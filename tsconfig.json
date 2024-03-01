@@ -17,12 +17,17 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": "./",
     "paths": {
+      "@apiClients": ["src/apiClients"],
+      "@components": ["src/components"],
       "@constants": ["src/constants"],
       "@interfaces": ["src/interfaces"],
+      "@models": ["src/models"],
+      "@mocks/*": ["src/mocks/*"],
       "@states": ["src/states"],
-      "@utils": ["src/utils"]
+      "@store": ["src/store"],
+      "@utils": ["src/utils"],
+      "@utils/*": ["src/utils/*"]
     }
   },
-  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
