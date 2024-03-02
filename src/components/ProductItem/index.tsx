@@ -7,9 +7,9 @@ export interface ProductItemProps {
 }
 
 export const ProductItem: React.FC<ProductItemProps> = ({ productId }) => {
-  const { selectProduct } = useProductModel();
+  const { queryHandler } = useProductModel();
   const product = useSelector((state: RootState) =>
-    selectProduct(state, productId)
+    queryHandler.selectEntity(state, productId)
   );
 
   return (

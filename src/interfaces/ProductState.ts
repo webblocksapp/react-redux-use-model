@@ -1,9 +1,3 @@
-import { Product, StateQuery } from '@interfaces';
+import { NormalizedState, Product, ProductQueryData } from '@interfaces';
 
-export type ProductState = {
-  byId: {
-    [id: string]: Product;
-  };
-  allIds: Array<string>;
-  queries: Array<StateQuery>;
-};
+export type ProductState = NormalizedState<Product, ProductQueryData>;

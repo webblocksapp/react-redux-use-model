@@ -1,5 +1,6 @@
 export * from './EntityParams';
 export * from './ListResponse';
+export * from './NormalizedState';
 export * from './Pagination';
 export * from './Product';
 export * from './ProductAction';

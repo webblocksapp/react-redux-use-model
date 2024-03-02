@@ -6,7 +6,7 @@ import {
   ProductQueryData,
   RootState,
 } from '@interfaces';
-import { Dispatch, createSelector } from '@reduxjs/toolkit';
+import { Dispatch } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import { useProductApiClient } from '@apiClients';
 import { useQueryHandler } from '@utils';
@@ -30,14 +30,10 @@ export const useProductModel = (options?: { componentId?: string }) => {
   };
 
   const selectProductState = (state: RootState) => state.productState;
-  const selectProduct = createSelector(
-    [selectProductState, (_: RootState, id: string) => id],
-    (productState, id) => productState.byId[id]
-  );
-  const queryHandler = useQueryHandler<ProductQueryData>({
+  const queryHandler = useQueryHandler<Product, ProductQueryData>({
     componentId: options?.componentId,
     stateSelector: selectProductState,
   });
 
-  return { list, selectProductState, selectProduct, queryHandler };
+  return { list, queryHandler };
 };
