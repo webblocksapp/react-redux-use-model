@@ -1,19 +1,11 @@
 import { ProductActionType as ActionType } from '@constants';
-import {
-  EntityParams,
-  Product,
-  ProductAction,
-  StateQueryParams,
-  RootState,
-} from '@interfaces';
+import { EntityParams, Product, ProductAction, RootState } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import { useProductApiClient } from '@apiClients';
 import { useQuerySelector } from '@utils';
 
-export const useProductModel = (options?: {
-  stateQueryParams?: StateQueryParams;
-}) => {
+export const useProductModel = (options?: { componentId?: string }) => {
   const dispatch = useDispatch<Dispatch<ProductAction>>();
   const productApiClient = useProductApiClient();
 
@@ -23,7 +15,7 @@ export const useProductModel = (options?: {
       dispatch({
         type: ActionType.LIST,
         products,
-        stateQueryParams: options?.stateQueryParams,
+        componentId: options?.componentId,
       });
     } catch (error) {
       console.error(error);

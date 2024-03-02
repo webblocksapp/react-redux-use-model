@@ -1,4 +1,4 @@
-import { Product, ProductState, StateQueryParams } from '@interfaces';
+import { Product, ProductState } from '@interfaces';
 import {
   getArrayIds,
   mergeQueries,
@@ -8,18 +8,13 @@ import {
 
 export const list = (
   products: Product[],
-  stateQueryParams: StateQueryParams | undefined,
+  componentId: string | undefined,
   state: ProductState
 ): ProductState => {
-  console.log('====>', state.queries, stateQueryParams);
   return {
     ...state,
     byId: { ...state.byId, ...normalizeArray(products) },
     allIds: mergeUniqueIds(state.allIds, getArrayIds(products)),
-    queries: mergeQueries(
-      state.queries,
-      stateQueryParams,
-      getArrayIds(products)
-    ),
+    queries: mergeQueries(state.queries, componentId, getArrayIds(products)),
   };
 };

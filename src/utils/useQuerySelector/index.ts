@@ -5,23 +5,9 @@ export const useQuerySelector = (
   queriesSelector: (state: any) => Array<StateQuery>
 ) => {
   const selectQuery = createSelector(
-    [
-      queriesSelector,
-      (_: RootState, componentName: string) => componentName,
-      (_: RootState, componentName: string, componentId?: string) => {
-        componentName;
-        return componentId;
-      },
-    ],
-    (queries, componentName, componentId) => {
-      if (componentId)
-        return queries.find(
-          (item) =>
-            item.componentName == componentName &&
-            item.componentId == componentId
-        );
-      return queries.find((item) => item.componentName == componentName);
-    }
+    [queriesSelector, (_: RootState, componentId: string) => componentId],
+    (queries, componentId) =>
+      queries.find((item) => item.componentId == componentId)
   );
 
   return { selectQuery };

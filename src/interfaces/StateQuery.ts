@@ -1,5 +1,4 @@
 export type StateQuery = {
-  componentId?: string;
-  componentName: string;
+  componentId: string;
   ids: Array<string>;
 };

@@ -1,4 +1,4 @@
-export enum ComponentName {
+export enum ComponentId {
   ProductList = 'ProductList',
 }
 
