@@ -1,4 +1,8 @@
-import { ProductActionType as ActionType } from "@constants";
-import { Product } from "@interfaces";
+import { ProductActionType as ActionType } from '@constants';
+import { Product, StateQueryParams } from '@interfaces';
 
-export type ProductAction = { type: ActionType.LIST; products: Product[] };
+export type ProductAction = {
+  type: ActionType.LIST;
+  products: Product[];
+  stateQueryParams?: StateQueryParams;
+};
