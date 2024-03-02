@@ -13,9 +13,8 @@ export const ProductItem: React.FC<ProductItemProps> = ({ productId }) => {
   );
 
   return (
-    <div id={product.id} style={{ border: '1px solid black', padding: 10 }}>
-      <p>{product.name}</p>
-      <p>{product.price}</p>
+    <div id={product.id} style={{ border: '1px solid black', padding: 5 }}>
+      Name: {product.name}, Price: {product.price}
     </div>
   );
 };
