@@ -1,5 +1,5 @@
 import { products } from './products';
 
 export const data = {
-  products: products(1000),
+  products: products(100),
 };

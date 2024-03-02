@@ -6,8 +6,14 @@ export const useQueryHandler = <TEntity, TQueryData>(options: {
   stateSelector: (state: RootState) => NormalizedState<TEntity, TQueryData>;
 }) => {
   const selectEntity = createSelector(
-    [options.stateSelector, (_: RootState, id: string) => id],
-    (state, id) => state.byId[id]
+    [
+      options.stateSelector,
+      (_: RootState, id: string | null | undefined) => id,
+    ],
+    (state, id) => {
+      const entity = id ? state.byId[id] : undefined;
+      return { entity, loading: entity ? false : true };
+    }
   );
   const selectQueries = createSelector(
     [options.stateSelector],
