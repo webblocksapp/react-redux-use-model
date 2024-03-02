@@ -7,7 +7,7 @@ const initialState: ProductState = { byId: {}, allIds: [], queries: [] };
 export const productState = (state = initialState, action: ProductAction) => {
   switch (action.type) {
     case ActionType.LIST:
-      return list(action.products, action.componentId, state);
+      return list(action.products, action.componentId, action.queryData, state);
     default:
       return state;
   }

@@ -6,4 +6,4 @@ export * from './mergeUniqueIds';
 export * from './normalizeArray';
 export * from './normalizeObject';
 export * from './paginateData';
-export * from './useQuerySelector';
+export * from './useQueryHandler';

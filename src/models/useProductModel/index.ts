@@ -1,9 +1,15 @@
 import { ProductActionType as ActionType } from '@constants';
-import { EntityParams, Product, ProductAction, RootState } from '@interfaces';
+import {
+  EntityParams,
+  Product,
+  ProductAction,
+  ProductQueryData,
+  RootState,
+} from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import { useProductApiClient } from '@apiClients';
-import { useQuerySelector } from '@utils';
+import { useQueryHandler } from '@utils';
 
 export const useProductModel = (options?: { componentId?: string }) => {
   const dispatch = useDispatch<Dispatch<ProductAction>>();
@@ -11,11 +17,12 @@ export const useProductModel = (options?: { componentId?: string }) => {
 
   const list = async (params?: EntityParams<Product>) => {
     try {
-      const { content: products } = await productApiClient.list(params);
+      const { products, pagination } = await productApiClient.list(params);
       dispatch({
         type: ActionType.LIST,
-        products,
         componentId: options?.componentId,
+        products,
+        queryData: { pagination },
       });
     } catch (error) {
       console.error(error);
@@ -23,15 +30,14 @@ export const useProductModel = (options?: { componentId?: string }) => {
   };
 
   const selectProductState = (state: RootState) => state.productState;
-  const selectQueries = createSelector(
-    [selectProductState],
-    (productState) => productState.queries
-  );
   const selectProduct = createSelector(
     [selectProductState, (_: RootState, id: string) => id],
     (productState, id) => productState.byId[id]
   );
-  const { selectQuery } = useQuerySelector(selectQueries);
+  const queryHandler = useQueryHandler<ProductQueryData>({
+    componentId: options?.componentId,
+    stateSelector: selectProductState,
+  });
 
-  return { list, selectProductState, selectProduct, selectQuery };
+  return { list, selectProductState, selectProduct, queryHandler };
 };
