@@ -1,6 +1,8 @@
 import { NormalizedEntitiesState, StateQuery } from '@interfaces';
 import {
+  buildEmptyIds,
   getArrayIds,
+  mergeIds,
   mergeQueries,
   mergeUniqueIds,
   normalizeArray,
@@ -48,15 +50,22 @@ export const goToPage = (
           if (item.queryData?.pagination === undefined) {
             console.warn('queryData lacks of pagination object.');
           } else {
+            const queryData = {
+              ...item.queryData,
+              pagination: {
+                ...item.queryData.pagination,
+                page,
+              },
+            };
+
             return {
               ...item,
-              queryData: {
-                ...item.queryData,
-                pagination: {
-                  ...item.queryData.pagination,
-                  page,
-                },
-              },
+              ids: mergeIds(
+                item.ids,
+                buildEmptyIds({ size: queryData.pagination.size }),
+                queryData.pagination
+              ),
+              queryData,
             };
           }
         }

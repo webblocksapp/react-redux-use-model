@@ -16,6 +16,7 @@ export const useProductModel = (options?: { queryKey?: string }) => {
 
   const list = async (params?: EntityParams<Product>) => {
     try {
+      dispatchGoToPage(params?._page);
       const { products, pagination } = await productApiClient.list(params);
       dispatchList({
         queryKey: options?.queryKey,
@@ -24,6 +25,12 @@ export const useProductModel = (options?: { queryKey?: string }) => {
       });
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const dispatchGoToPage = (page?: number) => {
+    if (options?.queryKey && page) {
+      queryHandler.dispatchGoToPage({ queryKey: options.queryKey, page });
     }
   };
 
