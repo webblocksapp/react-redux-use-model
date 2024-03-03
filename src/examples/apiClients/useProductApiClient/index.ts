@@ -6,14 +6,14 @@ export const useProductApiClient = () => {
   const list = async (
     params?: EntityParams<Product>
   ): Promise<{
-    products: Product[];
+    data: Product[];
     pagination: Pagination;
   }> => {
     const { data } = await axiosLocal.get<ListResponse<Product>>('/products', {
       params: { _size: 10, _page: 0, ...params },
     });
     return {
-      products: data.content,
+      data: data.content,
       pagination: {
         totalPages: data.totalPages,
         size: data.pageable.pageSize,

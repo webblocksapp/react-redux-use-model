@@ -8,7 +8,9 @@ export const ProductList: React.FC = () => {
   const productModel = useProductModel({
     queryKey: QueryKey.ProductList,
   });
-  const { queryHandler, list } = productModel;
+  const {
+    listQuery: { list, ...queryHandler },
+  } = productModel;
   const productQuery = useSelector(queryHandler.selectQuery);
 
   useEffect(() => {

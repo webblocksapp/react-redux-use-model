@@ -1,17 +1,28 @@
 import { EntityActionType } from '@constants';
-import { EntityAction, RootState } from '@interfaces';
+import { useApiClient } from '@hooks';
+import {
+  EntityAction,
+  Pagination,
+  QueryHandlerOptions,
+  RootState,
+} from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 
 export const useQueryHandler = <
   TNormalizedEntity extends { id: string },
-  TQueryData
->(options: {
-  entityName: string;
-  queryKey: string | undefined;
-}) => {
-  const { entityName, queryKey: defaultQueryKey } = options;
+  TQueryData extends { pagination?: Pagination }
+>(
+  options: QueryHandlerOptions<TNormalizedEntity>
+) => {
+  const {
+    entityName,
+    queryKey: defaultQueryKey,
+    apiClientFn,
+    action,
+  } = options;
+  const apiClient = useApiClient(apiClientFn);
 
   /**
    * Dispatch initialization.
@@ -24,11 +35,37 @@ export const useQueryHandler = <
    */
   const dispatchList = (params: {
     entities: Array<TNormalizedEntity>;
-    queryKey: string | undefined;
     queryData?: TQueryData;
     entityName?: string;
   }) => {
-    dispatch({ type: EntityActionType.LIST, entityName, ...params });
+    dispatch({
+      type: EntityActionType.LIST,
+      queryKey: options.queryKey,
+      entityName,
+      ...params,
+    });
+  };
+
+  const runApiClient = async (
+    params?: Parameters<
+      QueryHandlerOptions<TNormalizedEntity>['apiClientFn']
+    >[0]
+  ) => {
+    switch (action) {
+      case EntityActionType.LIST:
+        if (params?._page && defaultQueryKey) {
+          dispatchGoToPage({ queryKey: defaultQueryKey, page: params?._page });
+        }
+
+        const response = await apiClient.run(params);
+        dispatchList({
+          entities: response?.data || [],
+          queryData: { pagination: response?.pagination } as TQueryData,
+        });
+        break;
+      default:
+        break;
+    }
   };
 
   /**
@@ -88,7 +125,6 @@ export const useQueryHandler = <
   return {
     selectQuery,
     selectEntity,
-    dispatchList,
-    dispatchGoToPage,
+    runApiClient,
   };
 };
