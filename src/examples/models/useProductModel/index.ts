@@ -1,6 +1,7 @@
 import { EntityName } from '@examples/constants';
-import { EntityParams, Product, ProductQueryData } from '@examples/interfaces';
+import { Product, ProductQueryData } from '@examples/interfaces';
 import { useProductApiClient } from '@examples/apiClients';
+import { EntityParams } from '@interfaces';
 import { useQueryHandler } from '@hooks';
 
 export const useProductModel = (options?: { queryKey?: string }) => {

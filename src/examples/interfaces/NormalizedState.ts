@@ -1,6 +1,9 @@
-import { StateQuery } from '@interfaces';
+import { Pagination, StateQuery } from '@interfaces';
 
-export type NormalizedState<TEntity, TQueryData> = {
+export type NormalizedState<
+  TEntity,
+  TQueryData extends { pagination?: Pagination }
+> = {
   byId: {
     [id: string]: TEntity;
   };

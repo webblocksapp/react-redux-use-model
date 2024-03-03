@@ -32,6 +32,20 @@ export const useQueryHandler = <
   };
 
   /**
+   * Handles cache pagination to next page.
+   */
+  const dispatchNextPage = (params: { queryKey: string }) => {
+    dispatch({ type: EntityActionType.NEXT_PAGE, entityName, ...params });
+  };
+
+  /**
+   * Handles cache pagination to prev page.
+   */
+  const dispatchPrevPage = (params: { queryKey: string }) => {
+    dispatch({ type: EntityActionType.PREV_PAGE, entityName, ...params });
+  };
+
+  /**
    * Selects normalized entity state by the entity name.
    */
   const selectNormalizedEntityState = (state: RootState) =>
@@ -78,5 +92,11 @@ export const useQueryHandler = <
     }
   );
 
-  return { selectQuery, selectEntity, dispatchList };
+  return {
+    selectQuery,
+    selectEntity,
+    dispatchList,
+    dispatchNextPage,
+    dispatchPrevPage,
+  };
 };

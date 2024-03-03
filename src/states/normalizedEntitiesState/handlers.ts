@@ -30,3 +30,23 @@ export const list = (
     },
   };
 };
+
+export const nextPage = (
+  entityName: string,
+  queryKey: string | undefined,
+  state: NormalizedEntitiesState
+): NormalizedEntitiesState => {
+  const entityState = state[entityName];
+
+  return {
+    ...state,
+    [entityName]: {
+      ...entityState,
+      queries: entityState?.queries?.map((item) => {
+        if (item.queryKey === queryKey) {
+        }
+        return item;
+      }),
+    },
+  };
+};

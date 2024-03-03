@@ -1,5 +1,5 @@
-import { Pagination } from '@interfaces';
-import { EntityParams, ListResponse, Product } from '@examples/interfaces';
+import { EntityParams, Pagination } from '@interfaces';
+import { ListResponse, Product } from '@examples/interfaces';
 import { axiosLocal } from '@examples/utils';
 
 export const useProductApiClient = () => {
