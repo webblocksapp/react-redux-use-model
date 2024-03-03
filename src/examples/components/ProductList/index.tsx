@@ -16,25 +16,36 @@ export const ProductList: React.FC = () => {
   }, []);
 
   return (
-    <div>
-      <div
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div>
+        <div
+          style={{
+            border: '1px solid black',
+            overflow: 'auto',
+            width: 300,
+            height: 600,
+            padding: 10,
+          }}
+        >
+          {productQuery?.ids?.map((id) => (
+            <ProductItem key={id} productId={id} />
+          ))}
+        </div>
+        <Paginator
+          pagination={productQuery?.queryData?.pagination}
+          onClickPage={(index) => list({ _page: index })}
+        />
+      </div>
+      <pre
         style={{
           border: '1px solid black',
           overflow: 'auto',
-          width: 300,
+          width: 500,
           height: 600,
           padding: 10,
+          marginLeft: 20,
         }}
       >
-        {productQuery?.ids?.map((id) => (
-          <ProductItem key={id} productId={id} />
-        ))}
-      </div>
-      <Paginator
-        pagination={productQuery?.queryData?.pagination}
-        onClickPage={(index) => list({ _page: index })}
-      />
-      <pre>
         <code>{JSON.stringify(productQuery?.ids, null, 2)}</code>
       </pre>
     </div>
