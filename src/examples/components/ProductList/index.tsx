@@ -8,13 +8,11 @@ export const ProductList: React.FC = () => {
   const productModel = useProductModel({
     queryKey: QueryKey.ProductList,
   });
-  const {
-    listQuery: { list, ...queryHandler },
-  } = productModel;
-  const productQuery = useSelector(queryHandler.selectQuery);
+  const { listQuery } = productModel;
+  const productQuery = useSelector(listQuery.selectQuery);
 
   useEffect(() => {
-    list();
+    listQuery.list();
   }, []);
 
   return (
@@ -35,7 +33,7 @@ export const ProductList: React.FC = () => {
         </div>
         <Paginator
           pagination={productQuery?.queryData?.pagination}
-          onClickPage={(index) => list({ _page: index })}
+          onClickPage={(index) => listQuery.list({ _page: index })}
         />
       </div>
       <pre
