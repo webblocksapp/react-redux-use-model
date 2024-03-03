@@ -40,7 +40,7 @@ export const useQueryHandler = <
   /**
    * Select an entity value from the normalized list.
    */
-  const selecTNormalizedEntity = createSelector(
+  const selectEntity = createSelector(
     [
       selectNormalizedEntityState,
       (_: RootState, id: string | null | undefined) => id,
@@ -78,5 +78,5 @@ export const useQueryHandler = <
     }
   );
 
-  return { selectQuery, selecTNormalizedEntity, dispatchList };
+  return { selectQuery, selectEntity, dispatchList };
 };
