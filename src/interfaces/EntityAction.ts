@@ -12,12 +12,8 @@ export type EntityAction<
       queryData?: TQueryData;
     }
   | {
-      type: ActionType.NEXT_PAGE;
+      type: ActionType.GO_TO_PAGE;
       entityName: string;
       queryKey: string;
-    }
-  | {
-      type: ActionType.PREV_PAGE;
-      entityName: string;
-      queryKey: string;
+      page: number;
     };

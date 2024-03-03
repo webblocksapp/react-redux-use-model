@@ -32,17 +32,10 @@ export const useQueryHandler = <
   };
 
   /**
-   * Handles cache pagination to next page.
+   * Handles cache pagination to specific page.
    */
-  const dispatchNextPage = (params: { queryKey: string }) => {
-    dispatch({ type: EntityActionType.NEXT_PAGE, entityName, ...params });
-  };
-
-  /**
-   * Handles cache pagination to prev page.
-   */
-  const dispatchPrevPage = (params: { queryKey: string }) => {
-    dispatch({ type: EntityActionType.PREV_PAGE, entityName, ...params });
+  const dispatchGoToPage = (params: { queryKey: string; page: number }) => {
+    dispatch({ type: EntityActionType.GO_TO_PAGE, entityName, ...params });
   };
 
   /**
@@ -96,7 +89,6 @@ export const useQueryHandler = <
     selectQuery,
     selectEntity,
     dispatchList,
-    dispatchNextPage,
-    dispatchPrevPage,
+    dispatchGoToPage,
   };
 };

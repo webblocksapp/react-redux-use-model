@@ -1,4 +1,4 @@
-import { NormalizedEntitiesState } from '@interfaces';
+import { NormalizedEntitiesState, StateQuery } from '@interfaces';
 import {
   getArrayIds,
   mergeQueries,
@@ -10,7 +10,7 @@ export const list = (
   entityName: string,
   entities: any[],
   queryKey: string | undefined,
-  queryData: any,
+  queryData: StateQuery['queryData'],
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   const entityState = state[entityName];
@@ -31,9 +31,10 @@ export const list = (
   };
 };
 
-export const nextPage = (
+export const goToPage = (
   entityName: string,
   queryKey: string | undefined,
+  page: number,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   const entityState = state[entityName];
@@ -44,6 +45,20 @@ export const nextPage = (
       ...entityState,
       queries: entityState?.queries?.map((item) => {
         if (item.queryKey === queryKey) {
+          if (item.queryData?.pagination === undefined) {
+            console.warn('queryData lacks of pagination object.');
+          } else {
+            return {
+              ...item,
+              queryData: {
+                ...item.queryData,
+                pagination: {
+                  ...item.queryData.pagination,
+                  page,
+                },
+              },
+            };
+          }
         }
         return item;
       }),

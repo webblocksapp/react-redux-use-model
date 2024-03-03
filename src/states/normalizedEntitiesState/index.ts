@@ -1,6 +1,6 @@
 import { EntityActionType } from '@constants';
 import { EntityAction, NormalizedEntitiesState } from '@interfaces';
-import { list } from './handlers';
+import { list, goToPage } from './handlers';
 
 const initialState: NormalizedEntitiesState = {};
 
@@ -17,6 +17,8 @@ export const normalizedEntitiesState = (
         action.queryData,
         state
       );
+    case EntityActionType.GO_TO_PAGE:
+      return goToPage(action.entityName, action.queryKey, action.page, state);
     default:
       return state;
   }
