@@ -18,9 +18,11 @@
     "baseUrl": "./",
     "paths": {
       "@apiClients": ["src/apiClients"],
+      "@examples/*": ["src/examples/*"],
       "@components": ["src/components"],
       "@constants": ["src/constants"],
       "@interfaces": ["src/interfaces"],
+      "@hooks": ["src/hooks"],
       "@models": ["src/models"],
       "@mocks/*": ["src/mocks/*"],
       "@states": ["src/states"],

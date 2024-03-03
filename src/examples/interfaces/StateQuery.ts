@@ -1,5 +1,5 @@
 export type StateQuery<TQueryData = any> = {
+  componentId: string;
   ids: Array<string>;
-  queryKey: string;
   queryData?: TQueryData;
 };

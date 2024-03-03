@@ -1,3 +1,5 @@
-import { rootState } from '@states';
+import { NormalizedEntitiesState } from '@interfaces';
 
-export type RootState = ReturnType<typeof rootState>;
+export type RootState = {
+  normalizedEntitiesState: NormalizedEntitiesState;
+};

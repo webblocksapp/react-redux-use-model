@@ -5,8 +5,8 @@ import {
   replaceArrayPortion,
 } from '@utils';
 
-const queryExists = (item: StateQuery, componentId: string) =>
-  item.componentId == componentId;
+const queryExists = (item: StateQuery, queryKey: string) =>
+  item.queryKey == queryKey;
 
 const mergeIds = (
   originalIds: string[],
@@ -34,15 +34,15 @@ const mergeIds = (
 
 export const mergeQueries = <TQueryData extends { pagination?: Pagination }>(
   queries: StateQuery<TQueryData>[],
-  componentId: string | undefined,
+  queryKey: string | undefined,
   ids: string[],
   queryData?: TQueryData
 ): StateQuery<TQueryData>[] => {
-  if (componentId === undefined) return queries;
+  if (queryKey === undefined) return queries;
 
-  if (queries.some((item) => queryExists(item, componentId))) {
+  if (queries.some((item) => queryExists(item, queryKey))) {
     return queries.map((item) => {
-      if (queryExists(item, componentId)) {
+      if (queryExists(item, queryKey)) {
         return {
           ...item,
           ids: mergeIds(item.ids, ids, queryData?.pagination),
@@ -52,6 +52,6 @@ export const mergeQueries = <TQueryData extends { pagination?: Pagination }>(
       return item;
     });
   } else {
-    return [...queries, { componentId, ids, queryData }];
+    return [...queries, { queryKey, ids, queryData }];
   }
 };

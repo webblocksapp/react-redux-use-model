@@ -1,10 +1,6 @@
-export enum ComponentId {
-  ProductList = 'ProductList',
-}
-
-export enum ProductActionType {
-  LIST = 'PRODUCT:LIST',
-  CREATE = 'PRODUCT:CREATE',
-  UPDATE = 'PRODUCT:UPDATE',
-  REMOVE = 'PRODUCT:REMOVE',
+export enum EntityActionType {
+  LIST = 'ENTITY:LIST',
+  CREATE = 'ENTITY:CREATE',
+  UPDATE = 'ENTITY:UPDATE',
+  REMOVE = 'ENTITY:REMOVE',
 }

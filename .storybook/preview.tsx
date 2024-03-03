@@ -1,6 +1,6 @@
 import type { Preview } from '@storybook/react';
 import { Provider } from 'react-redux';
-import { worker } from '@mocks/browser';
+import { worker } from '@examples/mocks/browser';
 import { store } from '@store';
 
 worker.start({ onUnhandledRequest: 'bypass' });

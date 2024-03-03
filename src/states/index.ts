@@ -1,4 +1,6 @@
 import { combineReducers as combineStates } from '@reduxjs/toolkit';
-import { productState } from './productState';
+import { normalizedEntitiesState } from './normalizedEntitiesState';
 
-export const rootState = combineStates({ productState });
+export const rootState = combineStates({
+  normalizedEntitiesState,
+});

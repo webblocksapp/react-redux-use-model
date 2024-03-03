@@ -1,4 +1,3 @@
-export * from './axiosLocal';
 export * from './calcPaginationIndexes';
 export * from './getArrayIds';
 export * from './getOrigin';
@@ -9,4 +8,3 @@ export * from './normalizeObject';
 export * from './paginateData';
 export * from './removeArrayDuplicates';
 export * from './replaceArrayPortion';
-export * from './useQueryHandler';
