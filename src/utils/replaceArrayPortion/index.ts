@@ -34,6 +34,7 @@ export const replaceArrayPortion = <T extends Array<any>>(args: {
   endIndex: number;
   keepEmptyPositions?: boolean;
   removeDuplicates?: boolean;
+  replaceWhenEmpty?: boolean;
 }) => {
   let {
     originalArray,
@@ -41,6 +42,7 @@ export const replaceArrayPortion = <T extends Array<any>>(args: {
     startIndex,
     keepEmptyPositions = false,
     removeDuplicates = false,
+    replaceWhenEmpty = false,
   } = args;
   let resultingArray = [...originalArray];
   replacementArray = [...replacementArray] as T;
@@ -51,12 +53,22 @@ export const replaceArrayPortion = <T extends Array<any>>(args: {
 
   if (keepEmptyPositions) {
     for (let i = 0; i <= startIndex; i++) {
-      resultingArray[i] = originalArray[i];
+      if (replaceWhenEmpty) {
+        resultingArray[i] = resultingArray[i]
+          ? resultingArray[i]
+          : originalArray[i];
+      } else {
+        resultingArray[i] = originalArray[i];
+      }
     }
 
     for (let i = startIndex; i <= endIndex; i++) {
       const newItem = replacementArray[index];
-      resultingArray[i] = newItem;
+      if (replaceWhenEmpty) {
+        resultingArray[i] = resultingArray[i] ? resultingArray[i] : newItem;
+      } else {
+        resultingArray[i] = newItem;
+      }
       index++;
     }
   } else {

@@ -63,7 +63,8 @@ export const goToPage = (
               ids: mergeIds(
                 item.ids,
                 buildEmptyIds({ size: queryData.pagination.size }),
-                queryData.pagination
+                queryData.pagination,
+                { replaceWhenEmpty: true }
               ),
               queryData,
             };

@@ -8,7 +8,8 @@ import {
 export const mergeIds = (
   originalIds: string[],
   newIds: string[],
-  pagination?: Pagination
+  pagination?: Pagination,
+  options?: { replaceWhenEmpty: boolean }
 ) => {
   if (pagination) {
     const { startIndex, endIndex } = calcPaginationIndexes({
@@ -23,6 +24,7 @@ export const mergeIds = (
       endIndex,
       keepEmptyPositions: true,
       removeDuplicates: true,
+      ...options,
     });
   } else {
     return mergeUniqueIds(originalIds, newIds);
