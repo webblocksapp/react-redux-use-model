@@ -11,20 +11,34 @@ export const useQueryHandler = <
   entityName: string;
   queryKey: string | undefined;
 }) => {
+  const { entityName, queryKey: defaultQueryKey } = options;
+
+  /**
+   * Dispatch initialization.
+   */
   const dispatch = useDispatch<Dispatch<EntityAction<TEntity, TQueryData>>>();
+
+  /**
+   * Dispatch a list of entities.
+   */
   const dispatchList = (params: {
     entities: Array<TEntity>;
     queryKey: string | undefined;
     queryData?: TQueryData;
+    entityName?: string;
   }) => {
     dispatch({ type: EntityActionType.LIST, entityName, ...params });
   };
 
-  const { entityName, queryKey } = options;
-  const selectNormalizedEntityState = (state: RootState) => {
-    const entityState = state.normalizedEntitiesState[entityName];
-    return entityState ? entityState : undefined;
-  };
+  /**
+   * Selects normalized entity state by the entity name.
+   */
+  const selectNormalizedEntityState = (state: RootState) =>
+    state.normalizedEntitiesState[entityName];
+
+  /**
+   * Select an entity value from the normalized list.
+   */
   const selectEntity = createSelector(
     [
       selectNormalizedEntityState,
@@ -35,20 +49,33 @@ export const useQueryHandler = <
       return { entity, loading: entity ? false : true };
     }
   );
+
+  /**
+   * All queries selector from an entity state.
+   */
   const selectQueries = createSelector(
     [selectNormalizedEntityState],
     (state) => state?.queries
   );
-  const selectQuery = createSelector([selectQueries], (queries) => {
-    const query = queries?.find((item) => item.queryKey == queryKey);
-    return {
-      ...query,
-      ids: query?.ids?.map((item) => {
-        if (item === null || item === undefined) return `empty-${uuid()}`;
-        return item;
-      }),
-    };
-  });
+
+  /**
+   * Select the query by the given query key to the query handler.
+   */
+  const selectQuery = createSelector(
+    [selectQueries, (_: RootState, queryKey?: string) => queryKey],
+    (queries, queryKey) => {
+      const query = queries?.find(
+        (item) => item.queryKey == queryKey || defaultQueryKey
+      );
+      return {
+        ...query,
+        ids: query?.ids?.map((item) => {
+          if (item === null || item === undefined) return `empty-${uuid()}`;
+          return item;
+        }),
+      };
+    }
+  );
 
   return { selectQuery, selectEntity, dispatchList };
 };
