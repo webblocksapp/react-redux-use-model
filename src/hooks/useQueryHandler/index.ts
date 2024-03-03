@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 
 export const useQueryHandler = <
-  TEntity extends { id: string },
+  TNormalizedEntity extends { id: string },
   TQueryData
 >(options: {
   entityName: string;
@@ -16,13 +16,14 @@ export const useQueryHandler = <
   /**
    * Dispatch initialization.
    */
-  const dispatch = useDispatch<Dispatch<EntityAction<TEntity, TQueryData>>>();
+  const dispatch =
+    useDispatch<Dispatch<EntityAction<TNormalizedEntity, TQueryData>>>();
 
   /**
    * Dispatch a list of entities.
    */
   const dispatchList = (params: {
-    entities: Array<TEntity>;
+    entities: Array<TNormalizedEntity>;
     queryKey: string | undefined;
     queryData?: TQueryData;
     entityName?: string;
@@ -39,7 +40,7 @@ export const useQueryHandler = <
   /**
    * Select an entity value from the normalized list.
    */
-  const selectEntity = createSelector(
+  const selecTNormalizedEntity = createSelector(
     [
       selectNormalizedEntityState,
       (_: RootState, id: string | null | undefined) => id,
@@ -77,5 +78,5 @@ export const useQueryHandler = <
     }
   );
 
-  return { selectQuery, selectEntity, dispatchList };
+  return { selectQuery, selecTNormalizedEntity, dispatchList };
 };
