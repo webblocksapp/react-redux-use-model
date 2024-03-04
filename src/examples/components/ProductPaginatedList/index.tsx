@@ -6,7 +6,7 @@ import { Paginator, ProductItem } from '@examples/components';
 
 export const ProductPaginatedList: React.FC = () => {
   const productModel = useProductModel({
-    queryKey: QueryKey.ProductList,
+    queryKey: QueryKey.ProductPaginatedList,
   });
   const { listQuery } = productModel;
   const productQuery = useSelector(listQuery.selectPaginatedQuery);
@@ -16,41 +16,43 @@ export const ProductPaginatedList: React.FC = () => {
   }, []);
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <div>
-        <div
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div>
+          <div
+            style={{
+              border: '1px solid black',
+              overflow: 'auto',
+              width: 300,
+              height: 600,
+              padding: 10,
+            }}
+          >
+            {productQuery?.ids?.map((id) => (
+              <ProductItem key={id} productId={id} />
+            ))}
+          </div>
+          <Paginator
+            pagination={productQuery?.queryData?.pagination}
+            onClickPage={(index) => listQuery.list({ _page: index })}
+          />
+          <pre>
+            <code>{JSON.stringify(productQuery?.queryData?.pagination)}</code>
+          </pre>
+        </div>
+        <pre
           style={{
             border: '1px solid black',
             overflow: 'auto',
-            width: 300,
+            width: 500,
             height: 600,
             padding: 10,
+            marginLeft: 20,
           }}
         >
-          {productQuery?.ids?.map((id) => (
-            <ProductItem key={id} productId={id} />
-          ))}
-        </div>
-        <Paginator
-          pagination={productQuery?.queryData?.pagination}
-          onClickPage={(index) => listQuery.list({ _page: index })}
-        />
-        <pre>
-          <code>{JSON.stringify(productQuery?.queryData?.pagination)}</code>
+          <code>{JSON.stringify(productQuery, null, 2)}</code>
         </pre>
       </div>
-      <pre
-        style={{
-          border: '1px solid black',
-          overflow: 'auto',
-          width: 500,
-          height: 600,
-          padding: 10,
-          marginLeft: 20,
-        }}
-      >
-        <code>{JSON.stringify(productQuery?.ids, null, 2)}</code>
-      </pre>
     </div>
   );
 };

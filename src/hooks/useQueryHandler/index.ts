@@ -59,10 +59,14 @@ export const useQueryHandler = <
   ) => {
     switch (action) {
       case EntityActionType.LIST:
-        if (params?._page !== undefined && defaultQueryKey) {
-          ref.current.currentPage = params._page;
-          dispatchGoToPage({ queryKey: defaultQueryKey, page: params._page });
+        if (defaultQueryKey) {
+          ref.current.currentPage = params?._page || 0;
+          dispatchGoToPage({
+            queryKey: defaultQueryKey,
+            page: ref.current.currentPage,
+          });
         }
+
         const response = await apiClient.run(params);
         let queryData = { pagination: response?.pagination } as
           | TQueryData
@@ -121,7 +125,7 @@ export const useQueryHandler = <
     [selectQueries, (_: RootState, queryKey?: string) => queryKey],
     (queries, queryKey) => {
       const query = queries?.find(
-        (item) => item.queryKey == queryKey || defaultQueryKey
+        (item) => item.queryKey == (queryKey || defaultQueryKey)
       );
       return {
         ...query,

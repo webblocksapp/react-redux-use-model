@@ -60,6 +60,8 @@ export const goToPage = (
               },
             };
 
+            console.log({ queryData });
+
             return {
               ...item,
               ids: mergeIds(

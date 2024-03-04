@@ -4,6 +4,7 @@ export enum EntityName {
 
 export enum QueryKey {
   ProductList = 'ProductList',
+  ProductPaginatedList = 'ProductPaginatedList',
 }
 
 export enum ProductActionType {
