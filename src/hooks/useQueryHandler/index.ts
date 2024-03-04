@@ -7,6 +7,7 @@ import {
   RootState,
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
+import { paginateData } from '@utils';
 import { useDispatch } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 
@@ -53,7 +54,7 @@ export const useQueryHandler = <
   ) => {
     switch (action) {
       case EntityActionType.LIST:
-        if (params?._page && defaultQueryKey) {
+        if (params?._page !== undefined && defaultQueryKey) {
           dispatchGoToPage({ queryKey: defaultQueryKey, page: params?._page });
         }
 
@@ -122,8 +123,23 @@ export const useQueryHandler = <
     }
   );
 
+  /**
+   * Select the paginated query.
+   */
+  const selectPaginatedQuery = createSelector([selectQuery], (query) => {
+    if (query.queryData?.pagination) {
+      const { content } = paginateData(query.ids || [], {
+        page: query.queryData?.pagination.page,
+        limit: query.queryData?.pagination.size,
+      });
+
+      return { ...query, ids: content };
+    }
+  });
+
   return {
     selectQuery,
+    selectPaginatedQuery,
     selectEntity,
     runApiClient,
   };
