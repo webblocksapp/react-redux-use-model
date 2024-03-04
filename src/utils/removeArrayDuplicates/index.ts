@@ -1,10 +1,12 @@
+import { isNullish } from '@utils';
+
 export const removeArrayDuplicates = <
   T extends Array<{ id?: string | number } | string | number | undefined>
 >(
   arr: T,
   options?: { keepEmptyPositions: boolean }
 ) => {
-  const ids: Array<string | number | undefined> = [];
+  const ids: Array<string | number> = [];
   const newArray = [] as unknown as T;
 
   for (let item of arr) {
@@ -17,11 +19,11 @@ export const removeArrayDuplicates = <
         newArray.push(item);
       }
     } else {
-      if (ids.includes(item)) {
+      if (!isNullish(item) && ids.includes(item!)) {
         options?.keepEmptyPositions && newArray.push(undefined);
         continue;
       } else {
-        ids.push(item);
+        !isNullish(item) && ids.push(item!);
         newArray.push(item);
       }
     }

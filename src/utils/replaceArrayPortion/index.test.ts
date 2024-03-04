@@ -115,4 +115,20 @@ describe('replaceArrayPortion', () => {
       })
     ).toMatchObject([undefined, undefined, 9, 8, 10]);
   });
+
+  it('Added new items with indexes outside of range keeping empty positions and removing duplicates', () => {
+    const originalArray: Array<number> = [];
+    const replacementArray = [9, 8, 10, 10];
+
+    expect(
+      replaceArrayPortion({
+        originalArray,
+        replacementArray,
+        startIndex: 2,
+        endIndex: 4,
+        keepEmptyPositions: true,
+        removeDuplicates: true,
+      })
+    ).toMatchObject([undefined, undefined, 9, 8, 10]);
+  });
 });
