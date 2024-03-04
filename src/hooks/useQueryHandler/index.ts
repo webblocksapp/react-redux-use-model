@@ -8,6 +8,7 @@ import {
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import { paginateData } from '@utils';
+import { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 
@@ -24,6 +25,9 @@ export const useQueryHandler = <
     action,
   } = options;
   const apiClient = useApiClient(apiClientFn);
+  const ref = useRef<{ currentPage: number }>({
+    currentPage: 0,
+  });
 
   /**
    * Dispatch initialization.
@@ -38,6 +42,7 @@ export const useQueryHandler = <
     entities: Array<TNormalizedEntity>;
     queryData?: TQueryData;
     entityName?: string;
+    currentPage?: number;
   }) => {
     dispatch({
       type: EntityActionType.LIST,
@@ -55,13 +60,18 @@ export const useQueryHandler = <
     switch (action) {
       case EntityActionType.LIST:
         if (params?._page !== undefined && defaultQueryKey) {
-          dispatchGoToPage({ queryKey: defaultQueryKey, page: params?._page });
+          ref.current.currentPage = params._page;
+          dispatchGoToPage({ queryKey: defaultQueryKey, page: params._page });
         }
-
         const response = await apiClient.run(params);
+        let queryData = { pagination: response?.pagination } as
+          | TQueryData
+          | undefined;
+
         dispatchList({
           entities: response?.data || [],
-          queryData: { pagination: response?.pagination } as TQueryData,
+          queryData,
+          currentPage: ref.current.currentPage,
         });
         break;
       default:

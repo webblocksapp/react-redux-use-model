@@ -11,6 +11,7 @@ import {
 export const list = (
   entityName: string,
   entities: any[],
+  currentPage: number | undefined,
   queryKey: string | undefined,
   queryData: StateQuery['queryData'],
   state: NormalizedEntitiesState
@@ -27,7 +28,8 @@ export const list = (
         entityState?.queries || [],
         queryKey,
         getArrayIds(entities),
-        queryData
+        queryData,
+        currentPage
       ),
     },
   };

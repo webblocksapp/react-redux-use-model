@@ -13,6 +13,7 @@ export const normalizedEntitiesState = (
       return list(
         action.entityName,
         action.entities,
+        action.currentPage,
         action.queryKey,
         action.queryData,
         state

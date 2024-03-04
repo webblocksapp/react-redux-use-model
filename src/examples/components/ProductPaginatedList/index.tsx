@@ -35,6 +35,9 @@ export const ProductPaginatedList: React.FC = () => {
           pagination={productQuery?.queryData?.pagination}
           onClickPage={(index) => listQuery.list({ _page: index })}
         />
+        <pre>
+          <code>{JSON.stringify(productQuery?.queryData?.pagination)}</code>
+        </pre>
       </div>
       <pre
         style={{

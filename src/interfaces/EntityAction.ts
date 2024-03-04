@@ -10,6 +10,7 @@ export type EntityAction<
       entities: TNormalizedEntity[];
       queryKey: string | undefined;
       queryData?: TQueryData;
+      currentPage?: number;
     }
   | {
       type: ActionType.GO_TO_PAGE;
