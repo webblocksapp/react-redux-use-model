@@ -1,8 +1,9 @@
 import { EntityActionType as ActionType } from '@constants';
+import { Pagination } from '@interfaces';
 
 export type EntityAction<
   TNormalizedEntity extends { id: string } = any,
-  TQueryData = any
+  TQueryData extends { pagination?: Pagination } = { pagination?: Pagination }
 > =
   | {
       type: ActionType.LIST;

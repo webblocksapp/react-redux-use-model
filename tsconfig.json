@@ -26,6 +26,7 @@
       "@models": ["src/models"],
       "@mocks/*": ["src/mocks/*"],
       "@states": ["src/states"],
+      "@states/*": ["src/states/*"],
       "@store": ["src/store"],
       "@utils": ["src/utils"],
       "@utils/*": ["src/utils/*"]
