@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getOrigin } from '@utils/getOrigin';
+import { getOrigin } from '@examples/utils/getOrigin';
 
 export const BASE_URL = getOrigin();
 

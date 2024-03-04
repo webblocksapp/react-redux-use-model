@@ -1,7 +1,6 @@
 export * from './buildEmptyIds';
 export * from './calcPaginationIndexes';
 export * from './getArrayIds';
-export * from './getOrigin';
 export * from './mergeIds';
 export * from './mergeQueries';
 export * from './mergeUniqueIds';
