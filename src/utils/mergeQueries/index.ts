@@ -21,10 +21,14 @@ export const mergeQueries = <TQueryData extends { pagination?: Pagination }>(
           ids: mergeIds(item.ids, ids, queryData?.pagination),
           queryData: {
             ...queryData,
-            pagination: {
-              ...queryData?.pagination,
-              page: currentPage ?? queryData?.pagination?.page,
-            },
+            ...(queryData?.pagination
+              ? {
+                  pagination: {
+                    ...queryData?.pagination,
+                    page: currentPage ?? queryData?.pagination?.page,
+                  },
+                }
+              : undefined),
           } as TQueryData,
         };
       }
