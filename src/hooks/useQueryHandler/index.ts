@@ -18,12 +18,7 @@ export const useQueryHandler = <
 >(
   options: QueryHandlerOptions<TNormalizedEntity>
 ) => {
-  const {
-    entityName,
-    queryKey: defaultQueryKey,
-    apiClientFn,
-    action,
-  } = options;
+  const { entityName, queryKey, apiClientFn, action } = options;
   const apiClient = useApiClient(apiClientFn);
   const ref = useRef<{ currentPage: number }>({
     currentPage: 0,
@@ -59,10 +54,10 @@ export const useQueryHandler = <
   ) => {
     switch (action) {
       case EntityActionType.LIST:
-        if (defaultQueryKey) {
+        if (queryKey) {
           ref.current.currentPage = params?._page || 0;
           dispatchGoToPage({
-            queryKey: defaultQueryKey,
+            queryKey,
             page: ref.current.currentPage,
           });
         }
@@ -119,23 +114,18 @@ export const useQueryHandler = <
   );
 
   /**
-   * Select the query by the given query key to the query handler.
+   * Select the query.
    */
-  const selectQuery = createSelector(
-    [selectQueries, (_: RootState, queryKey?: string) => queryKey],
-    (queries, queryKey) => {
-      const query = queries?.find(
-        (item) => item.queryKey == (queryKey || defaultQueryKey)
-      );
-      return {
-        ...query,
-        ids: query?.ids?.map((item) => {
-          if (item === null || item === undefined) return `empty-${uuid()}`;
-          return item;
-        }),
-      };
-    }
-  );
+  const selectQuery = createSelector([selectQueries], (queries) => {
+    const query = queries?.find((item) => item.queryKey == queryKey);
+    return {
+      ...query,
+      ids: query?.ids?.map((item) => {
+        if (item === null || item === undefined) return `empty-${uuid()}`;
+        return item;
+      }),
+    };
+  });
 
   /**
    * Select the paginated query.
