@@ -1,25 +1,36 @@
 import { EntityActionType } from '@constants';
-import { useApiClient } from '@hooks';
-import {
-  EntityAction,
-  Pagination,
-  QueryHandlerOptions,
-  RootState,
-} from '@interfaces';
+import { EntityAction, Pagination, RootState } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import { paginateData } from '@utils';
 import { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 
+type QueryHandler =
+  | {
+      apiFn: (...args: any) => Promise<{
+        data: Array<{ id: string }>;
+        pagination?: Pagination;
+      }>;
+      action: EntityActionType.LIST;
+    }
+  | {
+      apiFn: (...args: any) => Promise<{
+        data: { id: string };
+      }>;
+      action: EntityActionType.CREATE;
+    };
+
 export const useQueryHandler = <
-  TNormalizedEntity extends { id: string },
-  TQueryData extends { pagination?: Pagination }
->(
-  options: QueryHandlerOptions<TNormalizedEntity>
-) => {
-  const { entityName, queryKey, apiClientFn, action } = options;
-  const apiClient = useApiClient(apiClientFn);
+  T extends {
+    [K in keyof T]: QueryHandler;
+  }
+>(params: {
+  handlers: T;
+  entityName: string;
+  queryKey: string | undefined;
+}) => {
+  const { handlers, entityName, queryKey } = params;
   const ref = useRef<{ currentPage: number }>({
     currentPage: 0,
   });
@@ -27,57 +38,82 @@ export const useQueryHandler = <
   /**
    * Dispatch initialization.
    */
-  const dispatch =
-    useDispatch<Dispatch<EntityAction<TNormalizedEntity, TQueryData>>>();
+  const dispatch = useDispatch<Dispatch<EntityAction>>();
 
   /**
    * Dispatch a list of entities.
    */
   const dispatchList = (params: {
-    entities: Array<TNormalizedEntity>;
-    queryData?: TQueryData;
+    entities: Array<any>;
+    queryData?: any;
     entityName?: string;
     currentPage?: number;
   }) => {
     dispatch({
       type: EntityActionType.LIST,
-      queryKey: options.queryKey,
+      queryKey,
       entityName,
       ...params,
     });
   };
 
-  const runApiClient = async (
-    params?: Parameters<
-      QueryHandlerOptions<TNormalizedEntity>['apiClientFn']
-    >[0]
-  ) => {
-    switch (action) {
-      case EntityActionType.LIST:
-        if (queryKey) {
-          ref.current.currentPage = params?._page || 0;
-          dispatchGoToPage({
-            queryKey,
-            page: ref.current.currentPage,
-          });
-        }
+  /**
+   * Get page from params.
+   */
+  const getPageFromParams = (params: Array<any>) => {
+    const param = params.find(
+      (item) => item?.page !== undefined || item?._page !== undefined
+    );
 
-        const response = await apiClient.run(params);
-        let queryData = { pagination: response?.pagination } as
-          | TQueryData
-          | undefined;
-
-        dispatchList({
-          entities: response?.data || [],
-          queryData,
-          currentPage: ref.current.currentPage,
-        });
-        break;
-      default:
-        break;
-    }
+    return param?.page || param?._page;
   };
 
+  /**
+   * Initialize model methods.
+   */
+  const buildModelMethods = () => {
+    const modelMethods = {} as {
+      [K in keyof T]: (...params: Parameters<T[K]['apiFn']>) => Promise<void>;
+    };
+    const keys = Object.keys(handlers) as Array<keyof T>;
+
+    for (const key of keys) {
+      modelMethods[key] = buildModelMethod(handlers[key]);
+    }
+
+    return modelMethods;
+  };
+
+  /**
+   * Orchestrate the api function with the state dispatcher.
+   */
+  const buildModelMethod = (handler: QueryHandler) => {
+    switch (handler.action) {
+      case EntityActionType.LIST:
+        return async (...params: Parameters<QueryHandler['apiFn']>) => {
+          const page = getPageFromParams(params);
+
+          if (queryKey) {
+            ref.current.currentPage = page || 0;
+            dispatchGoToPage({
+              queryKey,
+              page: ref.current.currentPage,
+            });
+          }
+
+          const response = await handler.apiFn(...params);
+          let queryData = { pagination: response?.pagination };
+
+          dispatchList({
+            entities: response?.data || [],
+            queryData,
+            currentPage: ref.current.currentPage,
+          });
+        };
+      default:
+        return async () => {};
+    }
+  };
   /**
    * Handles cache pagination to specific page.
    */
@@ -142,9 +178,9 @@ export const useQueryHandler = <
   });
 
   return {
-    selectQuery,
-    selectPaginatedQuery,
+    ...buildModelMethods(),
     selectEntity,
-    runApiClient,
+    selectPaginatedQuery,
+    selectQuery,
   };
 };
