@@ -1,17 +1,20 @@
 import { EntityActionType } from '@constants';
-import { EntityAction, Pagination, RootState } from '@interfaces';
+import { EntityAction, Pagination, RootState, StringKey } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import { paginateData } from '@utils';
-import { useRef } from 'react';
+import { useApiClients } from '@hooks';
+import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 
+type ListResponse = {
+  data: Array<{ id: string }>;
+  pagination?: Pagination;
+};
+
 type QueryHandler =
   | {
-      apiFn: (...args: any) => Promise<{
-        data: Array<{ id: string }>;
-        pagination?: Pagination;
-      }>;
+      apiFn: (...args: any) => Promise<ListResponse>;
       action: EntityActionType.LIST;
     }
   | {
@@ -31,6 +34,23 @@ export const useQueryHandler = <
   queryKey: string | undefined;
 }) => {
   const { handlers, entityName, queryKey } = params;
+
+  /**
+   * Extract the apis from the handlers.
+   */
+  const apis = useMemo(() => {
+    const apisFns = {} as {
+      [K in keyof T]: T[K]['apiFn'];
+    };
+    const keys = Object.keys(handlers) as Array<keyof T>;
+    for (const key of keys) {
+      apisFns[key] = handlers[key]['apiFn'];
+    }
+
+    return apisFns;
+  }, []);
+
+  const { runApi, state } = useApiClients(apis);
   const ref = useRef<{ currentPage: number }>({
     currentPage: 0,
   });
@@ -78,7 +98,10 @@ export const useQueryHandler = <
     const keys = Object.keys(handlers) as Array<keyof T>;
 
     for (const key of keys) {
-      modelMethods[key] = buildModelMethod(handlers[key]);
+      modelMethods[key] = buildModelMethod(
+        key as StringKey<keyof T>,
+        handlers[key]
+      );
     }
 
     return modelMethods;
@@ -87,7 +110,10 @@ export const useQueryHandler = <
   /**
    * Orchestrate the api function with the state dispatcher.
    */
-  const buildModelMethod = (handler: QueryHandler) => {
+  const buildModelMethod = (
+    handlerName: StringKey<keyof T>,
+    handler: QueryHandler
+  ) => {
     switch (handler.action) {
       case EntityActionType.LIST:
         return async (...params: Parameters<QueryHandler['apiFn']>) => {
@@ -101,7 +127,10 @@ export const useQueryHandler = <
             });
           }
 
-          const response = await handler.apiFn(...params);
+          const response = (await runApi(
+            handlerName,
+            ...params
+          )) as ListResponse;
           let queryData = { pagination: response?.pagination };
 
           dispatchList({
@@ -179,6 +208,7 @@ export const useQueryHandler = <
 
   return {
     ...buildModelMethods(),
+    ...state,
     selectEntity,
     selectPaginatedQuery,
     selectQuery,
