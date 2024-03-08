@@ -7,7 +7,7 @@ describe('normalizer', () => {
       { id: 2, name: 'Mario' },
     ];
     const result = normalizer(data, 'user');
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       user: { '1': { id: 1, name: 'John' }, '2': { id: 2, name: 'Mario' } },
     });
   });
@@ -29,7 +29,7 @@ describe('normalizer', () => {
       },
     ];
     const result = normalizer(data, 'products');
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       products: {
         '1': {
           id: 1,
@@ -43,6 +43,7 @@ describe('normalizer', () => {
         },
       },
       ['products.comments']: {
+        '1': { id: 1, detail: 'Nice shoes' },
         '2': { id: 2, detail: 'Excellent shoes' },
         '3': { id: 3, detail: 'Good product' },
       },
