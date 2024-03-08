@@ -6,7 +6,7 @@ import { EntityActionType } from '@constants';
 export const useProductModel = (options?: { queryKey?: string }) => {
   const productApiClient = useProductApiClient();
   const queryHandler = useQueryHandler({
-    entityName: EntityName.Product,
+    entityName: EntityName.Products,
     queryKey: options?.queryKey,
     handlers: {
       list: {

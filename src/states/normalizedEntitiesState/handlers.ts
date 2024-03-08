@@ -1,11 +1,10 @@
 import { NormalizedEntitiesState, StateQuery } from '@interfaces';
 import {
   buildEmptyIds,
-  getArrayIds,
   mergeIds,
   mergeQueries,
   mergeUniqueIds,
-  normalizeArray,
+  normalizer,
 } from '@utils';
 
 export const list = (
@@ -16,22 +15,29 @@ export const list = (
   queryData: StateQuery['queryData'],
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
-  const entityState = state[entityName];
+  let normalizedState: NormalizedEntitiesState = {};
 
-  return {
-    ...state,
-    [entityName]: {
+  for (let [key, value] of Object.entries(normalizer(entities, entityName))) {
+    const entityState = state[key];
+    const newIds = Object.keys(value);
+
+    normalizedState[key] = {
       ...entityState,
-      byId: { ...entityState?.byId, ...normalizeArray(entities) },
-      allIds: mergeUniqueIds(entityState?.allIds || [], getArrayIds(entities)),
+      byId: { ...entityState?.byId, ...value },
+      allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
       queries: mergeQueries(
         entityState?.queries || [],
         queryKey,
-        getArrayIds(entities),
+        newIds,
         queryData,
         currentPage
       ),
-    },
+    };
+  }
+
+  return {
+    ...state,
+    ...normalizedState,
   };
 };
 

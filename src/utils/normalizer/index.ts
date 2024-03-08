@@ -4,7 +4,7 @@ export const normalizer = <
   data: T,
   entityName: string,
   result: any = {}
-): any => {
+): { [key: string]: { [key: string]: { id?: string } } } => {
   if (result[entityName] === undefined) {
     result[entityName] = {};
   }
