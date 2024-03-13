@@ -6,4 +6,5 @@ export type StateQuery<
   ids: Array<string>;
   queryKey: string;
   queryData?: TQueryData;
+  params?: any;
 };

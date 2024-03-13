@@ -16,6 +16,7 @@ export const normalizedEntitiesState = (
         action.currentPage,
         action.queryKey,
         action.queryData,
+        action.params,
         state
       );
     case EntityActionType.GO_TO_PAGE:

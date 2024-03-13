@@ -1,5 +1,11 @@
 import { EntityActionType } from '@constants';
-import { EntityAction, Pagination, RootState, StringKey } from '@interfaces';
+import {
+  EntityAction,
+  Pagination,
+  RootState,
+  StateQuery,
+  StringKey,
+} from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import { paginateData, useModelContext } from '@utils';
 import { useApiClients } from '@hooks';
@@ -68,9 +74,10 @@ export const useModel = <
    */
   const dispatchList = (params: {
     entities: Array<any>;
-    queryData?: any;
+    queryData?: StateQuery['queryData'];
     entityName?: string;
     currentPage?: number;
+    params: any;
   }) => {
     dispatch({
       type: EntityActionType.LIST,
@@ -132,6 +139,7 @@ export const useModel = <
         entities: response?.data || [],
         queryData,
         currentPage: ref.current.currentPage,
+        params,
       });
     };
   };
@@ -159,14 +167,14 @@ export const useModel = <
       const query = findQuery(entityName, queryKey);
       const response = (await runApi(
         refetchHandlerName as StringKey<keyof T>,
-        ...params
+        ...query?.params
       )) as ListResponse;
-      let queryData = { pagination: query?.queryData?.pagination };
 
       dispatchList({
         entities: response?.data || [],
-        queryData,
+        queryData: { ...query?.queryData, pagination: response.pagination },
         currentPage: ref.current.currentPage,
+        params: query?.params,
       });
     };
   };

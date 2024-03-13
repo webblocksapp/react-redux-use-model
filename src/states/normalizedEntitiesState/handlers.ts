@@ -13,6 +13,7 @@ export const list = (
   currentPage: number | undefined,
   queryKey: string | undefined,
   queryData: StateQuery['queryData'],
+  params: any,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   let normalizedState: NormalizedEntitiesState = {};
@@ -30,7 +31,8 @@ export const list = (
         queryKey,
         newIds,
         queryData,
-        currentPage
+        currentPage,
+        params
       ),
     };
   }

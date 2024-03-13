@@ -12,6 +12,7 @@ export type EntityAction<
       queryKey: string | undefined;
       queryData?: TQueryData;
       currentPage?: number;
+      params?: any;
     }
   | {
       type: ActionType.GO_TO_PAGE;

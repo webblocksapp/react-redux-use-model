@@ -9,7 +9,8 @@ export const mergeQueries = <TQueryData extends { pagination?: Pagination }>(
   queryKey: string | undefined,
   ids: string[],
   queryData?: TQueryData,
-  currentPage?: number
+  currentPage?: number,
+  params?: any
 ): StateQuery<TQueryData>[] => {
   if (queryKey === undefined) return queries;
 
@@ -19,6 +20,7 @@ export const mergeQueries = <TQueryData extends { pagination?: Pagination }>(
         return {
           ...item,
           ids: mergeIds(item.ids, ids, queryData?.pagination),
+          params,
           queryData: {
             ...queryData,
             ...(queryData?.pagination
@@ -35,6 +37,6 @@ export const mergeQueries = <TQueryData extends { pagination?: Pagination }>(
       return item;
     });
   } else {
-    return [...queries, { queryKey, ids, queryData }];
+    return [...queries, { queryKey, ids, queryData, params }];
   }
 };
