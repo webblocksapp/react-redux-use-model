@@ -1,11 +1,11 @@
 import { EntityName } from '@examples/constants';
 import { useProductApiClient } from '@examples/apiClients';
-import { useQueryHandler } from '@hooks';
+import { useModel } from '@hooks';
 import { EntityActionType } from '@constants';
 
 export const useProductModel = (options?: { queryKey?: string }) => {
   const productApiClient = useProductApiClient();
-  const queryHandler = useQueryHandler({
+  const model = useModel({
     entityName: EntityName.Products,
     queryKey: options?.queryKey,
     handlers: {
@@ -13,8 +13,13 @@ export const useProductModel = (options?: { queryKey?: string }) => {
         apiFn: productApiClient.list,
         action: EntityActionType.LIST,
       },
+      create: {
+        action: EntityActionType.CREATE,
+        refetchHandler: 'list',
+        apiFn: productApiClient.create,
+      },
     },
   });
 
-  return queryHandler;
+  return model;
 };

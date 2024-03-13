@@ -12,21 +12,24 @@ type ListResponse = {
   pagination?: Pagination;
 };
 
-type QueryHandler =
+type CreateResponse = {
+  data: { id: string };
+};
+
+type QueryHandler<T = any> =
   | {
       apiFn: (...args: any) => Promise<ListResponse>;
       action: EntityActionType.LIST;
     }
   | {
-      apiFn: (...args: any) => Promise<{
-        data: { id: string };
-      }>;
+      apiFn: (...args: any) => Promise<CreateResponse>;
       action: EntityActionType.CREATE;
+      refetchHandler: StringKey<keyof T>;
     };
 
-export const useQueryHandler = <
+export const useModel = <
   T extends {
-    [K in keyof T]: QueryHandler;
+    [K in keyof T]: QueryHandler<T>;
   }
 >(params: {
   handlers: T;
@@ -108,6 +111,55 @@ export const useQueryHandler = <
   };
 
   /**
+   * Build the list method.
+   */
+  const buildListMethod = (handlerName: StringKey<keyof T>) => {
+    return async (...params: Parameters<QueryHandler['apiFn']>) => {
+      const page = getPageFromParams(params);
+
+      if (queryKey) {
+        ref.current.currentPage = page || 0;
+        dispatchGoToPage({
+          queryKey,
+          page: ref.current.currentPage,
+        });
+      }
+
+      const response = (await runApi(handlerName, ...params)) as ListResponse;
+      let queryData = { pagination: response?.pagination };
+
+      dispatchList({
+        entities: response?.data || [],
+        queryData,
+        currentPage: ref.current.currentPage,
+      });
+    };
+  };
+
+  /**
+   * Build the create method.
+   */
+  const buildCreateMethod = (
+    handlerName: StringKey<keyof T>,
+    handler: Extract<QueryHandler, { action: EntityActionType.CREATE }>
+  ) => {
+    return async (...params: Parameters<QueryHandler['apiFn']>) => {
+      await runApi(handlerName, ...params);
+      const response = (await runApi(
+        handler.refetchHandler as StringKey<keyof T>,
+        ...params
+      )) as ListResponse;
+      let queryData = { pagination: response?.pagination };
+
+      dispatchList({
+        entities: response?.data || [],
+        queryData,
+        currentPage: ref.current.currentPage,
+      });
+    };
+  };
+
+  /**
    * Orchestrate the api function with the state dispatcher.
    */
   const buildModelMethod = (
@@ -116,29 +168,9 @@ export const useQueryHandler = <
   ) => {
     switch (handler.action) {
       case EntityActionType.LIST:
-        return async (...params: Parameters<QueryHandler['apiFn']>) => {
-          const page = getPageFromParams(params);
-
-          if (queryKey) {
-            ref.current.currentPage = page || 0;
-            dispatchGoToPage({
-              queryKey,
-              page: ref.current.currentPage,
-            });
-          }
-
-          const response = (await runApi(
-            handlerName,
-            ...params
-          )) as ListResponse;
-          let queryData = { pagination: response?.pagination };
-
-          dispatchList({
-            entities: response?.data || [],
-            queryData,
-            currentPage: ref.current.currentPage,
-          });
-        };
+        return buildListMethod(handlerName);
+      case EntityActionType.CREATE:
+        return buildCreateMethod(handlerName, handler);
       default:
         return async () => {};
     }

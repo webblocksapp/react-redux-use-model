@@ -2,6 +2,7 @@ import { BASE_URL } from '@examples/utils';
 import { paginateData } from '@utils';
 import { http, delay, HttpResponse } from 'msw';
 import { data } from '@examples/mocks/data';
+import { Product } from '@examples/interfaces';
 
 export const productHandler = [
   // List
@@ -31,5 +32,10 @@ export const productHandler = [
       },
       { status: 200 }
     );
+  }),
+  http.post(`${BASE_URL}/products`, async ({ request }) => {
+    const product = (await request.json()) as Product;
+    data.products.push(product);
+    return HttpResponse.json(product, { status: 200 });
   }),
 ];

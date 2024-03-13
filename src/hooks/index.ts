@@ -1,2 +1,2 @@
 export * from './useApiClients';
-export * from './useQueryHandler';
+export * from './useModel';

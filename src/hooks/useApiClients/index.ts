@@ -36,7 +36,7 @@ export const useApiClients = <T extends Extend<T>>(apis: T) => {
   };
 
   const runApi = async <K extends keyof T>(
-    apiName: Extract<K, string>,
+    apiName: StringKey<K>,
     ...params: Parameters<T[K]>
   ) => {
     try {

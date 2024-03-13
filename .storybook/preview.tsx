@@ -1,5 +1,6 @@
 import type { Preview } from '@storybook/react';
 import { Provider } from 'react-redux';
+import { ModelProvider } from '@components';
 import { worker } from '@examples/mocks/browser';
 import { store } from '@store';
 
@@ -18,7 +19,9 @@ const preview: Preview = {
   decorators: [
     (Story) => (
       <Provider store={store}>
-        <Story />
+        <ModelProvider store={store}>
+          <Story />
+        </ModelProvider>
       </Provider>
     ),
   ],

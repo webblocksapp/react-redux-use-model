@@ -23,5 +23,11 @@ export const useProductApiClient = () => {
     };
   };
 
-  return { list };
+  const create = async (entity: Product) => {
+    const { data } = await axiosLocal.post<Product>('/products', entity);
+
+    return { data };
+  };
+
+  return { list, create };
 };
