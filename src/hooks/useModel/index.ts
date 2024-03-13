@@ -22,6 +22,10 @@ type CreateResponse = {
   data: { id: string };
 };
 
+type UpdateResponse = {
+  data: { id: string };
+};
+
 type QueryHandler =
   | {
       apiFn: (...args: any) => Promise<ListResponse>;
@@ -30,6 +34,10 @@ type QueryHandler =
   | {
       apiFn: (...args: any) => Promise<CreateResponse>;
       action: EntityActionType.CREATE;
+    }
+  | {
+      apiFn: (...args: any) => Promise<UpdateResponse>;
+      action: EntityActionType.UPDATE;
     };
 
 export const useModel = <
@@ -75,13 +83,23 @@ export const useModel = <
   const dispatchList = (params: {
     entities: Array<any>;
     queryData?: StateQuery['queryData'];
-    entityName?: string;
     currentPage?: number;
     params: any;
   }) => {
     dispatch({
       type: EntityActionType.LIST,
       queryKey,
+      entityName,
+      ...params,
+    });
+  };
+
+  /**
+   * Dispatch a created entity.
+   */
+  const dispatchCreate = (params: { entity: any }) => {
+    dispatch({
+      type: EntityActionType.CREATE,
       entityName,
       ...params,
     });
@@ -158,6 +176,33 @@ export const useModel = <
    */
   const buildCreateMethod = (handlerName: StringKey<keyof T>) => {
     return async (...params: Parameters<QueryHandler['apiFn']>) => {
+      const { data } = (await runApi(handlerName, ...params)) as CreateResponse;
+      dispatchCreate({ entity: data });
+      const refetchHandlerName = getRefetchHandlerName();
+
+      if (refetchHandlerName === undefined) return;
+      if (queryKey === undefined) return;
+
+      const query = findQuery(entityName, queryKey);
+      const response = (await runApi(
+        refetchHandlerName as StringKey<keyof T>,
+        ...query?.params
+      )) as ListResponse;
+
+      dispatchList({
+        entities: response?.data || [],
+        queryData: { ...query?.queryData, pagination: response.pagination },
+        currentPage: ref.current.currentPage,
+        params: query?.params,
+      });
+    };
+  };
+
+  /**
+   * Build the update method
+   */
+  const buildUpdateMethod = (handlerName: StringKey<keyof T>) => {
+    return async (...params: Parameters<QueryHandler['apiFn']>) => {
       await runApi(handlerName, ...params);
       const refetchHandlerName = getRefetchHandlerName();
 
@@ -191,6 +236,8 @@ export const useModel = <
         return buildListMethod(handlerName);
       case EntityActionType.CREATE:
         return buildCreateMethod(handlerName);
+      case EntityActionType.UPDATE:
+        return buildUpdateMethod(handlerName);
       default:
         return async () => {};
     }

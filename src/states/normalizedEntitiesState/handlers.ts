@@ -43,6 +43,30 @@ export const list = (
   };
 };
 
+export const create = (
+  entityName: string,
+  entity: any,
+  state: NormalizedEntitiesState
+): NormalizedEntitiesState => {
+  let normalizedState: NormalizedEntitiesState = {};
+
+  for (let [key, value] of Object.entries(normalizer(entity, entityName))) {
+    const entityState = state[key];
+    const newIds = Object.keys(value);
+
+    normalizedState[key] = {
+      ...entityState,
+      byId: { ...entityState?.byId, ...value },
+      allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
+    };
+  }
+
+  return {
+    ...state,
+    ...normalizedState,
+  };
+};
+
 export const goToPage = (
   entityName: string,
   queryKey: string | undefined,

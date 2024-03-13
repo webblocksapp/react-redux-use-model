@@ -2,17 +2,22 @@ import { EntityActionType as ActionType } from '@constants';
 import { Pagination } from '@interfaces';
 
 export type EntityAction<
-  TNormalizedEntity extends { id: string } = any,
+  TEntity extends { id: string } = any,
   TQueryData extends { pagination?: Pagination } = { pagination?: Pagination }
 > =
   | {
       type: ActionType.LIST;
       entityName: string;
-      entities: TNormalizedEntity[];
+      entities: TEntity[];
       queryKey: string | undefined;
       queryData?: TQueryData;
       currentPage?: number;
       params?: any;
+    }
+  | {
+      type: ActionType.CREATE;
+      entityName: string;
+      entity: TEntity;
     }
   | {
       type: ActionType.GO_TO_PAGE;
