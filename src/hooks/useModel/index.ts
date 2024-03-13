@@ -1,7 +1,7 @@
 import { EntityActionType } from '@constants';
 import { EntityAction, Pagination, RootState, StringKey } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
-import { paginateData } from '@utils';
+import { paginateData, useModelContext } from '@utils';
 import { useApiClients } from '@hooks';
 import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -16,7 +16,7 @@ type CreateResponse = {
   data: { id: string };
 };
 
-type QueryHandler<T = any> =
+type QueryHandler =
   | {
       apiFn: (...args: any) => Promise<ListResponse>;
       action: EntityActionType.LIST;
@@ -24,12 +24,11 @@ type QueryHandler<T = any> =
   | {
       apiFn: (...args: any) => Promise<CreateResponse>;
       action: EntityActionType.CREATE;
-      refetchHandler: StringKey<keyof T>;
     };
 
 export const useModel = <
   T extends {
-    [K in keyof T]: QueryHandler<T>;
+    [K in keyof T]: QueryHandler;
   }
 >(params: {
   handlers: T;
@@ -37,6 +36,7 @@ export const useModel = <
   queryKey: string | undefined;
 }) => {
   const { handlers, entityName, queryKey } = params;
+  const { findQuery } = useModelContext();
 
   /**
    * Extract the apis from the handlers.
@@ -137,19 +137,31 @@ export const useModel = <
   };
 
   /**
+   * Get the list query handler name.
+   */
+  const getRefetchHandlerName = () => {
+    for (const [key, value] of Object.entries(handlers)) {
+      if ((value as QueryHandler).action === EntityActionType.LIST) return key;
+    }
+  };
+
+  /**
    * Build the create method.
    */
-  const buildCreateMethod = (
-    handlerName: StringKey<keyof T>,
-    handler: Extract<QueryHandler, { action: EntityActionType.CREATE }>
-  ) => {
+  const buildCreateMethod = (handlerName: StringKey<keyof T>) => {
     return async (...params: Parameters<QueryHandler['apiFn']>) => {
       await runApi(handlerName, ...params);
+      const refetchHandlerName = getRefetchHandlerName();
+
+      if (refetchHandlerName === undefined) return;
+      if (queryKey === undefined) return;
+
+      const query = findQuery(entityName, queryKey);
       const response = (await runApi(
-        handler.refetchHandler as StringKey<keyof T>,
+        refetchHandlerName as StringKey<keyof T>,
         ...params
       )) as ListResponse;
-      let queryData = { pagination: response?.pagination };
+      let queryData = { pagination: query?.queryData?.pagination };
 
       dispatchList({
         entities: response?.data || [],
@@ -170,7 +182,7 @@ export const useModel = <
       case EntityActionType.LIST:
         return buildListMethod(handlerName);
       case EntityActionType.CREATE:
-        return buildCreateMethod(handlerName, handler);
+        return buildCreateMethod(handlerName);
       default:
         return async () => {};
     }

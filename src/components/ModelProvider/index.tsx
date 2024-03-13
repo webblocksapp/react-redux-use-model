@@ -1,18 +1,11 @@
 import { NormalizedEntitiesState } from '@interfaces';
 import { Store } from '@reduxjs/toolkit';
-import { createContext, useContext } from 'react';
+import { ModelContext, ModelContextType } from '@utils';
 
 export interface ModelProviderProps {
   store: Store<{ normalizedEntitiesState: NormalizedEntitiesState }>;
   children?: React.ReactNode;
 }
-
-export type ModelContextType = {
-  getNormalizedEntitiesState: () => NormalizedEntitiesState;
-};
-
-export const ModelContext = createContext<ModelContextType | null>(null);
-export const useModelContext = () => useContext(ModelContext);
 
 export const ModelProvider: React.FC<ModelProviderProps> = ({
   store,
@@ -23,8 +16,15 @@ export const ModelProvider: React.FC<ModelProviderProps> = ({
       return store.getState().normalizedEntitiesState;
     };
 
+  const findQuery: ModelContextType['findQuery'] = (entityName, queryKey) => {
+    const state = getNormalizedEntitiesState();
+    return state[entityName]?.queries?.find(
+      (item) => item.queryKey == queryKey
+    );
+  };
+
   return (
-    <ModelContext.Provider value={{ getNormalizedEntitiesState }}>
+    <ModelContext.Provider value={{ getNormalizedEntitiesState, findQuery }}>
       {children}
     </ModelContext.Provider>
   );

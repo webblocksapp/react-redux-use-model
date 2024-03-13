@@ -8,3 +8,4 @@ export * from './normalizer';
 export * from './paginateData';
 export * from './removeArrayDuplicates';
 export * from './replaceArrayPortion';
+export * from './useModelContext';
