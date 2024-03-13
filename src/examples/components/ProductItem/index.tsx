@@ -5,13 +5,9 @@ import { createRandomProduct } from '@examples/mocks/fakers';
 
 export interface ProductItemProps {
   productId?: string;
-  showUpdateBtn?: boolean;
 }
 
-export const ProductItem: React.FC<ProductItemProps> = ({
-  productId,
-  showUpdateBtn,
-}) => {
+export const ProductItem: React.FC<ProductItemProps> = ({ productId }) => {
   const productModel = useProductModel();
   const { entity: product, loading } = useSelector((state: RootState) =>
     productModel.selectEntity(state, productId)
@@ -19,6 +15,10 @@ export const ProductItem: React.FC<ProductItemProps> = ({
 
   const update = (id: string) => {
     productModel.update(id, { ...createRandomProduct(), id });
+  };
+
+  const updateOptimistic = (id: string) => {
+    productModel.updateOptimistic(id, { ...createRandomProduct(), id });
   };
 
   return (
@@ -37,17 +37,20 @@ export const ProductItem: React.FC<ProductItemProps> = ({
             Name: {product?.name}, Price: {product?.price}
           </div>
           <div>
-            {showUpdateBtn ? (
-              <button
-                onClick={() => {
-                  productId && update(productId);
-                }}
-              >
-                {productModel.updateState.isLoading ? 'Updating...' : 'Update'}
-              </button>
-            ) : (
-              <></>
-            )}
+            <button
+              onClick={() => {
+                productId && update(productId);
+              }}
+            >
+              {productModel.updateState.isLoading ? 'Updating...' : 'Update'}
+            </button>
+            <button
+              onClick={() => {
+                productId && updateOptimistic(productId);
+              }}
+            >
+              Opt. Update
+            </button>
           </div>
         </div>
       )}

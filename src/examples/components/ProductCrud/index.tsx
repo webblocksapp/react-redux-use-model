@@ -36,7 +36,7 @@ export const ProductCrud: React.FC = () => {
             }}
           >
             {productQuery?.ids?.map((id) => (
-              <ProductItem key={id} productId={id} showUpdateBtn />
+              <ProductItem key={id} productId={id} />
             ))}
           </div>
           <Paginator

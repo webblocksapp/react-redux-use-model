@@ -21,6 +21,11 @@ export const useProductModel = (options?: { queryKey?: string }) => {
         action: EntityActionType.UPDATE,
         apiFn: productApiClient.update,
       },
+      updateOptimistic: {
+        action: EntityActionType.UPDATE,
+        apiFn: productApiClient.update,
+        optimistic: true,
+      },
     },
   });
 
