@@ -36,8 +36,9 @@ type QueryHandler =
       action: EntityActionType.CREATE;
     }
   | {
-      apiFn: (...args: any) => Promise<UpdateResponse>;
+      apiFn: (id: string, entity: any, ...args: any) => Promise<UpdateResponse>;
       action: EntityActionType.UPDATE;
+      optimistic?: boolean;
     };
 
 export const useModel = <
@@ -50,7 +51,7 @@ export const useModel = <
   queryKey: string | undefined;
 }) => {
   const { handlers, entityName, queryKey } = params;
-  const { findQuery } = useModelContext();
+  const { findEntity, findQuery } = useModelContext();
 
   /**
    * Extract the apis from the handlers.
@@ -106,6 +107,17 @@ export const useModel = <
   };
 
   /**
+   * Dispatch an updated entity.
+   */
+  const dispatchUpdate = (params: { entity: any }) => {
+    dispatch({
+      type: EntityActionType.UPDATE,
+      entityName,
+      ...params,
+    });
+  };
+
+  /**
    * Get page from params.
    */
   const getPageFromParams = (params: Array<any>) => {
@@ -150,7 +162,11 @@ export const useModel = <
         });
       }
 
-      const response = (await runApi(handlerName, ...params)) as ListResponse;
+      const response = (await runApi({
+        apiName: handlerName,
+        params,
+      })) as ListResponse;
+
       let queryData = { pagination: response?.pagination };
 
       dispatchList({
@@ -176,7 +192,10 @@ export const useModel = <
    */
   const buildCreateMethod = (handlerName: StringKey<keyof T>) => {
     return async (...params: Parameters<QueryHandler['apiFn']>) => {
-      const { data } = (await runApi(handlerName, ...params)) as CreateResponse;
+      const { data } = (await runApi({
+        apiName: handlerName,
+        params,
+      })) as CreateResponse;
       dispatchCreate({ entity: data });
       const refetchHandlerName = getRefetchHandlerName();
 
@@ -184,10 +203,10 @@ export const useModel = <
       if (queryKey === undefined) return;
 
       const query = findQuery(entityName, queryKey);
-      const response = (await runApi(
-        refetchHandlerName as StringKey<keyof T>,
-        ...query?.params
-      )) as ListResponse;
+      const response = (await runApi({
+        apiName: refetchHandlerName as StringKey<keyof T>,
+        params: query?.params,
+      })) as ListResponse;
 
       dispatchList({
         entities: response?.data || [],
@@ -201,19 +220,41 @@ export const useModel = <
   /**
    * Build the update method
    */
-  const buildUpdateMethod = (handlerName: StringKey<keyof T>) => {
+  const buildUpdateMethod = (
+    handlerName: StringKey<keyof T>,
+    handler: Extract<QueryHandler, { action: EntityActionType.UPDATE }>
+  ) => {
     return async (...params: Parameters<QueryHandler['apiFn']>) => {
-      await runApi(handlerName, ...params);
+      const [entityId, updatedEntity] = params as Parameters<
+        (typeof handler)['apiFn']
+      >;
+      const currentEntity = findEntity(entityName, entityId);
+
+      if (handler.optimistic) {
+        dispatchUpdate({ entity: updatedEntity }); // Update in memory is done prev api call.
+      }
+
+      try {
+        const { data } = (await runApi({
+          apiName: handlerName,
+          params,
+        })) as UpdateResponse;
+
+        dispatchUpdate({ entity: data });
+      } catch (_) {
+        dispatchUpdate({ entity: currentEntity }); // Entity is rollback in case of api fail
+      }
+
       const refetchHandlerName = getRefetchHandlerName();
 
       if (refetchHandlerName === undefined) return;
       if (queryKey === undefined) return;
 
       const query = findQuery(entityName, queryKey);
-      const response = (await runApi(
-        refetchHandlerName as StringKey<keyof T>,
-        ...query?.params
-      )) as ListResponse;
+      const response = (await runApi({
+        apiName: refetchHandlerName as StringKey<keyof T>,
+        params: query?.params,
+      })) as ListResponse;
 
       dispatchList({
         entities: response?.data || [],
@@ -237,7 +278,7 @@ export const useModel = <
       case EntityActionType.CREATE:
         return buildCreateMethod(handlerName);
       case EntityActionType.UPDATE:
-        return buildUpdateMethod(handlerName);
+        return buildUpdateMethod(handlerName, handler);
       default:
         return async () => {};
     }

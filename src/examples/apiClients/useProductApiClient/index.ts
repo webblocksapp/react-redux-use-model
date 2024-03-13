@@ -29,5 +29,11 @@ export const useProductApiClient = () => {
     return { data };
   };
 
-  return { list, create };
+  const update = async (id: string, entity: Product) => {
+    const { data } = await axiosLocal.put<Product>(`/products/${id}`, entity);
+
+    return { data };
+  };
+
+  return { list, create, update };
 };

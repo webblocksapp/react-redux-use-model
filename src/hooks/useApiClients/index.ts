@@ -35,10 +35,13 @@ export const useApiClients = <T extends Extend<T>>(apis: T) => {
     }));
   };
 
-  const runApi = async <K extends keyof T>(
-    apiName: StringKey<K>,
-    ...params: Parameters<T[K]>
-  ) => {
+  const runApi = async <K extends keyof T>(args: {
+    apiName: StringKey<K>;
+    params: Parameters<T[K]>;
+    throwError?: boolean;
+  }) => {
+    const { apiName, params, throwError } = args;
+
     try {
       updateState(apiName, { isLoading: true });
       const response = await apis[apiName](...params);
@@ -46,6 +49,7 @@ export const useApiClients = <T extends Extend<T>>(apis: T) => {
       return response;
     } catch (error) {
       updateState(apiName, { error });
+      if (throwError) throw error;
     } finally {
       updateState(apiName, { isLoading: false });
     }

@@ -30,13 +30,13 @@ export const ProductCrud: React.FC = () => {
             style={{
               border: '1px solid black',
               overflow: 'auto',
-              width: 300,
+              width: 500,
               height: 600,
               padding: 10,
             }}
           >
             {productQuery?.ids?.map((id) => (
-              <ProductItem key={id} productId={id} />
+              <ProductItem key={id} productId={id} showUpdateBtn />
             ))}
           </div>
           <Paginator

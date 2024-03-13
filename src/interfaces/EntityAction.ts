@@ -20,6 +20,11 @@ export type EntityAction<
       entity: TEntity;
     }
   | {
+      type: ActionType.UPDATE;
+      entityName: string;
+      entity: TEntity;
+    }
+  | {
       type: ActionType.GO_TO_PAGE;
       entityName: string;
       queryKey: string;

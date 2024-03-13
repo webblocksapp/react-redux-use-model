@@ -15,8 +15,11 @@ export const useProductModel = (options?: { queryKey?: string }) => {
       },
       create: {
         action: EntityActionType.CREATE,
-        refetchHandler: 'list',
         apiFn: productApiClient.create,
+      },
+      update: {
+        action: EntityActionType.UPDATE,
+        apiFn: productApiClient.update,
       },
     },
   });

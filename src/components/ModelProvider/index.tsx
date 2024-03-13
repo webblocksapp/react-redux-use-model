@@ -23,8 +23,15 @@ export const ModelProvider: React.FC<ModelProviderProps> = ({
     );
   };
 
+  const findEntity: ModelContextType['findEntity'] = (entityName, entityId) => {
+    const state = getNormalizedEntitiesState();
+    return state[entityName]?.byId?.[entityId];
+  };
+
   return (
-    <ModelContext.Provider value={{ getNormalizedEntitiesState, findQuery }}>
+    <ModelContext.Provider
+      value={{ getNormalizedEntitiesState, findQuery, findEntity }}
+    >
       {children}
     </ModelContext.Provider>
   );

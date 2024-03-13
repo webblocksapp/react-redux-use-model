@@ -36,6 +36,19 @@ export const productHandler = [
   http.post(`${BASE_URL}/products`, async ({ request }) => {
     const product = (await request.json()) as Product;
     data.products.push(product);
+    await delay(2000);
+    return HttpResponse.json(product, { status: 200 });
+  }),
+  http.put(`${BASE_URL}/products/:id`, async ({ request, params }) => {
+    const { id } = params;
+    const product = (await request.json()) as Product;
+    data.products = data.products.map((item) => {
+      if (item.id == id) {
+        return { ...item, ...product };
+      }
+      return item;
+    });
+    await delay(2000);
     return HttpResponse.json(product, { status: 200 });
   }),
 ];

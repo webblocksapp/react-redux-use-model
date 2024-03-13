@@ -1,25 +1,55 @@
 import { RootState } from '@interfaces';
 import { useProductModel } from '@examples/models';
 import { useSelector } from 'react-redux';
+import { createRandomProduct } from '@examples/mocks/fakers';
 
 export interface ProductItemProps {
   productId?: string;
+  showUpdateBtn?: boolean;
 }
 
-export const ProductItem: React.FC<ProductItemProps> = ({ productId }) => {
+export const ProductItem: React.FC<ProductItemProps> = ({
+  productId,
+  showUpdateBtn,
+}) => {
   const productModel = useProductModel();
   const { entity: product, loading } = useSelector((state: RootState) =>
     productModel.selectEntity(state, productId)
   );
+
+  const update = (id: string) => {
+    productModel.update(id, { ...createRandomProduct(), id });
+  };
 
   return (
     <div id={product?.id} style={{ border: '1px solid black', padding: 5 }}>
       {loading ? (
         <>Loading...</>
       ) : (
-        <>
-          Name: {product?.name}, Price: {product?.price}
-        </>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div>
+            Name: {product?.name}, Price: {product?.price}
+          </div>
+          <div>
+            {showUpdateBtn ? (
+              <button
+                onClick={() => {
+                  productId && update(productId);
+                }}
+              >
+                {productModel.updateState.isLoading ? 'Updating...' : 'Update'}
+              </button>
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

@@ -43,7 +43,7 @@ export const list = (
   };
 };
 
-export const create = (
+export const save = (
   entityName: string,
   entity: any,
   state: NormalizedEntitiesState
