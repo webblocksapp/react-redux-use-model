@@ -1,4 +1,4 @@
-import { NormalizedEntitiesState, QueryState } from '@interfaces';
+import { Entity, NormalizedEntitiesState, QueryState } from '@interfaces';
 import {
   buildEmptyIds,
   mergeIds,
@@ -45,7 +45,7 @@ export const list = (
 
 export const save = (
   entityName: string,
-  entity: any,
+  entity: Entity,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   let normalizedState: NormalizedEntitiesState = {};
@@ -70,14 +70,19 @@ export const save = (
 export const remove = (
   entityName: string,
   entityId: string,
+  foreignKeys:
+    | Array<{ entityName: string; foreignKeyName: string }>
+    | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   let normalizedState: NormalizedEntitiesState = {};
+  let entity: Entity | undefined;
   const entityState = state[entityName];
 
   if (entityState?.byId) {
-    const byId = entityState?.byId;
+    const byId = entityState.byId;
     const { [entityId]: removedEntity, ...restById } = byId;
+    entity = removedEntity;
 
     normalizedState[entityName] = {
       ...entityState,
@@ -88,14 +93,34 @@ export const remove = (
         ids: query.ids.filter((id) => id !== entityId),
       })),
     };
-
-    return {
-      ...state,
-      ...normalizedState,
-    };
   }
 
-  return state;
+  if (entity) {
+    for (let foreignKey of foreignKeys || []) {
+      const entityState = state[foreignKey.entityName];
+      const foreignEntityId = entity[foreignKey.entityName];
+
+      if (entityState?.byId) {
+        const byId = entityState.byId;
+        const { [foreignEntityId]: removedEntity, ...restById } = byId;
+
+        normalizedState[entityName] = {
+          ...entityState,
+          byId: restById,
+          allIds: (entityState?.allIds || []).filter((id) => id !== entityId),
+          queries: entityState?.queries?.map?.((query) => ({
+            ...query,
+            ids: query.ids.filter((id) => id !== entityId),
+          })),
+        };
+      }
+    }
+  }
+
+  return {
+    ...state,
+    ...normalizedState,
+  };
 };
 
 export const goToPage = (
