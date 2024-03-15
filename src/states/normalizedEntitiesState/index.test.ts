@@ -123,4 +123,38 @@ describe('normalizedEntitiesState', () => {
       },
     });
   });
+
+  it('Dispatch update action.', () => {
+    const entities1 = [{ id: '1', name: 'name 1' }];
+    let state = normalizedEntitiesState(
+      {},
+      {
+        type: EntityActionType.LIST,
+        entities: entities1,
+        queryKey: 'UsersList',
+        entityName: 'Users',
+      }
+    );
+
+    state = normalizedEntitiesState(state, {
+      type: EntityActionType.UPDATE,
+      entity: { id: '1', name: 'updated name 1' },
+      entityName: 'Users',
+    });
+
+    expect(state).toEqual({
+      Users: {
+        byId: {
+          ['1']: { id: '1', name: 'updated name 1' },
+        },
+        allIds: ['1'],
+        queries: [
+          {
+            ids: ['1'],
+            queryKey: 'UsersList',
+          },
+        ],
+      },
+    });
+  });
 });

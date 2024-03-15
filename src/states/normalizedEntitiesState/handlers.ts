@@ -83,6 +83,10 @@ export const remove = (
       ...entityState,
       byId: restById,
       allIds: (entityState?.allIds || []).filter((id) => id !== entityId),
+      queries: entityState?.queries?.map?.((query) => ({
+        ...query,
+        ids: query.ids.filter((id) => id !== entityId),
+      })),
     };
 
     return {
