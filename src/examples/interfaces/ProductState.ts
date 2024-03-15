@@ -1,7 +1,3 @@
-import {
-  NormalizedState,
-  Product,
-  ProductQueryData,
-} from '@examples/interfaces';
+import { NormalizedState, Product } from '@examples/interfaces';
 
-export type ProductState = NormalizedState<Product, ProductQueryData>;
+export type ProductState = NormalizedState<Product>;

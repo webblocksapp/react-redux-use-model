@@ -5,5 +5,5 @@ export * from './NormalizedEntitiesState';
 export * from './Pagination';
 export * from './QueryHandlerOptions';
 export * from './RootState';
-export * from './StateQuery';
+export * from './QueryState';
 export * from './StringKey';

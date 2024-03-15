@@ -1,20 +1,18 @@
-import { Pagination, StateQuery } from '@interfaces';
+import { QueryState } from '@interfaces';
 import { mergeIds } from '@utils';
 
-const queryExists = (item: StateQuery, queryKey: string) =>
+const queryExists = (item: QueryState, queryKey: string) =>
   item.queryKey == queryKey;
 
-export const mergeQueries = <
-  TQueryData extends { pagination?: Pagination }
->(args: {
-  queries: StateQuery<TQueryData>[];
+export const mergeQueries = (args: {
+  queries: QueryState[];
   queryKey: string | undefined;
   ids: string[];
-  queryData?: TQueryData;
+  pagination?: QueryState['pagination'];
   currentPage?: number;
   params?: any;
-}): StateQuery<TQueryData>[] => {
-  const { queries, queryKey, ids, queryData, currentPage, params } = args;
+}): QueryState[] => {
+  const { queries, queryKey, ids, pagination, currentPage, params } = args;
 
   if (queryKey === undefined) return queries;
 
@@ -23,24 +21,21 @@ export const mergeQueries = <
       if (queryExists(item, queryKey)) {
         return {
           ...item,
-          ids: mergeIds(item.ids, ids, queryData?.pagination),
+          ids: mergeIds(item.ids, ids, pagination),
           params,
-          queryData: {
-            ...queryData,
-            ...(queryData?.pagination
-              ? {
-                  pagination: {
-                    ...queryData?.pagination,
-                    page: currentPage ?? queryData?.pagination?.page,
-                  },
-                }
-              : undefined),
-          } as TQueryData,
+          ...(pagination
+            ? {
+                pagination: {
+                  ...pagination,
+                  page: currentPage ?? pagination?.page,
+                },
+              }
+            : undefined),
         };
       }
       return item;
     });
   } else {
-    return [...queries, { queryKey, ids, queryData, params }];
+    return [...queries, { queryKey, ids, pagination, params }];
   }
 };

@@ -12,7 +12,7 @@ describe('mergeQueries', () => {
       {
         queryKey: 'QueryKey',
         ids: ['1', '2'],
-        queryData: undefined,
+        pagination: undefined,
       },
     ]);
   });
@@ -23,7 +23,7 @@ describe('mergeQueries', () => {
         {
           queryKey: 'QueryKey',
           ids: ['1', '2'],
-          queryData: undefined,
+          pagination: undefined,
         },
       ],
       queryKey: 'QueryKey',
@@ -34,7 +34,7 @@ describe('mergeQueries', () => {
       {
         queryKey: 'QueryKey',
         ids: ['1', '2', '3', '4'],
-        queryData: {},
+        pagination: {},
       },
     ]);
   });
@@ -45,7 +45,7 @@ describe('mergeQueries', () => {
         {
           queryKey: 'QueryKey',
           ids: ['1', '2'],
-          queryData: undefined,
+          pagination: undefined,
         },
       ],
       queryKey: undefined,
@@ -56,7 +56,7 @@ describe('mergeQueries', () => {
       {
         queryKey: 'QueryKey',
         ids: ['1', '2'],
-        queryData: undefined,
+        pagination: undefined,
       },
     ]);
   });
@@ -67,23 +67,19 @@ describe('mergeQueries', () => {
         {
           queryKey: 'QueryKey',
           ids: ['1', '2'],
-          queryData: {
-            pagination: { page: 0, size: 2, totalElements: 6, totalPages: 3 },
-          },
+          pagination: { page: 0, size: 2, totalElements: 6, totalPages: 3 },
         },
       ],
       queryKey: 'QueryKey',
       ids: ['3', '4'],
-      queryData: {
-        pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
-      },
+      pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
     });
 
     expect(result).toMatchObject([
       {
         queryKey: 'QueryKey',
         ids: ['1', '2', undefined, undefined, '3', '4'],
-        queryData: {
+        pagination: {
           pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
         },
       },
@@ -96,23 +92,19 @@ describe('mergeQueries', () => {
         {
           queryKey: 'QueryKey',
           ids: ['1', '2', '3', '4', '5'],
-          queryData: {
-            pagination: { page: 0, size: 2, totalElements: 6, totalPages: 3 },
-          },
+          pagination: { page: 0, size: 2, totalElements: 6, totalPages: 3 },
         },
       ],
       queryKey: 'QueryKey',
       ids: ['4', '5'],
-      queryData: {
-        pagination: { page: 1, size: 2, totalElements: 5, totalPages: 3 },
-      },
+      pagination: { page: 1, size: 2, totalElements: 5, totalPages: 3 },
     });
 
     expect(result).toMatchObject([
       {
         queryKey: 'QueryKey',
         ids: ['1', '2', '4', '5'],
-        queryData: {
+        pagination: {
           pagination: { page: 1, size: 2, totalElements: 5, totalPages: 3 },
         },
       },
@@ -125,16 +117,12 @@ describe('mergeQueries', () => {
         {
           queryKey: 'QueryKey',
           ids: ['1', '2'],
-          queryData: {
-            pagination: { page: 0, size: 2, totalElements: 6, totalPages: 3 },
-          },
+          pagination: { page: 0, size: 2, totalElements: 6, totalPages: 3 },
         },
       ],
       queryKey: 'QueryKey',
       ids: ['3', '4'],
-      queryData: {
-        pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
-      },
+      pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
       currentPage: 1, // <-- Page override.
     });
 
@@ -142,7 +130,7 @@ describe('mergeQueries', () => {
       {
         queryKey: 'QueryKey',
         ids: ['1', '2', undefined, undefined, '3', '4'],
-        queryData: {
+        pagination: {
           pagination: { page: 1, size: 2, totalElements: 6, totalPages: 3 },
         },
       },
@@ -155,7 +143,7 @@ describe('mergeQueries', () => {
         {
           queryKey: 'QueryKey1',
           ids: ['1', '2'],
-          queryData: undefined,
+          pagination: undefined,
         },
       ],
       queryKey: 'QueryKey2',
@@ -166,12 +154,12 @@ describe('mergeQueries', () => {
       {
         queryKey: 'QueryKey1',
         ids: ['1', '2'],
-        queryData: undefined,
+        pagination: undefined,
       },
       {
         queryKey: 'QueryKey2',
         ids: ['1', '2'],
-        queryData: undefined,
+        pagination: undefined,
       },
     ]);
   });

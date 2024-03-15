@@ -1,4 +1,4 @@
-import { StateQuery } from '@interfaces';
+import { QueryState } from '@interfaces';
 
 export type NormalizedEntitiesState = {
   [entityName: string]:
@@ -7,7 +7,7 @@ export type NormalizedEntitiesState = {
           [id: string]: any | undefined;
         };
         allIds?: Array<string>;
-        queries?: Array<StateQuery>;
+        queries?: Array<QueryState>;
       }
     | undefined;
 };

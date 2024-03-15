@@ -42,9 +42,7 @@ describe('normalizedEntitiesState', () => {
         entities,
         entityName: 'Users',
         queryKey: 'UsersList',
-        queryData: {
-          pagination: { page: 0, size: 2, totalElements: 6, totalPages: 3 },
-        },
+        pagination: { page: 0, size: 2, totalElements: 6, totalPages: 3 },
       }
     );
 
@@ -81,9 +79,7 @@ describe('normalizedEntitiesState', () => {
         entities: entities1,
         entityName: 'Users',
         queryKey: 'UsersList',
-        queryData: {
-          pagination: pagination1,
-        },
+        pagination: pagination1,
       }
     );
 
@@ -97,9 +93,7 @@ describe('normalizedEntitiesState', () => {
       entities: entities2,
       entityName: 'Users',
       queryKey: 'UsersList',
-      queryData: {
-        pagination: pagination2,
-      },
+      pagination: pagination2,
     });
 
     expect(state).toEqual({

@@ -15,7 +15,7 @@ export const normalizedEntitiesState = (
         action.entities,
         action.currentPage,
         action.queryKey,
-        action.queryData,
+        action.pagination,
         action.params,
         state
       );

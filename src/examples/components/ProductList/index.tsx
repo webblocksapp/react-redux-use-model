@@ -32,7 +32,7 @@ export const ProductList: React.FC = () => {
             ))}
           </div>
           <Paginator
-            pagination={productQuery?.queryData?.pagination}
+            pagination={productQuery?.pagination}
             onClickPage={(index) => productModel.list({ _page: index })}
           />
         </div>

@@ -1,9 +1,9 @@
-import { NormalizedEntitiesState, StateQuery } from '@interfaces';
+import { NormalizedEntitiesState, QueryState } from '@interfaces';
 import { createContext, useContext } from 'react';
 
 export type ModelContextType = {
   getNormalizedEntitiesState: () => NormalizedEntitiesState;
-  findQuery: (entityName: string, queryKey: string) => StateQuery | undefined;
+  findQuery: (entityName: string, queryKey: string) => QueryState | undefined;
   findEntity: <TEntity extends { id?: string }>(
     entityName: string,
     entityId: string

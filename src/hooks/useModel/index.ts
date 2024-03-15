@@ -3,7 +3,7 @@ import {
   EntityAction,
   Pagination,
   RootState,
-  StateQuery,
+  QueryState,
   StringKey,
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
@@ -83,7 +83,7 @@ export const useModel = <
    */
   const dispatchList = (params: {
     entities: Array<any>;
-    queryData?: StateQuery['queryData'];
+    pagination?: QueryState['pagination'];
     currentPage?: number;
     params: any;
   }) => {
@@ -167,11 +167,9 @@ export const useModel = <
         params,
       })) as ListResponse;
 
-      let queryData = { pagination: response?.pagination };
-
       dispatchList({
         entities: response?.data || [],
-        queryData,
+        pagination: response?.pagination,
         currentPage: ref.current.currentPage,
         params,
       });
@@ -210,7 +208,7 @@ export const useModel = <
 
       dispatchList({
         entities: response?.data || [],
-        queryData: { ...query?.queryData, pagination: response.pagination },
+        pagination: response.pagination,
         currentPage: ref.current.currentPage,
         params: query?.params,
       });
@@ -258,7 +256,7 @@ export const useModel = <
 
       dispatchList({
         entities: response?.data || [],
-        queryData: { ...query?.queryData, pagination: response.pagination },
+        pagination: response.pagination,
         currentPage: ref.current.currentPage,
         params: query?.params,
       });
@@ -336,10 +334,10 @@ export const useModel = <
    * Select the paginated query.
    */
   const selectPaginatedQuery = createSelector([selectQuery], (query) => {
-    if (query.queryData?.pagination) {
+    if (query?.pagination) {
       const { content } = paginateData(query.ids || [], {
-        page: query.queryData?.pagination.page,
-        limit: query.queryData?.pagination.size,
+        page: query?.pagination.page,
+        limit: query?.pagination.size,
       });
 
       return { ...query, ids: content };

@@ -1,16 +1,13 @@
 import { EntityActionType as ActionType } from '@constants';
-import { Pagination } from '@interfaces';
+import { QueryState } from './QueryState';
 
-export type EntityAction<
-  TEntity extends { id: string } = any,
-  TQueryData extends { pagination?: Pagination } = { pagination?: Pagination }
-> =
+export type EntityAction<TEntity extends { id: string } = any> =
   | {
       type: ActionType.LIST;
       entityName: string;
       entities: TEntity[];
       queryKey: string | undefined;
-      queryData?: TQueryData;
+      pagination?: QueryState['pagination'];
       currentPage?: number;
       params?: any;
     }
