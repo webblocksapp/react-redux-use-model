@@ -147,4 +147,36 @@ describe('normalizedEntitiesState', () => {
       },
     });
   });
+
+  it('Dispatch remove action.', () => {
+    const entities1 = [{ id: '1', name: 'name 1' }];
+    let state = normalizedEntitiesState(
+      {},
+      {
+        type: EntityActionType.LIST,
+        entities: entities1,
+        queryKey: 'UsersList',
+        entityName: 'Users',
+      }
+    );
+
+    state = normalizedEntitiesState(state, {
+      type: EntityActionType.REMOVE,
+      entityId: '1',
+      entityName: 'Users',
+    });
+
+    expect(state).toEqual({
+      Users: {
+        byId: {},
+        allIds: [],
+        queries: [
+          {
+            ids: [],
+            queryKey: 'UsersList',
+          },
+        ],
+      },
+    });
+  });
 });
