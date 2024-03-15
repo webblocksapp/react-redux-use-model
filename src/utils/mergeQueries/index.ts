@@ -4,14 +4,18 @@ import { mergeIds } from '@utils';
 const queryExists = (item: StateQuery, queryKey: string) =>
   item.queryKey == queryKey;
 
-export const mergeQueries = <TQueryData extends { pagination?: Pagination }>(
-  queries: StateQuery<TQueryData>[],
-  queryKey: string | undefined,
-  ids: string[],
-  queryData?: TQueryData,
-  currentPage?: number,
-  params?: any
-): StateQuery<TQueryData>[] => {
+export const mergeQueries = <
+  TQueryData extends { pagination?: Pagination }
+>(args: {
+  queries: StateQuery<TQueryData>[];
+  queryKey: string | undefined;
+  ids: string[];
+  queryData?: TQueryData;
+  currentPage?: number;
+  params?: any;
+}): StateQuery<TQueryData>[] => {
+  const { queries, queryKey, ids, queryData, currentPage, params } = args;
+
   if (queryKey === undefined) return queries;
 
   if (queries.some((item) => queryExists(item, queryKey))) {

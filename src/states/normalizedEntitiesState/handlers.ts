@@ -26,14 +26,14 @@ export const list = (
       ...entityState,
       byId: { ...entityState?.byId, ...value },
       allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
-      queries: mergeQueries(
-        entityState?.queries || [],
+      queries: mergeQueries({
+        queries: entityState?.queries || [],
         queryKey,
-        newIds,
+        ids: newIds,
         queryData,
         currentPage,
-        params
-      ),
+        params,
+      }),
     };
   }
 
@@ -65,6 +65,33 @@ export const save = (
     ...state,
     ...normalizedState,
   };
+};
+
+export const remove = (
+  entityName: string,
+  entityId: string,
+  state: NormalizedEntitiesState
+): NormalizedEntitiesState => {
+  let normalizedState: NormalizedEntitiesState = {};
+  const entityState = state[entityName];
+
+  if (entityState?.byId) {
+    const byId = entityState?.byId;
+    const { [entityId]: removedEntity, ...restById } = byId;
+
+    normalizedState[entityName] = {
+      ...entityState,
+      byId: restById,
+      allIds: (entityState?.allIds || []).filter((id) => id !== entityId),
+    };
+
+    return {
+      ...state,
+      ...normalizedState,
+    };
+  }
+
+  return state;
 };
 
 export const goToPage = (

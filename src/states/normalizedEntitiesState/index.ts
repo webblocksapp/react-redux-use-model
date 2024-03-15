@@ -1,6 +1,6 @@
 import { EntityActionType } from '@constants';
 import { EntityAction, NormalizedEntitiesState } from '@interfaces';
-import { list, goToPage, save } from './handlers';
+import { list, goToPage, save, remove } from './handlers';
 
 const initialState: NormalizedEntitiesState = {};
 
@@ -22,6 +22,8 @@ export const normalizedEntitiesState = (
     case EntityActionType.CREATE:
     case EntityActionType.UPDATE:
       return save(action.entityName, action.entity, state);
+    case EntityActionType.REMOVE:
+      return remove(action.entityName, action.entityId, state);
     case EntityActionType.GO_TO_PAGE:
       return goToPage(action.entityName, action.queryKey, action.page, state);
     default:

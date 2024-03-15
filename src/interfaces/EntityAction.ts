@@ -25,6 +25,11 @@ export type EntityAction<
       entity: TEntity;
     }
   | {
+      type: ActionType.REMOVE;
+      entityName: string;
+      entityId: string;
+    }
+  | {
       type: ActionType.GO_TO_PAGE;
       entityName: string;
       queryKey: string;

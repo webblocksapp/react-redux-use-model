@@ -14,7 +14,7 @@ describe('normalizedEntitiesState', () => {
       }
     );
 
-    expect(state).toMatchObject({
+    expect(state).toEqual({
       Users: {
         byId: {
           ['1']: { id: '1', name: 'name 1' },
@@ -48,7 +48,7 @@ describe('normalizedEntitiesState', () => {
       }
     );
 
-    expect(state).toMatchObject({
+    expect(state).toEqual({
       Users: {
         byId: {
           ['1']: { id: '1', name: 'name 1' },
@@ -102,7 +102,7 @@ describe('normalizedEntitiesState', () => {
       },
     });
 
-    expect(state).toMatchObject({
+    expect(state).toEqual({
       Users: {
         byId: {
           ['1']: { id: '1', name: 'name 1' },
