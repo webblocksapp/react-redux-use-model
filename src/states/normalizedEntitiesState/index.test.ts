@@ -57,9 +57,7 @@ describe('normalizedEntitiesState', () => {
           {
             ids: ['1', '2'],
             queryKey: 'UsersList',
-            queryData: {
-              pagination: { page: 0, size: 2, totalElements: 6, totalPages: 3 },
-            },
+            pagination: { page: 0, size: 2, totalElements: 6, totalPages: 3 },
           },
         ],
       },
@@ -109,9 +107,7 @@ describe('normalizedEntitiesState', () => {
           {
             ids: ['1', '2', undefined, undefined, '5', '6'],
             queryKey: 'UsersList',
-            queryData: {
-              pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
-            },
+            pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
           },
         ],
       },

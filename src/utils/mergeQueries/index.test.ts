@@ -79,9 +79,7 @@ describe('mergeQueries', () => {
       {
         queryKey: 'QueryKey',
         ids: ['1', '2', undefined, undefined, '3', '4'],
-        pagination: {
-          pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
-        },
+        pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
       },
     ]);
   });
@@ -104,9 +102,7 @@ describe('mergeQueries', () => {
       {
         queryKey: 'QueryKey',
         ids: ['1', '2', '4', '5'],
-        pagination: {
-          pagination: { page: 1, size: 2, totalElements: 5, totalPages: 3 },
-        },
+        pagination: { page: 1, size: 2, totalElements: 5, totalPages: 3 },
       },
     ]);
   });
@@ -130,9 +126,7 @@ describe('mergeQueries', () => {
       {
         queryKey: 'QueryKey',
         ids: ['1', '2', undefined, undefined, '3', '4'],
-        pagination: {
-          pagination: { page: 1, size: 2, totalElements: 6, totalPages: 3 },
-        },
+        pagination: { page: 1, size: 2, totalElements: 6, totalPages: 3 },
       },
     ]);
   });
