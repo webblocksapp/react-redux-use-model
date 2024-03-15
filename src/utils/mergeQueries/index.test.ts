@@ -2,7 +2,11 @@ import { mergeQueries } from '@utils';
 
 describe('mergeQueries', () => {
   it('Merge query with no existing queries.', () => {
-    const result = mergeQueries([], 'QueryKey', ['1', '2']);
+    const result = mergeQueries({
+      queries: [],
+      queryKey: 'QueryKey',
+      ids: ['1', '2'],
+    });
 
     expect(result).toMatchObject([
       {
@@ -14,17 +18,17 @@ describe('mergeQueries', () => {
   });
 
   it('Merge query with existing queries.', () => {
-    const result = mergeQueries(
-      [
+    const result = mergeQueries({
+      queries: [
         {
           queryKey: 'QueryKey',
           ids: ['1', '2'],
           queryData: undefined,
         },
       ],
-      'QueryKey',
-      ['3', '4']
-    );
+      queryKey: 'QueryKey',
+      ids: ['3', '4'],
+    });
 
     expect(result).toMatchObject([
       {
@@ -36,17 +40,17 @@ describe('mergeQueries', () => {
   });
 
   it('Return existing queries when queryKey is undefined.', () => {
-    const result = mergeQueries(
-      [
+    const result = mergeQueries({
+      queries: [
         {
           queryKey: 'QueryKey',
           ids: ['1', '2'],
           queryData: undefined,
         },
       ],
-      undefined,
-      ['3', '4']
-    );
+      queryKey: undefined,
+      ids: ['3', '4'],
+    });
 
     expect(result).toMatchObject([
       {
@@ -58,8 +62,8 @@ describe('mergeQueries', () => {
   });
 
   it('Merge query with existing queries and pagination.', () => {
-    const result = mergeQueries(
-      [
+    const result = mergeQueries({
+      queries: [
         {
           queryKey: 'QueryKey',
           ids: ['1', '2'],
@@ -68,10 +72,12 @@ describe('mergeQueries', () => {
           },
         },
       ],
-      'QueryKey',
-      ['3', '4'],
-      { pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 } }
-    );
+      queryKey: 'QueryKey',
+      ids: ['3', '4'],
+      queryData: {
+        pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
+      },
+    });
 
     expect(result).toMatchObject([
       {
@@ -85,8 +91,8 @@ describe('mergeQueries', () => {
   });
 
   it('Merge query with existing queries and pagination removing duplicates.', () => {
-    const result = mergeQueries(
-      [
+    const result = mergeQueries({
+      queries: [
         {
           queryKey: 'QueryKey',
           ids: ['1', '2', '3', '4', '5'],
@@ -95,10 +101,12 @@ describe('mergeQueries', () => {
           },
         },
       ],
-      'QueryKey',
-      ['4', '5'],
-      { pagination: { page: 1, size: 2, totalElements: 5, totalPages: 3 } }
-    );
+      queryKey: 'QueryKey',
+      ids: ['4', '5'],
+      queryData: {
+        pagination: { page: 1, size: 2, totalElements: 5, totalPages: 3 },
+      },
+    });
 
     expect(result).toMatchObject([
       {
@@ -112,8 +120,8 @@ describe('mergeQueries', () => {
   });
 
   it('Merge query with page override.', () => {
-    const result = mergeQueries(
-      [
+    const result = mergeQueries({
+      queries: [
         {
           queryKey: 'QueryKey',
           ids: ['1', '2'],
@@ -122,11 +130,13 @@ describe('mergeQueries', () => {
           },
         },
       ],
-      'QueryKey',
-      ['3', '4'],
-      { pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 } },
-      1 // <-- Page override.
-    );
+      queryKey: 'QueryKey',
+      ids: ['3', '4'],
+      queryData: {
+        pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
+      },
+      currentPage: 1, // <-- Page override.
+    });
 
     expect(result).toMatchObject([
       {
@@ -140,17 +150,17 @@ describe('mergeQueries', () => {
   });
 
   it('Adds a new query.', () => {
-    const result = mergeQueries(
-      [
+    const result = mergeQueries({
+      queries: [
         {
           queryKey: 'QueryKey1',
           ids: ['1', '2'],
           queryData: undefined,
         },
       ],
-      'QueryKey2',
-      ['1', '2']
-    );
+      queryKey: 'QueryKey2',
+      ids: ['1', '2'],
+    });
 
     expect(result).toMatchObject([
       {
