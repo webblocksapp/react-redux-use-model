@@ -22,7 +22,7 @@ export const ProductPaginatedList: React.FC = () => {
             style={{
               border: '1px solid black',
               overflow: 'auto',
-              width: 300,
+              width: 500,
               height: 600,
               padding: 10,
             }}
