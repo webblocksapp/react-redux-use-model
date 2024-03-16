@@ -13,12 +13,24 @@ export const ProductItem: React.FC<ProductItemProps> = ({ productId }) => {
     productModel.selectEntity(state, productId)
   );
 
-  const update = (id: string) => {
-    productModel.update(id, { ...createRandomProduct(), id });
+  const update = () => {
+    productId &&
+      productModel.update(productId, {
+        ...createRandomProduct(),
+        id: productId,
+      });
   };
 
-  const updateOptimistic = (id: string) => {
-    productModel.updateOptimistic(id, { ...createRandomProduct(), id });
+  const updateOptimistic = () => {
+    productId &&
+      productModel.updateOptimistic(productId, {
+        ...createRandomProduct(),
+        id: productId,
+      });
+  };
+
+  const remove = () => {
+    productId && productModel.remove(productId);
   };
 
   return (
@@ -37,19 +49,12 @@ export const ProductItem: React.FC<ProductItemProps> = ({ productId }) => {
             Name: {product?.name}, Price: {product?.price}
           </div>
           <div>
-            <button
-              onClick={() => {
-                productId && update(productId);
-              }}
-            >
+            <button onClick={update}>
               {productModel.updateState.isLoading ? 'Updating...' : 'Update'}
             </button>
-            <button
-              onClick={() => {
-                productId && updateOptimistic(productId);
-              }}
-            >
-              Opt. Update
+            <button onClick={updateOptimistic}>Opt. Update</button>
+            <button onClick={remove}>
+              {productModel.removeState.isLoading ? 'Removing...' : 'Remove'}
             </button>
           </div>
         </div>
