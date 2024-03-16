@@ -5,6 +5,7 @@ import {
   RootState,
   QueryState,
   StringKey,
+  ForeignKey,
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import { now, paginateData, useModelContext } from '@utils';
@@ -26,6 +27,10 @@ type UpdateResponse = {
   data: { id: string };
 };
 
+type RemoveResponse = {
+  data: { id: string };
+};
+
 type QueryHandler =
   | {
       apiFn: (...args: any) => Promise<ListResponse>;
@@ -39,6 +44,10 @@ type QueryHandler =
       apiFn: (id: string, entity: any, ...args: any) => Promise<UpdateResponse>;
       action: EntityActionType.UPDATE;
       optimistic?: boolean;
+    }
+  | {
+      apiFn: (id: string, ...args: any) => Promise<RemoveResponse>;
+      action: EntityActionType.REMOVE;
     };
 
 export const useModel = <
@@ -119,6 +128,20 @@ export const useModel = <
       ...(params?.optimisticUpdateTimestamp
         ? { optimisticUpdateTimestamp: params.optimisticUpdateTimestamp }
         : {}),
+      ...params,
+    });
+  };
+
+  /**
+   * Dispatch remove operation.
+   */
+  const dispatchRemove = (params: {
+    entityId: string;
+    foreignKeys: Array<ForeignKey>;
+  }) => {
+    dispatch({
+      type: EntityActionType.REMOVE,
+      entityName,
       ...params,
     });
   };
@@ -263,6 +286,7 @@ export const useModel = <
         const { data } = (await runApi({
           apiName: handlerName,
           params,
+          throwError: true,
         })) as UpdateResponse;
 
         /**
@@ -302,6 +326,20 @@ export const useModel = <
   };
 
   /**
+   * Build the remove method.
+   */
+  const buildRemoveMethod = (handlerName: StringKey<keyof T>) => {
+    return async (...params: Parameters<QueryHandler['apiFn']>) => {
+      const { data } = (await runApi({
+        apiName: handlerName,
+        params,
+      })) as RemoveResponse;
+
+      dispatchRemove({ entityId: data.id, foreignKeys: [] });
+    };
+  };
+
+  /**
    * Orchestrate the api function with the state dispatcher.
    */
   const buildModelMethod = (
@@ -315,6 +353,8 @@ export const useModel = <
         return buildCreateMethod(handlerName);
       case EntityActionType.UPDATE:
         return buildUpdateMethod(handlerName, handler);
+      case EntityActionType.REMOVE:
+        return buildRemoveMethod(handlerName);
       default:
         return async () => {};
     }

@@ -1,7 +1,6 @@
+import { Product } from '@examples/interfaces';
 import { faker } from '@faker-js/faker';
 import { v4 as uuid } from 'uuid';
-
-export type Product = { id: string; name: string; price: number };
 
 export const createRandomProduct = (): Product => {
   return {

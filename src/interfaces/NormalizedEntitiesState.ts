@@ -1,17 +1,5 @@
-import { Entity, QueryState } from '@interfaces';
+import { NormalizedState } from '@interfaces';
 
 export type NormalizedEntitiesState = {
-  [entityName: string]:
-    | {
-        byId?: {
-          [id: string]: Entity;
-        };
-        allIds?: Array<string>;
-        queries?: Array<QueryState>;
-        timestamps?: {
-          optimisticUpdate?: number;
-          optimisticRemove?: number;
-        };
-      }
-    | undefined;
+  [entityName: string]: NormalizedState | undefined;
 };

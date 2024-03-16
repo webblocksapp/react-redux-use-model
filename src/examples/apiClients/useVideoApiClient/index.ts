@@ -1,15 +1,15 @@
 import { EntityParams, Pagination } from '@interfaces';
-import { ListResponse, Product } from '@examples/interfaces';
+import { ListResponse, Video } from '@examples/interfaces';
 import { axiosLocal } from '@examples/utils';
 
-export const useProductApiClient = () => {
+export const useVideoApiClient = () => {
   const list = async (
-    params?: EntityParams<Product>
+    params?: EntityParams<Video>
   ): Promise<{
-    data: Product[];
+    data: Video[];
     pagination: Pagination;
   }> => {
-    const { data } = await axiosLocal.get<ListResponse<Product>>('/products', {
+    const { data } = await axiosLocal.get<ListResponse<Video>>('/videos', {
       params: { _size: 10, _page: 0, ...params },
     });
     return {
@@ -23,20 +23,20 @@ export const useProductApiClient = () => {
     };
   };
 
-  const create = async (entity: Product) => {
-    const { data } = await axiosLocal.post<Product>('/products', entity);
+  const create = async (entity: Video) => {
+    const { data } = await axiosLocal.post<Video>('/videos', entity);
 
     return { data };
   };
 
-  const update = async (id: string, entity: Product) => {
-    const { data } = await axiosLocal.put<Product>(`/products/${id}`, entity);
+  const update = async (id: string, entity: Video) => {
+    const { data } = await axiosLocal.put<Video>(`/videos/${id}`, entity);
 
     return { data };
   };
 
   const remove = async (id: string) => {
-    const { data } = await axiosLocal.delete<Product>(`/products/${id}`);
+    const { data } = await axiosLocal.delete<Video>(`/videos/${id}`);
 
     return { data };
   };
