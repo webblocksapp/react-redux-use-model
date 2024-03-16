@@ -1,10 +1,18 @@
-import { Entity, NormalizedEntitiesState, QueryState } from '@interfaces';
+import {
+  Entity,
+  ForeignKey,
+  NormalizedEntitiesState,
+  QueryState,
+} from '@interfaces';
 import {
   buildEmptyIds,
+  clone,
+  get,
   mergeIds,
   mergeQueries,
   mergeUniqueIds,
   normalizer,
+  set,
 } from '@utils';
 
 export const list = (
@@ -70,9 +78,7 @@ export const save = (
 export const remove = (
   entityName: string,
   entityId: string,
-  foreignKeys:
-    | Array<{ entityName: string; foreignKeyName: string }>
-    | undefined,
+  foreignKeys: Array<ForeignKey> | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   let normalizedState: NormalizedEntitiesState = {};
@@ -102,16 +108,15 @@ export const remove = (
 
       if (entityState?.byId) {
         const byId = entityState.byId;
-        const { [foreignEntityId]: removedEntity, ...restById } = byId;
+        const { [foreignEntityId]: parentEntity, ...restById } = byId;
+        const value = get(parentEntity, foreignKey.fieldName);
+        const updatedParentEntity = clone(
+          set(parentEntity, foreignKey.fieldName, value)
+        );
 
         normalizedState[entityName] = {
           ...entityState,
-          byId: restById,
-          allIds: (entityState?.allIds || []).filter((id) => id !== entityId),
-          queries: entityState?.queries?.map?.((query) => ({
-            ...query,
-            ids: query.ids.filter((id) => id !== entityId),
-          })),
+          byId: { [foreignEntityId]: updatedParentEntity, ...restById },
         };
       }
     }

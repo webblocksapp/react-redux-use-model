@@ -1,5 +1,8 @@
 export * from './buildEmptyIds';
 export * from './calcPaginationIndexes';
+export * from './clone';
+export * from './formatObjectPath';
+export * from './get';
 export * from './isNullish';
 export * from './mergeIds';
 export * from './mergeQueries';
@@ -8,4 +11,5 @@ export * from './normalizer';
 export * from './paginateData';
 export * from './removeArrayDuplicates';
 export * from './replaceArrayPortion';
+export * from './set';
 export * from './useModelContext';
