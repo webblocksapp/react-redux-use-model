@@ -164,6 +164,7 @@ describe('normalizedEntitiesState', () => {
       type: EntityActionType.REMOVE,
       entityId: '1',
       entityName: 'Users',
+      foreignKeys: [],
     });
 
     expect(state).toEqual({
@@ -174,6 +175,86 @@ describe('normalizedEntitiesState', () => {
           {
             ids: [],
             queryKey: 'UsersList',
+          },
+        ],
+      },
+    });
+  });
+
+  it('Dispatch remove action of entity with foreign key.', () => {
+    const entities1 = [{ id: '1', name: 'name 1', comments: ['1', '2'] }];
+    let state = normalizedEntitiesState(
+      {},
+      {
+        type: EntityActionType.LIST,
+        entities: entities1,
+        queryKey: 'VideosList',
+        entityName: 'Videos',
+      }
+    );
+
+    const entities2 = [{ id: '1', name: 'I liked the video', videoId: '1' }];
+    state = normalizedEntitiesState(state, {
+      type: EntityActionType.LIST,
+      entities: entities2,
+      queryKey: 'CommentsList',
+      entityName: 'Videos.Comments',
+    });
+
+    expect(state).toEqual({
+      Videos: {
+        byId: { '1': { id: '1', name: 'name 1', comments: ['1', '2'] } },
+        allIds: ['1'],
+        queries: [
+          {
+            ids: ['1'],
+            queryKey: 'VideosList',
+          },
+        ],
+      },
+      'Videos.Comments': {
+        byId: { '1': { id: '1', name: 'I liked the video', videoId: '1' } },
+        allIds: ['1'],
+        queries: [
+          {
+            ids: ['1'],
+            queryKey: 'CommentsList',
+          },
+        ],
+      },
+    });
+
+    state = normalizedEntitiesState(state, {
+      type: EntityActionType.REMOVE,
+      entityId: '1',
+      entityName: 'Videos.Comments',
+      foreignKeys: [
+        {
+          foreignEntityName: 'Videos',
+          foreignKeyName: 'videoId',
+          foreignFieldName: 'comments',
+        },
+      ],
+    });
+
+    expect(state).toEqual({
+      Videos: {
+        byId: { '1': { id: '1', name: 'name 1', comments: ['2'] } },
+        allIds: ['1'],
+        queries: [
+          {
+            ids: ['1'],
+            queryKey: 'VideosList',
+          },
+        ],
+      },
+      'Videos.Comments': {
+        byId: {},
+        allIds: [],
+        queries: [
+          {
+            ids: [],
+            queryKey: 'CommentsList',
           },
         ],
       },

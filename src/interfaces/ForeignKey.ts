@@ -1,5 +1,5 @@
 export type ForeignKey = {
-  entityName: string;
+  foreignEntityName: string;
   foreignKeyName: string;
-  fieldName: string;
+  foreignFieldName: string;
 };

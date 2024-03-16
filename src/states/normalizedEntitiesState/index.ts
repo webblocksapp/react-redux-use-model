@@ -23,7 +23,12 @@ export const normalizedEntitiesState = (
     case EntityActionType.UPDATE:
       return save(action.entityName, action.entity, state);
     case EntityActionType.REMOVE:
-      return remove(action.entityName, action.entityId, state);
+      return remove(
+        action.entityName,
+        action.entityId,
+        action.foreignKeys,
+        state
+      );
     case EntityActionType.GO_TO_PAGE:
       return goToPage(action.entityName, action.queryKey, action.page, state);
     default:

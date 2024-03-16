@@ -88,8 +88,8 @@ export const remove = (
   if (entityState?.byId) {
     const byId = entityState.byId;
     const { [entityId]: removedEntity, ...restById } = byId;
-    entity = removedEntity;
 
+    entity = removedEntity;
     normalizedState[entityName] = {
       ...entityState,
       byId: restById,
@@ -103,18 +103,26 @@ export const remove = (
 
   if (entity) {
     for (let foreignKey of foreignKeys || []) {
-      const entityState = state[foreignKey.entityName];
-      const foreignEntityId = entity[foreignKey.entityName];
+      const foreignEntityName = foreignKey.foreignEntityName;
+      const foreignKeyName = foreignKey.foreignKeyName;
+      const foreignFieldName = foreignKey.foreignFieldName;
+
+      const entityState = state[foreignEntityName];
+      const foreignEntityId = entity[foreignKeyName];
 
       if (entityState?.byId) {
         const byId = entityState.byId;
         const { [foreignEntityId]: parentEntity, ...restById } = byId;
-        const value = get(parentEntity, foreignKey.fieldName);
+        const entityIds = get<Array<string>>(parentEntity, foreignFieldName);
         const updatedParentEntity = clone(
-          set(parentEntity, foreignKey.fieldName, value)
+          set(
+            parentEntity,
+            foreignFieldName,
+            entityIds.filter((id) => id !== entity?.id)
+          )
         );
 
-        normalizedState[entityName] = {
+        normalizedState[foreignEntityName] = {
           ...entityState,
           byId: { [foreignEntityId]: updatedParentEntity, ...restById },
         };

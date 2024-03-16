@@ -1,5 +1,5 @@
 import { EntityActionType as ActionType } from '@constants';
-import { QueryState } from './QueryState';
+import { QueryState, ForeignKey } from '@interfaces';
 
 export type EntityAction<TEntity extends { id: string } = any> =
   | {
@@ -25,6 +25,7 @@ export type EntityAction<TEntity extends { id: string } = any> =
       type: ActionType.REMOVE;
       entityName: string;
       entityId: string;
+      foreignKeys: Array<ForeignKey>;
     }
   | {
       type: ActionType.GO_TO_PAGE;
