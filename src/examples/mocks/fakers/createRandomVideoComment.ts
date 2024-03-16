@@ -1,10 +1,10 @@
-import { Comment } from '@examples/interfaces';
+import { VideoComment } from '@examples/interfaces';
 import { faker } from '@faker-js/faker';
 import { v4 as uuid } from 'uuid';
 
-export const createRandomComment = (opts: {
-  data: Partial<Comment>;
-}): Comment => {
+export const createRandomVideoComment = (opts: {
+  data: Partial<VideoComment>;
+}): VideoComment => {
   const { videoId } = opts.data;
   return {
     id: uuid(),

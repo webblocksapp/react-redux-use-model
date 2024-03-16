@@ -51,4 +51,10 @@ export const productHandler = [
     await delay(2000);
     return HttpResponse.json(product, { status: 200 });
   }),
+  http.delete(`${BASE_URL}/products/:id`, async ({ params }) => {
+    const { id } = params;
+    data.products = data.products.filter((item) => item.id != id);
+    await delay(2000);
+    return HttpResponse.json({ id }, { status: 200 });
+  }),
 ];

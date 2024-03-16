@@ -51,4 +51,10 @@ export const videoHandler = [
     await delay(2000);
     return HttpResponse.json(video, { status: 200 });
   }),
+  http.delete(`${BASE_URL}/videos/:id`, async ({ params }) => {
+    const { id } = params;
+    data.videos = data.videos.filter((item) => item.id != id);
+    await delay(2000);
+    return HttpResponse.json({ id }, { status: 200 });
+  }),
 ];

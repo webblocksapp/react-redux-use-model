@@ -1,3 +1,7 @@
-import { Comment } from '@examples/interfaces';
+import { VideoComment } from '@examples/interfaces';
 
-export type Video = { id: string; title: string; comments: Array<Comment> };
+export type Video = {
+  id: string;
+  title: string;
+  comments: Array<VideoComment>;
+};

@@ -46,7 +46,11 @@ type QueryHandler =
       optimistic?: boolean;
     }
   | {
-      apiFn: (id: string, ...args: any) => Promise<RemoveResponse>;
+      apiFn: (
+        id: string,
+        entity?: any,
+        ...args: any
+      ) => Promise<RemoveResponse>;
       action: EntityActionType.REMOVE;
     };
 
@@ -191,6 +195,15 @@ export const useModel = <
   };
 
   /**
+   * Get the list query handler name.
+   */
+  const getRefetchHandlerName = () => {
+    for (const [key, value] of Object.entries(handlers)) {
+      if ((value as QueryHandler).action === EntityActionType.LIST) return key;
+    }
+  };
+
+  /**
    * Build the list method.
    */
   const buildListMethod = (handlerName: StringKey<keyof T>) => {
@@ -217,15 +230,6 @@ export const useModel = <
         params,
       });
     };
-  };
-
-  /**
-   * Get the list query handler name.
-   */
-  const getRefetchHandlerName = () => {
-    for (const [key, value] of Object.entries(handlers)) {
-      if ((value as QueryHandler).action === EntityActionType.LIST) return key;
-    }
   };
 
   /**

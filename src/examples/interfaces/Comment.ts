@@ -1,1 +1,1 @@
-export type Comment = { id: string; content: string; videoId: string };
+export type VideoComment = { id: string; content: string; videoId: string };

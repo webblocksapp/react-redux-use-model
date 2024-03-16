@@ -26,6 +26,10 @@ export const useProductModel = (options?: { queryKey?: string }) => {
         apiFn: productApiClient.update,
         optimistic: true,
       },
+      remove: {
+        action: EntityActionType.REMOVE,
+        apiFn: productApiClient.remove,
+      },
     },
   });
 
