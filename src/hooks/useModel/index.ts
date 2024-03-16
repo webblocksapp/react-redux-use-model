@@ -1,4 +1,4 @@
-import { EntityActionType } from '@constants';
+import { EntityActionType, EntityHelperActionType } from '@constants';
 import {
   EntityAction,
   Pagination,
@@ -7,7 +7,7 @@ import {
   StringKey,
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
-import { paginateData, useModelContext } from '@utils';
+import { now, paginateData, useModelContext } from '@utils';
 import { useApiClients } from '@hooks';
 import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -51,7 +51,7 @@ export const useModel = <
   queryKey: string | undefined;
 }) => {
   const { handlers, entityName, queryKey } = params;
-  const { findEntity, findQuery } = useModelContext();
+  const { findEntity, findQuery, findEntityState } = useModelContext();
 
   /**
    * Extract the apis from the handlers.
@@ -109,11 +109,31 @@ export const useModel = <
   /**
    * Dispatch an updated entity.
    */
-  const dispatchUpdate = (params: { entity: any }) => {
+  const dispatchUpdate = (params: {
+    entity: any;
+    optimisticUpdateTimestamp?: number;
+  }) => {
     dispatch({
       type: EntityActionType.UPDATE,
       entityName,
+      ...(params?.optimisticUpdateTimestamp
+        ? { optimisticUpdateTimestamp: params.optimisticUpdateTimestamp }
+        : {}),
       ...params,
+    });
+  };
+
+  /**
+   * Dispatch entity timestamps.
+   */
+  const dispatchTimestamps = (timestamps: {
+    optimisticUpdate?: number;
+    optimisticRemove?: number;
+  }) => {
+    dispatch({
+      type: EntityHelperActionType.UPDATE_TIMESTAMPS,
+      entityName,
+      timestamps,
     });
   };
 
@@ -227,16 +247,34 @@ export const useModel = <
         (typeof handler)['apiFn']
       >;
       const currentEntity = findEntity(entityName, entityId);
+      const timestamp = now();
 
+      // Update in memory is done prev api call.
       if (handler.optimistic) {
-        dispatchUpdate({ entity: updatedEntity }); // Update in memory is done prev api call.
+        dispatchUpdate({
+          entity: updatedEntity,
+          optimisticUpdateTimestamp: timestamp,
+        });
       }
+
+      dispatchTimestamps({ optimisticUpdate: timestamp });
 
       try {
         const { data } = (await runApi({
           apiName: handlerName,
           params,
         })) as UpdateResponse;
+
+        /**
+         * Response dispatch is cancelled if an optimistic update
+         * is sent multiple times. (Last update wins)
+         */
+        const nextTimestamp =
+          findEntityState(entityName)?.timestamps?.optimisticUpdate;
+
+        if (nextTimestamp && nextTimestamp !== timestamp) {
+          return;
+        }
 
         dispatchUpdate({ entity: data });
       } catch (_) {
@@ -285,7 +323,11 @@ export const useModel = <
    * Handles cache pagination to specific page.
    */
   const dispatchGoToPage = (params: { queryKey: string; page: number }) => {
-    dispatch({ type: EntityActionType.GO_TO_PAGE, entityName, ...params });
+    dispatch({
+      type: EntityHelperActionType.GO_TO_PAGE,
+      entityName,
+      ...params,
+    });
   };
 
   /**

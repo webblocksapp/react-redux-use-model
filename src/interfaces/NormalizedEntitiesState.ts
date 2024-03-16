@@ -8,6 +8,10 @@ export type NormalizedEntitiesState = {
         };
         allIds?: Array<string>;
         queries?: Array<QueryState>;
+        timestamps?: {
+          optimisticUpdate?: number;
+          optimisticRemove?: number;
+        };
       }
     | undefined;
 };

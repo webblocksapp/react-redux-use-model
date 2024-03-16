@@ -3,5 +3,9 @@ export enum EntityActionType {
   CREATE = 'ENTITY:CREATE',
   UPDATE = 'ENTITY:UPDATE',
   REMOVE = 'ENTITY:REMOVE',
+}
+
+export enum EntityHelperActionType {
   GO_TO_PAGE = 'ENTITY:GO_TO_PAGE',
+  UPDATE_TIMESTAMPS = 'ENTITY:UPDATE_TIMESTAMPS',
 }

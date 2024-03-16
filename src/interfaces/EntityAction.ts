@@ -1,9 +1,9 @@
-import { EntityActionType as ActionType } from '@constants';
+import { EntityActionType, EntityHelperActionType } from '@constants';
 import { QueryState, ForeignKey } from '@interfaces';
 
 export type EntityAction<TEntity extends { id: string } = any> =
   | {
-      type: ActionType.LIST;
+      type: EntityActionType.LIST;
       entityName: string;
       entities: TEntity[];
       queryKey: string | undefined;
@@ -12,24 +12,33 @@ export type EntityAction<TEntity extends { id: string } = any> =
       params?: any;
     }
   | {
-      type: ActionType.CREATE;
+      type: EntityActionType.CREATE;
       entityName: string;
       entity: TEntity;
     }
   | {
-      type: ActionType.UPDATE;
+      type: EntityActionType.UPDATE;
       entityName: string;
       entity: TEntity;
+      optimisticUpdateTimestamp?: number;
     }
   | {
-      type: ActionType.REMOVE;
+      type: EntityActionType.REMOVE;
       entityName: string;
       entityId: string;
       foreignKeys: Array<ForeignKey>;
     }
   | {
-      type: ActionType.GO_TO_PAGE;
+      type: EntityHelperActionType.GO_TO_PAGE;
       entityName: string;
       queryKey: string;
       page: number;
+    }
+  | {
+      type: EntityHelperActionType.UPDATE_TIMESTAMPS;
+      entityName: string;
+      timestamps: {
+        optimisticUpdate?: number;
+        optimisticRemove?: number;
+      };
     };

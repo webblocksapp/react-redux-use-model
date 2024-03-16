@@ -8,6 +8,7 @@ export * from './mergeIds';
 export * from './mergeQueries';
 export * from './mergeUniqueIds';
 export * from './normalizer';
+export * from './now';
 export * from './paginateData';
 export * from './removeArrayDuplicates';
 export * from './replaceArrayPortion';
