@@ -20,7 +20,6 @@ export type EntityAction<TEntity extends { id: string } = any> =
       type: EntityActionType.UPDATE;
       entityName: string;
       entity: TEntity;
-      optimisticUpdateTimestamp?: number;
     }
   | {
       type: EntityActionType.REMOVE;
@@ -33,12 +32,4 @@ export type EntityAction<TEntity extends { id: string } = any> =
       entityName: string;
       queryKey: string;
       page: number;
-    }
-  | {
-      type: EntityHelperActionType.UPDATE_TIMESTAMPS;
-      entityName: string;
-      timestamps: {
-        optimisticUpdate?: number;
-        optimisticRemove?: number;
-      };
     };

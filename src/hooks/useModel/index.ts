@@ -9,7 +9,7 @@ import {
   AnyObject,
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
-import { now, paginateData, useModelContext } from '@utils';
+import { paginateData, useModelContext } from '@utils';
 import { useApiClients } from '@hooks';
 import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -86,7 +86,7 @@ export const useModel = <
   schema?: ModelSchema;
 }) => {
   const { handlers, entityName, queryKey, schema } = params;
-  const { findEntity, findQuery, findEntityState } = useModelContext();
+  const { findQuery } = useModelContext();
 
   /**
    * Extract the apis from the handlers.
@@ -144,16 +144,10 @@ export const useModel = <
   /**
    * Dispatch an updated entity.
    */
-  const dispatchUpdate = (params: {
-    entity: any;
-    optimisticUpdateTimestamp?: number;
-  }) => {
+  const dispatchUpdate = (params: { entity: any }) => {
     dispatch({
       type: EntityActionType.UPDATE,
       entityName,
-      ...(params?.optimisticUpdateTimestamp
-        ? { optimisticUpdateTimestamp: params.optimisticUpdateTimestamp }
-        : {}),
       ...params,
     });
   };
@@ -167,20 +161,6 @@ export const useModel = <
       entityName,
       foreignKeys: schema?.foreignKeys || [],
       ...params,
-    });
-  };
-
-  /**
-   * Dispatch entity timestamps.
-   */
-  const dispatchTimestamps = (timestamps: {
-    optimisticUpdate?: number;
-    optimisticRemove?: number;
-  }) => {
-    dispatch({
-      type: EntityHelperActionType.UPDATE_TIMESTAMPS,
-      entityName,
-      timestamps,
     });
   };
 
@@ -285,49 +265,15 @@ export const useModel = <
   /**
    * Build the update method
    */
-  const buildUpdateMethod = (
-    handlerName: StringKey<keyof T>,
-    handler: Extract<QueryHandler, { action: EntityActionType.UPDATE }>
-  ) => {
+  const buildUpdateMethod = (handlerName: StringKey<keyof T>) => {
     return async (...params: Parameters<QueryHandler['apiFn']>) => {
-      const [entityId, updatedEntity] = params as Parameters<
-        (typeof handler)['apiFn']
-      >;
-      const currentEntity = findEntity(entityName, entityId);
-      const timestamp = now();
+      const { data } = (await runApi({
+        apiName: handlerName,
+        params,
+        throwError: true,
+      })) as UpdateResponse;
 
-      // Update in memory is done prev api call.
-      if (handler.optimistic) {
-        dispatchUpdate({
-          entity: updatedEntity,
-          optimisticUpdateTimestamp: timestamp,
-        });
-      }
-
-      dispatchTimestamps({ optimisticUpdate: timestamp });
-
-      try {
-        const { data } = (await runApi({
-          apiName: handlerName,
-          params,
-          throwError: true,
-        })) as UpdateResponse;
-
-        /**
-         * Response dispatch is cancelled if an optimistic update
-         * is sent multiple times. (Last update wins)
-         */
-        const nextTimestamp =
-          findEntityState(entityName)?.timestamps?.optimisticUpdate;
-
-        if (nextTimestamp && nextTimestamp !== timestamp) {
-          return;
-        }
-
-        dispatchUpdate({ entity: data });
-      } catch (_) {
-        dispatchUpdate({ entity: currentEntity }); // Entity is rollback in case of api fail
-      }
+      dispatchUpdate({ entity: data });
 
       const refetchHandlerName = getRefetchHandlerName();
 
@@ -376,7 +322,7 @@ export const useModel = <
       case EntityActionType.CREATE:
         return buildCreateMethod(handlerName);
       case EntityActionType.UPDATE:
-        return buildUpdateMethod(handlerName, handler);
+        return buildUpdateMethod(handlerName);
       case EntityActionType.REMOVE:
         return buildRemoveMethod(handlerName);
       default:

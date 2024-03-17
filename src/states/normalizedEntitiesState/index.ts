@@ -1,13 +1,6 @@
 import { EntityActionType, EntityHelperActionType } from '@constants';
 import { EntityAction, NormalizedEntitiesState } from '@interfaces';
-import {
-  list,
-  goToPage,
-  create,
-  update,
-  remove,
-  updateTimestamps,
-} from './handlers';
+import { list, goToPage, create, update, remove } from './handlers';
 
 const initialState: NormalizedEntitiesState = {};
 
@@ -39,8 +32,6 @@ export const normalizedEntitiesState = (
       );
     case EntityHelperActionType.GO_TO_PAGE:
       return goToPage(action.entityName, action.queryKey, action.page, state);
-    case EntityHelperActionType.UPDATE_TIMESTAMPS:
-      return updateTimestamps(action.entityName, action.timestamps, state);
     default:
       return state;
   }

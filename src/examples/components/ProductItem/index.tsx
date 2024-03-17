@@ -21,14 +21,6 @@ export const ProductItem: React.FC<ProductItemProps> = ({ productId }) => {
       });
   };
 
-  const updateOptimistic = () => {
-    productId &&
-      productModel.updateOptimistic(productId, {
-        ...createRandomProduct(),
-        id: productId,
-      });
-  };
-
   const remove = () => {
     productId && productModel.remove(productId);
   };
@@ -52,7 +44,6 @@ export const ProductItem: React.FC<ProductItemProps> = ({ productId }) => {
             <button onClick={update}>
               {productModel.updateState.isLoading ? 'Updating...' : 'Update'}
             </button>
-            <button onClick={updateOptimistic}>Opt. Update</button>
             <button onClick={remove}>
               {productModel.removeState.isLoading ? 'Removing...' : 'Remove'}
             </button>

@@ -7,5 +7,4 @@ export enum EntityActionType {
 
 export enum EntityHelperActionType {
   GO_TO_PAGE = 'ENTITY:GO_TO_PAGE',
-  UPDATE_TIMESTAMPS = 'ENTITY:UPDATE_TIMESTAMPS',
 }

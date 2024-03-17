@@ -217,24 +217,3 @@ export const goToPage = (
     },
   };
 };
-
-export const updateTimestamps = (
-  entityName: string,
-  timestamps: Partial<
-    Extract<NormalizedEntitiesState[string], object>['timestamps']
-  >,
-  state: NormalizedEntitiesState
-) => {
-  let normalizedState: NormalizedEntitiesState = {};
-  const entityState = state[entityName];
-
-  normalizedState[entityName] = {
-    ...entityState,
-    timestamps: { ...entityState?.timestamps, ...timestamps },
-  };
-
-  return {
-    ...state,
-    ...normalizedState,
-  };
-};
