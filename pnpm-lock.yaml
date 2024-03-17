@@ -103,6 +103,9 @@ devDependencies:
   msw:
     specifier: ^2.2.2
     version: 2.2.2(typescript@5.3.3)
+  react-virtuoso:
+    specifier: ^4.7.2
+    version: 4.7.2(react-dom@18.2.0)(react@18.2.0)
   storybook:
     specifier: ^7.6.17
     version: 7.6.17
@@ -8857,6 +8860,17 @@ packages:
       invariant: 2.2.4
       react: 18.2.0
       tslib: 2.6.2
+    dev: true
+
+  /react-virtuoso@4.7.2(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-xF4es1ajK36Hs9MciaiGA9l16tV2bpkpgxM9JVKh0rJSn6uhdAUrxSQ6FttQOOPAGt4GRG2A4gdjlo18JWhyRw==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16 || >=17 || >= 18'
+      react-dom: '>=16 || >=17 || >= 18'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: true
 
   /react@18.2.0:

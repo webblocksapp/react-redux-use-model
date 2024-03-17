@@ -1,8 +1,8 @@
 import { Pagination } from '@interfaces';
 
-export type QueryState = {
+export type QueryState<TParams = any> = {
   ids: Array<string>;
   queryKey: string;
-  params?: any;
+  params?: TParams;
   pagination?: Pagination;
 };

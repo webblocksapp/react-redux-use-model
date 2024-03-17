@@ -9,6 +9,7 @@ export enum QueryKey {
   ProductPaginatedList = 'ProductPaginatedList',
   ProductCrud = 'ProductCrud',
   VideoList = 'VideoList',
+  VideosDropdown = 'VideosDropdown',
 }
 
 export enum ProductActionType {

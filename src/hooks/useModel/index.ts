@@ -415,9 +415,9 @@ export const useModel = <
       }> = [];
       if (ids) {
         for (const id of ids) {
-          const entity = (id ? state?.byId?.[id] : undefined) as
-            | NormalizeEntity<ExtractEntity<T>>
-            | undefined;
+          const entity = (id ? state?.byId?.[id] : { id }) as NormalizeEntity<
+            ExtractEntity<T>
+          >;
           entities.push({ entity, loading: entity ? false : true });
         }
       }
@@ -460,7 +460,14 @@ export const useModel = <
         if (item === null || item === undefined) return `empty-${uuid()}`;
         return item;
       }),
-    };
+    } as QueryState<
+      Parameters<
+        Extract<
+          T[StringKey<keyof T>],
+          { action: EntityActionType.LIST }
+        >['apiFn']
+      >
+    >;
   });
 
   /**
