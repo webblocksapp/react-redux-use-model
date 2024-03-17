@@ -1,6 +1,7 @@
 export enum EntityName {
   Products = 'products',
   Videos = 'videos',
+  VideosComments = 'videos.comments',
 }
 
 export enum QueryKey {

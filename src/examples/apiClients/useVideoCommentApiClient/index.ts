@@ -2,7 +2,7 @@ import { EntityParams, Pagination } from '@interfaces';
 import { ListResponse, VideoComment } from '@examples/interfaces';
 import { axiosLocal } from '@examples/utils';
 
-export const useVideoCommentCommentApiClient = () => {
+export const useVideoCommentApiClient = () => {
   const list = async (
     params: EntityParams<VideoComment>
   ): Promise<{

@@ -114,12 +114,10 @@ export const remove = (
         const byId = entityState.byId;
         const { [foreignEntityId]: parentEntity, ...restById } = byId;
         const entityIds = get<Array<string>>(parentEntity, foreignFieldName);
-        const updatedParentEntity = clone(
-          set(
-            parentEntity,
-            foreignFieldName,
-            entityIds.filter((id) => id !== entity?.id)
-          )
+        const updatedParentEntity = set(
+          clone(parentEntity),
+          foreignFieldName,
+          entityIds.filter((id) => id !== entity?.id)
         );
 
         normalizedState[foreignEntityName] = {

@@ -2,6 +2,7 @@ import { createRandomVideo } from '@examples/mocks';
 import { useVideoModel } from '@examples/models';
 import { RootState } from '@interfaces';
 import { useSelector } from 'react-redux';
+import { VideoCommentsList } from '@examples/components';
 
 export interface VideoItemProps {
   videoId: string;
@@ -30,24 +31,29 @@ export const VideoItem: React.FC<VideoItemProps> = ({ videoId }) => {
       {loading ? (
         <>Loading...</>
       ) : (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div>
-            Name: {video?.name}, Price: {video?.price}
+        <div>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>Title: {video?.title}</div>
+            <div>
+              <button onClick={update}>
+                {videoModel.updateState.isLoading ? 'Updating...' : 'Update'}
+              </button>
+              <button onClick={remove}>
+                {videoModel.removeState.isLoading ? 'Removing...' : 'Remove'}
+              </button>
+            </div>
           </div>
-          <div>
-            <button onClick={update}>
-              {videoModel.updateState.isLoading ? 'Updating...' : 'Update'}
-            </button>
-            <button onClick={remove}>
-              {videoModel.removeState.isLoading ? 'Removing...' : 'Remove'}
-            </button>
-          </div>
+          {video?.comments ? (
+            <VideoCommentsList commentsIds={video.comments} />
+          ) : (
+            <></>
+          )}
         </div>
       )}
     </div>

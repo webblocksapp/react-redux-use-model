@@ -10,7 +10,7 @@ export const createRandomVideo = (): Video => {
     .map(() => createRandomVideoComment({ data: { videoId } }));
 
   return {
-    id: uuid(),
+    id: videoId,
     title: faker.lorem.words({ min: 1, max: 2 }),
     comments,
   };

@@ -6,6 +6,7 @@ import {
   QueryState,
   StringKey,
   ForeignKey,
+  AnyObject,
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import { now, paginateData, useModelContext } from '@utils';
@@ -54,6 +55,26 @@ type QueryHandler =
       action: EntityActionType.REMOVE;
     };
 
+type ExtractEntity<
+  T extends {
+    [K in keyof T]: QueryHandler;
+  }
+> = Awaited<
+  ReturnType<
+    Extract<T[StringKey<keyof T>], { action: EntityActionType.LIST }>['apiFn']
+  >
+>['data'][0];
+
+type NormalizeEntity<T extends AnyObject> = {
+  [K in keyof T]: T[K] extends Array<{ id?: string }>
+    ? Array<string>
+    : T[K] extends { id?: string }
+    ? string
+    : T[K];
+};
+
+type ModelSchema = { foreignKeys: Array<ForeignKey> };
+
 export const useModel = <
   T extends {
     [K in keyof T]: QueryHandler;
@@ -62,8 +83,9 @@ export const useModel = <
   handlers: T;
   entityName: string;
   queryKey: string | undefined;
+  schema?: ModelSchema;
 }) => {
-  const { handlers, entityName, queryKey } = params;
+  const { handlers, entityName, queryKey, schema } = params;
   const { findEntity, findQuery, findEntityState } = useModelContext();
 
   /**
@@ -139,13 +161,11 @@ export const useModel = <
   /**
    * Dispatch remove operation.
    */
-  const dispatchRemove = (params: {
-    entityId: string;
-    foreignKeys: Array<ForeignKey>;
-  }) => {
+  const dispatchRemove = (params: { entityId: string }) => {
     dispatch({
       type: EntityActionType.REMOVE,
       entityName,
+      foreignKeys: schema?.foreignKeys || [],
       ...params,
     });
   };
@@ -339,7 +359,7 @@ export const useModel = <
         params,
       })) as RemoveResponse;
 
-      dispatchRemove({ entityId: data.id, foreignKeys: [] });
+      dispatchRemove({ entityId: data.id });
     };
   };
 
@@ -381,6 +401,31 @@ export const useModel = <
     state.normalizedEntitiesState[entityName];
 
   /**
+   * Select multiple entities values from the normalized list.
+   */
+  const selectEntities = createSelector(
+    [
+      selectNormalizedEntityState,
+      (_: RootState, ids: Array<string> | null | undefined) => ids,
+    ],
+    (state, ids) => {
+      const entities: Array<{
+        entity: NormalizeEntity<ExtractEntity<T>> | undefined;
+        loading: boolean;
+      }> = [];
+      if (ids) {
+        for (const id of ids) {
+          const entity = (id ? state?.byId?.[id] : undefined) as
+            | NormalizeEntity<ExtractEntity<T>>
+            | undefined;
+          entities.push({ entity, loading: entity ? false : true });
+        }
+      }
+      return entities;
+    }
+  );
+
+  /**
    * Select an entity value from the normalized list.
    */
   const selectEntity = createSelector(
@@ -389,7 +434,9 @@ export const useModel = <
       (_: RootState, id: string | null | undefined) => id,
     ],
     (state, id) => {
-      const entity = id ? state?.byId?.[id] : undefined;
+      const entity = (id ? state?.byId?.[id] : undefined) as
+        | NormalizeEntity<ExtractEntity<T>>
+        | undefined;
       return { entity, loading: entity ? false : true };
     }
   );
@@ -434,6 +481,7 @@ export const useModel = <
     ...buildModelMethods(),
     ...state,
     selectEntity,
+    selectEntities,
     selectPaginatedQuery,
     selectQuery,
   };

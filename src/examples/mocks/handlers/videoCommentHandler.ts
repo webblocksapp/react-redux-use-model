@@ -75,9 +75,8 @@ export const videoComment = [
   ),
   http.delete(
     `${BASE_URL}/videos/:videoId/comments/:commentId`,
-    async ({ request, params }) => {
+    async ({ params }) => {
       const { videoId, commentId } = params;
-      const video = (await request.json()) as VideoComment;
       data.videos = data.videos.map((video) => {
         if (video.id == videoId) {
           video.comments.filter((comment) => comment.id != commentId);
@@ -85,7 +84,7 @@ export const videoComment = [
         return video;
       });
       await delay(2000);
-      return HttpResponse.json(video, { status: 200 });
+      return HttpResponse.json({ id: commentId }, { status: 200 });
     }
   ),
 ];

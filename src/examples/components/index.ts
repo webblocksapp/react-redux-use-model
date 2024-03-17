@@ -3,5 +3,6 @@ export * from './ProductCrud';
 export * from './ProductItem';
 export * from './ProductList';
 export * from './ProductPaginatedList';
+export * from './VideoCommentsList';
 export * from './VideoItem';
 export * from './VideosList';
