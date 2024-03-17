@@ -1,6 +1,13 @@
 import { EntityActionType, EntityHelperActionType } from '@constants';
 import { EntityAction, NormalizedEntitiesState } from '@interfaces';
-import { list, goToPage, save, remove, updateTimestamps } from './handlers';
+import {
+  list,
+  goToPage,
+  create,
+  update,
+  remove,
+  updateTimestamps,
+} from './handlers';
 
 const initialState: NormalizedEntitiesState = {};
 
@@ -20,8 +27,9 @@ export const normalizedEntitiesState = (
         state
       );
     case EntityActionType.CREATE:
+      return create(action.entityName, action.entity, state);
     case EntityActionType.UPDATE:
-      return save(action.entityName, action.entity, state);
+      return update(action.entityName, action.entity, state);
     case EntityActionType.REMOVE:
       return remove(
         action.entityName,

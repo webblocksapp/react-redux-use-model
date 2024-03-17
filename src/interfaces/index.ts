@@ -1,5 +1,6 @@
 export * from './AnyObject';
 export * from './ApiClientFn';
+export * from './CrudOperation';
 export * from './Entity';
 export * from './EntityAction';
 export * from './EntityParams';

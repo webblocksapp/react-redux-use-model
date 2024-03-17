@@ -157,6 +157,7 @@ describe('normalizedEntitiesState', () => {
         entities: entities1,
         queryKey: 'UsersList',
         entityName: 'Users',
+        pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
       }
     );
 
@@ -175,6 +176,7 @@ describe('normalizedEntitiesState', () => {
           {
             ids: [],
             queryKey: 'UsersList',
+            pagination: { page: 0, size: 10, totalElements: 0, totalPages: 0 },
           },
         ],
       },
@@ -190,6 +192,7 @@ describe('normalizedEntitiesState', () => {
         entities: entities1,
         queryKey: 'VideosList',
         entityName: 'Videos',
+        pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
       }
     );
 
@@ -209,6 +212,7 @@ describe('normalizedEntitiesState', () => {
           {
             ids: ['1'],
             queryKey: 'VideosList',
+            pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
           },
         ],
       },
@@ -245,6 +249,7 @@ describe('normalizedEntitiesState', () => {
           {
             ids: ['1'],
             queryKey: 'VideosList',
+            pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
           },
         ],
       },

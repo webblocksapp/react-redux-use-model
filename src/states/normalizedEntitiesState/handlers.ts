@@ -8,6 +8,7 @@ import {
   buildEmptyIds,
   clone,
   get,
+  handlePagination,
   mergeIds,
   mergeQueries,
   mergeUniqueIds,
@@ -51,7 +52,42 @@ export const list = (
   };
 };
 
-export const save = (
+export const create = (
+  entityName: string,
+  entity: Entity,
+  state: NormalizedEntitiesState
+): NormalizedEntitiesState => {
+  let normalizedState: NormalizedEntitiesState = {};
+
+  for (let [key, value] of Object.entries(normalizer(entity, entityName))) {
+    const entityState = state[key];
+    const newIds = Object.keys(value);
+
+    normalizedState[key] = {
+      ...entityState,
+      byId: { ...entityState?.byId, ...value },
+      allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
+      queries: entityState?.queries?.map((query) => ({
+        ...query,
+        ...(query.pagination
+          ? {
+              pagination: handlePagination({
+                pagination: query.pagination,
+                operation: 'create',
+              }),
+            }
+          : {}),
+      })),
+    };
+  }
+
+  return {
+    ...state,
+    ...normalizedState,
+  };
+};
+
+export const update = (
   entityName: string,
   entity: Entity,
   state: NormalizedEntitiesState
@@ -97,6 +133,14 @@ export const remove = (
       queries: entityState?.queries?.map?.((query) => ({
         ...query,
         ids: query.ids.filter((id) => id !== entityId),
+        ...(query.pagination
+          ? {
+              pagination: handlePagination({
+                pagination: query.pagination,
+                operation: 'remove',
+              }),
+            }
+          : {}),
       })),
     };
   }
