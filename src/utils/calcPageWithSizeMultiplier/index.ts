@@ -1,7 +1,7 @@
 import { calcPageSize } from '@utils';
 
 // Util function to calc page with size multiplier.
-export const calcPage = (args: {
+export const calcPageWithSizeMultiplier = (args: {
   page: number;
   size: number;
   sizeMultiplier?: number;

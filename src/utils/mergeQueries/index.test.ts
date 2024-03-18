@@ -157,4 +157,59 @@ describe('mergeQueries', () => {
       },
     ]);
   });
+
+  it('Merge query with existing queries and calculated pagination.', () => {
+    const result = mergeQueries({
+      queries: [
+        {
+          queryKey: 'QueryKey',
+          ids: ['1', '2', '3', '4', '5', '6'],
+          pagination: { page: 0, size: 2, totalElements: 18, totalPages: 9 },
+          calculatedPagination: {
+            page: 0,
+            size: 6,
+            totalElements: 18,
+            totalPages: 3,
+          },
+        },
+      ],
+      queryKey: 'QueryKey',
+      ids: ['13', '14', '15', '16', '17', '18'],
+      pagination: { page: 7, size: 2, totalElements: 18, totalPages: 3 },
+      sizeMultiplier: 3,
+    });
+
+    expect(result).toEqual([
+      {
+        queryKey: 'QueryKey',
+        ids: [
+          '1',
+          '2',
+          '3',
+          '4',
+          '5',
+          '6',
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          '13',
+          '14',
+          '15',
+          '16',
+          '17',
+          '18',
+        ],
+        pagination: { page: 7, size: 2, totalElements: 18, totalPages: 3 },
+        calculatedPagination: {
+          page: 2,
+          size: 6,
+          totalElements: 18,
+          totalPages: 3,
+        },
+      },
+    ]);
+  });
 });

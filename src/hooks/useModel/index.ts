@@ -11,8 +11,7 @@ import {
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import {
-  calcPage,
-  calcPagination,
+  calcPageWithSizeMultiplier,
   paginateData,
   useModelContext,
 } from '@utils';
@@ -133,6 +132,7 @@ export const useModel = <
     pagination?: QueryState['pagination'];
     currentPage?: number;
     params: any;
+    sizeMultiplier?: number;
   }) => {
     dispatch({
       type: EntityActionType.LIST,
@@ -216,24 +216,37 @@ export const useModel = <
         >['apiFn']
       >
     ) => {
-      const [paginationParams] = params;
+      let [paginationParams, ...restParams] = params;
       const page = paginationParams._page || 0;
-      const calculatedPage = calcPage({
-        page,
-        size: paginationParams._size || 10,
-        sizeMultiplier: paginationConfig?.sizeMultiplier,
-      });
+      const size = paginationParams._size || 10;
+      const sizeMultiplier = paginationConfig?.sizeMultiplier || 1;
+
+      paginationParams = {
+        ...paginationParams,
+        _page: calcPageWithSizeMultiplier({
+          page,
+          size,
+          sizeMultiplier,
+        }),
+        _size: calcPageWithSizeMultiplier({
+          page,
+          size,
+          sizeMultiplier,
+        }),
+      };
 
       if (queryKey) {
         dispatchGoToPage({
           queryKey,
           page,
+          size,
+          sizeMultiplier,
         });
       }
 
       const response = (await runApi({
         apiName: handlerName,
-        params,
+        params: [paginationParams, ...restParams] as typeof params,
       })) as ListResponse;
 
       dispatchList({
@@ -318,6 +331,7 @@ export const useModel = <
         pagination: response.pagination,
         currentPage: ref.current.currentPage,
         params: query?.params,
+        sizeMultiplier: paginationConfig?.sizeMultiplier,
       });
     };
   };
@@ -366,7 +380,12 @@ export const useModel = <
   /**
    * Handles cache pagination to specific page.
    */
-  const dispatchGoToPage = (params: { queryKey: string; page: number }) => {
+  const dispatchGoToPage = (params: {
+    queryKey: string;
+    page: number;
+    size: number;
+    sizeMultiplier: number;
+  }) => {
     dispatch({
       type: EntityHelperActionType.GO_TO_PAGE,
       entityName,

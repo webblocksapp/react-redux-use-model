@@ -6,6 +6,7 @@ import {
 } from '@interfaces';
 import {
   buildEmptyIds,
+  calcPagination,
   clone,
   get,
   handlePagination,
@@ -22,6 +23,7 @@ export const list = (
   currentPage: number | undefined,
   queryKey: string | undefined,
   pagination: QueryState['pagination'],
+  sizeMultiplier: number | undefined,
   params: any,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
@@ -40,6 +42,7 @@ export const list = (
         queryKey,
         ids: newIds,
         pagination,
+        sizeMultiplier,
         currentPage,
         params,
       }),
@@ -182,6 +185,8 @@ export const goToPage = (
   entityName: string,
   queryKey: string | undefined,
   page: number,
+  size: number,
+  sizeMultiplier: number,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   const entityState = state[entityName];
@@ -200,6 +205,14 @@ export const goToPage = (
               page,
             };
 
+            const calculatedPagination = calcPagination({
+              page,
+              size,
+              sizeMultiplier,
+              totalPages: pagination.totalPages,
+              totalElements: pagination.totalElements,
+            });
+
             return {
               ...item,
               ids: mergeIds(
@@ -209,6 +222,7 @@ export const goToPage = (
                 { replaceWhenEmpty: true }
               ),
               pagination,
+              calculatedPagination,
             };
           }
         }

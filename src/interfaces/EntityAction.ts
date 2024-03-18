@@ -8,6 +8,7 @@ export type EntityAction<TEntity extends { id: string } = any> =
       entities: TEntity[];
       queryKey: string | undefined;
       pagination?: QueryState['pagination'];
+      sizeMultiplier?: number;
       currentPage?: number;
       params?: any;
     }
@@ -32,4 +33,6 @@ export type EntityAction<TEntity extends { id: string } = any> =
       entityName: string;
       queryKey: string;
       page: number;
+      size: number;
+      sizeMultiplier: number;
     };

@@ -16,6 +16,7 @@ export const normalizedEntitiesState = (
         action.currentPage,
         action.queryKey,
         action.pagination,
+        action.sizeMultiplier,
         action.params,
         state
       );
@@ -31,7 +32,14 @@ export const normalizedEntitiesState = (
         state
       );
     case EntityHelperActionType.GO_TO_PAGE:
-      return goToPage(action.entityName, action.queryKey, action.page, state);
+      return goToPage(
+        action.entityName,
+        action.queryKey,
+        action.page,
+        action.size,
+        action.sizeMultiplier,
+        state
+      );
     default:
       return state;
   }
