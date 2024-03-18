@@ -5,10 +5,13 @@ export const calcPage = (args: {
   page: number;
   size: number;
   sizeMultiplier?: number;
+  zeroBased?: boolean;
 }) => {
-  const { page, size, sizeMultiplier } = args;
-  const calculatedPage = Math.floor(
+  let { page, size, sizeMultiplier, zeroBased = true } = args;
+  page = zeroBased ? page + 1 : page;
+  let calculatedPage = Math.ceil(
     (page * size) / calcPageSize({ size, sizeMultiplier })
   );
+  calculatedPage = zeroBased ? calculatedPage - 1 : calculatedPage;
   return calculatedPage < 0 ? 0 : calculatedPage;
 };
