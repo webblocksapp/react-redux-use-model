@@ -6,6 +6,8 @@ import {
 } from '@interfaces';
 import {
   buildEmptyIds,
+  calcPage,
+  calcPageSize,
   calcPagination,
   clone,
   get,
@@ -213,16 +215,26 @@ export const goToPage = (
               totalElements: pagination.totalElements,
             });
 
+            const calculatedCurrentPage = calcPage({
+              page,
+              size,
+              sizeMultiplier,
+            });
+
             return {
               ...item,
               ids: mergeIds(
                 item.ids,
-                buildEmptyIds({ size: pagination.size }),
+                buildEmptyIds({
+                  size: calcPageSize({ size: pagination.size, sizeMultiplier }),
+                }),
                 pagination,
                 { replaceWhenEmpty: true }
               ),
               pagination,
               calculatedPagination,
+              currentPage: page,
+              calculatedCurrentPage,
             };
           }
         }

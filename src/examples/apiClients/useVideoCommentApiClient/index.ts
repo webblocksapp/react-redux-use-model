@@ -4,7 +4,7 @@ import { axiosLocal } from '@examples/utils';
 
 export const useVideoCommentApiClient = () => {
   const list = async (
-    paginationParams: PaginationParams,
+    params: PaginationParams,
     entity: VideoComment
   ): Promise<{
     data: VideoComment[];
@@ -13,7 +13,7 @@ export const useVideoCommentApiClient = () => {
     const { data } = await axiosLocal.get<ListResponse<VideoComment>>(
       `/videos/${entity.videoId}/comments`,
       {
-        params: { _size: 10, ...paginationParams },
+        params,
       }
     );
     return {

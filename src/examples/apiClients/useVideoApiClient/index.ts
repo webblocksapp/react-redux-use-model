@@ -4,13 +4,13 @@ import { axiosLocal } from '@examples/utils';
 
 export const useVideoApiClient = () => {
   const list = async (
-    paginationParams: PaginationParams
+    params: PaginationParams
   ): Promise<{
     data: Video[];
     pagination: Pagination;
   }> => {
     const { data } = await axiosLocal.get<ListResponse<Video>>('/videos', {
-      params: { _size: 10, ...paginationParams },
+      params,
     });
     return {
       data: data.content,

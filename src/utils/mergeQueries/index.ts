@@ -1,5 +1,5 @@
 import { QueryState } from '@interfaces';
-import { calcPageWithSizeMultiplier, calcPagination, mergeIds } from '@utils';
+import { calcPage, calcPagination, mergeIds } from '@utils';
 
 const queryExists = (item: QueryState, queryKey: string) =>
   item.queryKey == queryKey;
@@ -30,7 +30,7 @@ export const mergeQueries = (args: {
     : undefined;
   const calculatedCurrentPage =
     currentPage && pagination
-      ? calcPageWithSizeMultiplier({
+      ? calcPage({
           page: currentPage,
           size: pagination.size,
           sizeMultiplier,
@@ -60,6 +60,7 @@ export const mergeQueries = (args: {
                 },
               }
             : undefined),
+          currentPage,
           calculatedCurrentPage,
         };
       }

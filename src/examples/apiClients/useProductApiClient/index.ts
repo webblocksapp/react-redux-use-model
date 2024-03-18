@@ -4,13 +4,13 @@ import { axiosLocal } from '@examples/utils';
 
 export const useProductApiClient = () => {
   const list = async (
-    paginationParams?: PaginationParams
+    params?: PaginationParams
   ): Promise<{
     data: Product[];
     pagination: Pagination;
   }> => {
     const { data } = await axiosLocal.get<ListResponse<Product>>('/products', {
-      params: { _size: 10, _page: 0, ...paginationParams },
+      params,
     });
     return {
       data: data.content,

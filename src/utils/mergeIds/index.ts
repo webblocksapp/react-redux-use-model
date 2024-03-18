@@ -17,8 +17,6 @@ export const mergeIds = (
       size: pagination.size,
     });
 
-    console.log(pagination, { startIndex, endIndex });
-
     return replaceArrayPortion({
       originalArray: originalIds,
       replacementArray: newIds,

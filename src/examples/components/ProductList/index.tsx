@@ -27,8 +27,8 @@ export const ProductList: React.FC = () => {
               padding: 10,
             }}
           >
-            {productQuery?.ids?.map((id) => (
-              <ProductItem key={id} productId={id} />
+            {productQuery?.ids?.map((id, index) => (
+              <ProductItem key={id} index={index} productId={id} />
             ))}
           </div>
           <Paginator

@@ -17,18 +17,18 @@ export const ProductPaginatedList: React.FC = () => {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <div>
-          <div
-            style={{
-              border: '1px solid black',
-              overflow: 'auto',
-              width: 500,
-              height: 600,
-              padding: 10,
-            }}
-          >
-            {productQuery?.ids?.map((id) => (
-              <ProductItem key={id} productId={id} />
+        <div
+          style={{
+            border: '1px solid black',
+            overflow: 'auto',
+            width: 500,
+            height: 600,
+            padding: 10,
+          }}
+        >
+          <div>
+            {productQuery?.ids?.map((id, index) => (
+              <ProductItem key={id} index={index} productId={id} />
             ))}
           </div>
           <Paginator

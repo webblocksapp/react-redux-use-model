@@ -5,9 +5,13 @@ import { createRandomProduct } from '@examples/mocks/fakers';
 
 export interface ProductItemProps {
   productId?: string;
+  index: number;
 }
 
-export const ProductItem: React.FC<ProductItemProps> = ({ productId }) => {
+export const ProductItem: React.FC<ProductItemProps> = ({
+  productId,
+  index,
+}) => {
   const productModel = useProductModel();
   const { entity: product, loading } = useSelector((state: RootState) =>
     productModel.selectEntity(state, productId)
@@ -38,7 +42,7 @@ export const ProductItem: React.FC<ProductItemProps> = ({ productId }) => {
           }}
         >
           <div>
-            Name: {product?.name}, Price: {product?.price}
+            {index + 1}. Name: {product?.name}, Price: {product?.price}
           </div>
           <div>
             <button onClick={update}>

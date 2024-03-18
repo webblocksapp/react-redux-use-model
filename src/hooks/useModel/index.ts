@@ -11,14 +11,24 @@ import {
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import {
-  calcPageWithSizeMultiplier,
+  calcPageSize,
+  calcPage,
   paginateData,
   useModelContext,
+  calcTotalPages,
 } from '@utils';
 import { useApiClients } from '@hooks';
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuid } from 'uuid';
+
+type ListApiFnParams<
+  T extends {
+    [K in keyof T]: QueryHandler;
+  }
+> = Parameters<
+  Extract<T[StringKey<keyof T>], { action: EntityActionType.LIST }>['apiFn']
+>;
 
 type ListResponse = {
   data: Array<{ id: string }>;
@@ -40,7 +50,7 @@ type RemoveResponse = {
 type QueryHandler =
   | {
       apiFn: (
-        paginationParams: PaginationParams,
+        paginationParams: PaginationParams | undefined,
         ...args: any
       ) => Promise<ListResponse>;
       action: EntityActionType.LIST;
@@ -115,9 +125,6 @@ export const useModel = <
   }, []);
 
   const { runApi, state } = useApiClients(apis);
-  const ref = useRef<{ currentPage: number }>({
-    currentPage: 0,
-  });
 
   /**
    * Dispatch initialization.
@@ -205,6 +212,23 @@ export const useModel = <
   };
 
   /**
+   * Get the pagination from the cached params inside a query.
+   */
+  const getCachedPaginationParams = () => {
+    const query = findQuery(entityName, queryKey);
+    let [cachedPaginationParams] = (query?.params || []) as ListApiFnParams<T>;
+    return cachedPaginationParams;
+  };
+
+  /**
+   * Get the current page from the query.
+   */
+  const getCurrentPage = () => {
+    const query = findQuery(entityName, queryKey);
+    return query?.currentPage;
+  };
+
+  /**
    * Build the list method.
    */
   const buildListMethod = (handlerName: StringKey<keyof T>) => {
@@ -216,24 +240,12 @@ export const useModel = <
         >['apiFn']
       >
     ) => {
-      let [paginationParams, ...restParams] = params;
-      const page = paginationParams._page || 0;
-      const size = paginationParams._size || 10;
+      const [paginationParams, ...restParams] = params;
+      let cachedPaginationParams = getCachedPaginationParams();
+      const page = paginationParams?._page || 0;
+      const size =
+        paginationParams?._size || cachedPaginationParams?._size || 10;
       const sizeMultiplier = paginationConfig?.sizeMultiplier || 1;
-
-      paginationParams = {
-        ...paginationParams,
-        _page: calcPageWithSizeMultiplier({
-          page,
-          size,
-          sizeMultiplier,
-        }),
-        _size: calcPageWithSizeMultiplier({
-          page,
-          size,
-          sizeMultiplier,
-        }),
-      };
 
       if (queryKey) {
         dispatchGoToPage({
@@ -246,14 +258,41 @@ export const useModel = <
 
       const response = (await runApi({
         apiName: handlerName,
-        params: [paginationParams, ...restParams] as typeof params,
+        params: [
+          {
+            ...paginationParams,
+            _page: calcPage({
+              page,
+              size,
+              sizeMultiplier,
+            }),
+            _size: calcPageSize({
+              size,
+              sizeMultiplier,
+            }),
+          },
+          ...restParams,
+        ] as typeof params,
       })) as ListResponse;
+
+      cachedPaginationParams = getCachedPaginationParams();
 
       dispatchList({
         entities: response?.data || [],
-        pagination: response?.pagination,
-        currentPage: page,
+        pagination: response.pagination
+          ? {
+              ...response.pagination,
+              page,
+              size,
+              totalPages: calcTotalPages({
+                totalElements: response.pagination.totalElements,
+                size,
+              }),
+            }
+          : undefined,
+        currentPage: getCurrentPage(),
         params,
+        sizeMultiplier,
       });
     };
   };
@@ -289,7 +328,7 @@ export const useModel = <
       dispatchList({
         entities: response?.data || [],
         pagination: response.pagination,
-        currentPage: ref.current.currentPage,
+        currentPage: query?.currentPage,
         params: query?.params,
       });
     };
@@ -329,7 +368,7 @@ export const useModel = <
       dispatchList({
         entities: response?.data || [],
         pagination: response.pagination,
-        currentPage: ref.current.currentPage,
+        currentPage: query?.currentPage,
         params: query?.params,
         sizeMultiplier: paginationConfig?.sizeMultiplier,
       });

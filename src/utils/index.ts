@@ -1,5 +1,5 @@
 export * from './buildEmptyIds';
-export * from './calcPageWithSizeMultiplier';
+export * from './calcPage';
 export * from './calcPageSize';
 export * from './calcPagination';
 export * from './calcPaginationIndexes';
