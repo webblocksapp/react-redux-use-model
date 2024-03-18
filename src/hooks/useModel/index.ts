@@ -84,8 +84,11 @@ export const useModel = <
   entityName: string;
   queryKey: string | undefined;
   schema?: ModelSchema;
+  paginationConfig?: {
+    sizeMultiplier?: number;
+  };
 }) => {
-  const { handlers, entityName, queryKey, schema } = params;
+  const { handlers, entityName, queryKey, schema, paginationConfig } = params;
   const { findQuery } = useModelContext();
 
   /**

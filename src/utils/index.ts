@@ -1,4 +1,5 @@
 export * from './buildEmptyIds';
+export * from './calcPageSize';
 export * from './calcPaginationIndexes';
 export * from './calcTotalPages';
 export * from './clone';
