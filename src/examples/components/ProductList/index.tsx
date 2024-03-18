@@ -11,7 +11,7 @@ export const ProductList: React.FC = () => {
   const productQuery = useSelector(productModel.selectQuery);
 
   useEffect(() => {
-    productModel.list();
+    productModel.list({ _page: 0, _size: 10 });
   }, []);
 
   return (

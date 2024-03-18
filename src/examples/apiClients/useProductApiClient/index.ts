@@ -1,16 +1,16 @@
-import { EntityParams, Pagination } from '@interfaces';
+import { Pagination, PaginationParams } from '@interfaces';
 import { ListResponse, Product } from '@examples/interfaces';
 import { axiosLocal } from '@examples/utils';
 
 export const useProductApiClient = () => {
   const list = async (
-    params?: EntityParams<Product>
+    paginationParams?: PaginationParams
   ): Promise<{
     data: Product[];
     pagination: Pagination;
   }> => {
     const { data } = await axiosLocal.get<ListResponse<Product>>('/products', {
-      params: { _size: 10, _page: 0, ...params },
+      params: { _size: 10, _page: 0, ...paginationParams },
     });
     return {
       data: data.content,

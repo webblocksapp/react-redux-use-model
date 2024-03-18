@@ -7,9 +7,15 @@ import {
   StringKey,
   ForeignKey,
   AnyObject,
+  PaginationParams,
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
-import { paginateData, useModelContext } from '@utils';
+import {
+  calcPage,
+  calcPagination,
+  paginateData,
+  useModelContext,
+} from '@utils';
 import { useApiClients } from '@hooks';
 import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -34,7 +40,10 @@ type RemoveResponse = {
 
 type QueryHandler =
   | {
-      apiFn: (...args: any) => Promise<ListResponse>;
+      apiFn: (
+        paginationParams: PaginationParams,
+        ...args: any
+      ) => Promise<ListResponse>;
       action: EntityActionType.LIST;
     }
   | {
@@ -168,17 +177,6 @@ export const useModel = <
   };
 
   /**
-   * Get page from params.
-   */
-  const getPageFromParams = (params: Array<any>) => {
-    const param = params.find(
-      (item) => item?.page !== undefined || item?._page !== undefined
-    );
-
-    return param?.page || param?._page;
-  };
-
-  /**
    * Initialize model methods.
    */
   const buildModelMethods = () => {
@@ -210,14 +208,26 @@ export const useModel = <
    * Build the list method.
    */
   const buildListMethod = (handlerName: StringKey<keyof T>) => {
-    return async (...params: Parameters<QueryHandler['apiFn']>) => {
-      const page = getPageFromParams(params);
+    return async (
+      ...params: Parameters<
+        Extract<
+          T[StringKey<keyof T>],
+          { action: EntityActionType.LIST }
+        >['apiFn']
+      >
+    ) => {
+      const [paginationParams] = params;
+      const page = paginationParams._page || 0;
+      const calculatedPage = calcPage({
+        page,
+        size: paginationParams._size || 10,
+        sizeMultiplier: paginationConfig?.sizeMultiplier,
+      });
 
       if (queryKey) {
-        ref.current.currentPage = page || 0;
         dispatchGoToPage({
           queryKey,
-          page: ref.current.currentPage,
+          page,
         });
       }
 
@@ -229,7 +239,7 @@ export const useModel = <
       dispatchList({
         entities: response?.data || [],
         pagination: response?.pagination,
-        currentPage: ref.current.currentPage,
+        currentPage: page,
         params,
       });
     };
@@ -239,7 +249,14 @@ export const useModel = <
    * Build the create method.
    */
   const buildCreateMethod = (handlerName: StringKey<keyof T>) => {
-    return async (...params: Parameters<QueryHandler['apiFn']>) => {
+    return async (
+      ...params: Parameters<
+        Extract<
+          T[StringKey<keyof T>],
+          { action: EntityActionType.CREATE }
+        >['apiFn']
+      >
+    ) => {
       const { data } = (await runApi({
         apiName: handlerName,
         params,
@@ -269,7 +286,14 @@ export const useModel = <
    * Build the update method
    */
   const buildUpdateMethod = (handlerName: StringKey<keyof T>) => {
-    return async (...params: Parameters<QueryHandler['apiFn']>) => {
+    return async (
+      ...params: Parameters<
+        Extract<
+          T[StringKey<keyof T>],
+          { action: EntityActionType.UPDATE }
+        >['apiFn']
+      >
+    ) => {
       const { data } = (await runApi({
         apiName: handlerName,
         params,
@@ -302,7 +326,14 @@ export const useModel = <
    * Build the remove method.
    */
   const buildRemoveMethod = (handlerName: StringKey<keyof T>) => {
-    return async (...params: Parameters<QueryHandler['apiFn']>) => {
+    return async (
+      ...params: Parameters<
+        Extract<
+          T[StringKey<keyof T>],
+          { action: EntityActionType.REMOVE }
+        >['apiFn']
+      >
+    ) => {
       const { data } = (await runApi({
         apiName: handlerName,
         params,

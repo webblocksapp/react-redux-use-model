@@ -11,7 +11,7 @@ export const VideosList: React.FC<VideosListProps> = () => {
   const videoQuery = useSelector(videoModel.selectQuery);
 
   useEffect(() => {
-    videoModel.list();
+    videoModel.list({ _page: 0 });
   }, []);
 
   return (

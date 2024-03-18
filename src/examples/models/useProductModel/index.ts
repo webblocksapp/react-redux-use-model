@@ -8,6 +8,7 @@ export const useProductModel = (options?: { queryKey?: string }) => {
   const model = useModel({
     entityName: EntityName.Products,
     queryKey: options?.queryKey,
+    paginationConfig: { sizeMultiplier: 5 },
     handlers: {
       list: {
         apiFn: productApiClient.list,

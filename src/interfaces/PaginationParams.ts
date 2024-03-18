@@ -1,5 +1,5 @@
-export type EntityParams<T = any> = {
+export type PaginationParams = {
   _page?: number;
   _size?: number;
   _filter?: string;
-} & Partial<T>;
+};

@@ -1,18 +1,19 @@
-import { EntityParams, Pagination } from '@interfaces';
+import { Pagination, PaginationParams } from '@interfaces';
 import { ListResponse, VideoComment } from '@examples/interfaces';
 import { axiosLocal } from '@examples/utils';
 
 export const useVideoCommentApiClient = () => {
   const list = async (
-    params: EntityParams<VideoComment>
+    paginationParams: PaginationParams,
+    entity: VideoComment
   ): Promise<{
     data: VideoComment[];
     pagination: Pagination;
   }> => {
     const { data } = await axiosLocal.get<ListResponse<VideoComment>>(
-      `/videos/${params.videoId}/comments`,
+      `/videos/${entity.videoId}/comments`,
       {
-        params: { _size: 10, _page: 0, ...params },
+        params: { _size: 10, ...paginationParams },
       }
     );
     return {
