@@ -5,6 +5,7 @@ export * from './clone';
 export * from './formatObjectPath';
 export * from './get';
 export * from './handlePagination';
+export * from './isLastPage';
 export * from './isNullish';
 export * from './mergeIds';
 export * from './mergeQueries';
