@@ -1,3 +1,4 @@
+// Util function to calc page size with its multiplier.
 export const calcPageSize = (args: {
   size: number;
   sizeMultiplier?: number;
