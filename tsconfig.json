@@ -33,5 +33,6 @@
       "react-redux-use-model": ["src"]
     }
   },
+  "exclude": ["public"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
