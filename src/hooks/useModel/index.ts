@@ -17,6 +17,7 @@ import {
   paginateData,
   useModelContext,
   calcTotalPages,
+  isLastPage,
 } from '@utils';
 import { useApiClients } from '@hooks';
 import { useMemo } from 'react';
@@ -548,9 +549,20 @@ export const useModel = <
    */
   const selectPaginatedQuery = createSelector([selectQuery], (query) => {
     if (query?.pagination) {
+      let limit = query.pagination.size;
+      if (
+        query.currentPage &&
+        isLastPage({
+          page: query.currentPage,
+          size: query.pagination.size,
+          totalElements: query.pagination.totalElements,
+        })
+      ) {
+      }
+
       const { content } = paginateData(query?.ids || [], {
-        page: query?.pagination.page,
-        limit: query?.pagination.size,
+        page: query.pagination.page,
+        limit,
       });
 
       return { ...query, ids: content };

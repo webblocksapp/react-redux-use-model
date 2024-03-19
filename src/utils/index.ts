@@ -3,6 +3,7 @@ export * from './calcPage';
 export * from './calcPageSize';
 export * from './calcPagination';
 export * from './calcPaginationIndexes';
+export * from './calcPaginationLimit';
 export * from './calcTotalPages';
 export * from './clone';
 export * from './formatObjectPath';
