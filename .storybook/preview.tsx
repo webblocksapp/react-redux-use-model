@@ -2,7 +2,7 @@ import type { Preview } from '@storybook/react';
 import { Provider } from 'react-redux';
 import { ModelProvider } from '@components';
 import { worker } from '@examples/mocks/browser';
-import { store } from '@store';
+import { store } from '@examples/store';
 
 worker.start({ onUnhandledRequest: 'bypass' });
 

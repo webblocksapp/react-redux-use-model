@@ -32,23 +32,23 @@ export const VideoCommentsList: React.FC<VideoCommentsListProps> = ({
 
   return (
     <ul>
-      {entities.map((item) => (
+      {entities.map((entity) => (
         <li
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
-          key={item.entity?.id}
+          key={entity.id}
         >
-          {item.loading ? 'Loading comment...' : item.entity?.content}
+          {entity.loading ? 'Loading comment...' : entity.data?.content}
           <div>
-            <button onClick={() => update(item.entity)}>
+            <button onClick={() => update(entity.data)}>
               {videoCommentModel.updateState.isLoading
                 ? 'Updating...'
                 : 'Update'}
             </button>
-            <button onClick={() => remove(item.entity)}>
+            <button onClick={() => remove(entity.data)}>
               {videoCommentModel.removeState.isLoading
                 ? 'Removing...'
                 : 'Remove'}

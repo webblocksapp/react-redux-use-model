@@ -102,11 +102,14 @@ export const useModel = <
   entityName: string;
   queryKey: string | undefined;
   schema?: ModelSchema;
-  paginationConfig?: {
-    sizeMultiplier?: number;
+  config?: {
+    paginationSizeMultiplier?: number;
+    initialLoadingSize?: number;
   };
 }) => {
-  const { handlers, entityName, queryKey, schema, paginationConfig } = params;
+  const { handlers, entityName, queryKey, schema, config } = params;
+  const { paginationSizeMultiplier = 5, initialLoadingSize = 10 } =
+    config || {};
   const { findQuery } = useModelContext();
 
   /**
@@ -245,7 +248,7 @@ export const useModel = <
       const page = paginationParams?._page || 0;
       const size =
         paginationParams?._size || cachedPaginationParams?._size || 10;
-      const sizeMultiplier = paginationConfig?.sizeMultiplier || 1;
+      const sizeMultiplier = paginationSizeMultiplier || 1;
 
       if (queryKey) {
         dispatchGoToPage({
@@ -313,7 +316,9 @@ export const useModel = <
         apiName: handlerName,
         params,
       })) as CreateResponse;
+
       dispatchCreate({ entity: data });
+
       const refetchHandlerName = getRefetchHandlerName();
 
       if (refetchHandlerName === undefined) return;
@@ -370,7 +375,7 @@ export const useModel = <
         pagination: response.pagination,
         currentPage: query?.currentPage,
         params: query?.params,
-        sizeMultiplier: paginationConfig?.sizeMultiplier,
+        sizeMultiplier: paginationSizeMultiplier,
       });
     };
   };
@@ -448,17 +453,21 @@ export const useModel = <
     ],
     (state, ids) => {
       const entities: Array<{
-        entity: NormalizeEntity<ExtractEntity<T>> | undefined;
+        id: string;
+        data: NormalizeEntity<ExtractEntity<T>> | undefined;
         loading: boolean;
       }> = [];
+
       if (ids) {
         for (const id of ids) {
-          const entity = (id ? state?.byId?.[id] : { id }) as NormalizeEntity<
-            ExtractEntity<T>
-          >;
-          entities.push({ entity, loading: entity ? false : true });
+          const loading = Boolean(state?.byId?.[id]);
+          const entity = (id ? state?.byId?.[id] : undefined) as
+            | NormalizeEntity<ExtractEntity<T>>
+            | undefined;
+          entities.push({ id, data: entity, loading });
         }
       }
+
       return entities;
     }
   );
@@ -488,6 +497,20 @@ export const useModel = <
   );
 
   /**
+   * Helper function that generates a random empty id.
+   */
+  const emptyId = () => `empty-${uuid()}`;
+
+  /**
+   * Helper function that generates random empty ids.
+   */
+  const buildEmptyIds = (size: number) => {
+    return Array(size)
+      .fill(null)
+      .map(() => emptyId());
+  };
+
+  /**
    * Select the query.
    */
   const selectQuery = createSelector([selectQueries], (queries) => {
@@ -495,7 +518,7 @@ export const useModel = <
     return {
       ...query,
       ids: query?.ids?.map((item) => {
-        if (item === null || item === undefined) return `empty-${uuid()}`;
+        if (item === null || item === undefined) return emptyId();
         return item;
       }),
     } as QueryState<
@@ -525,13 +548,15 @@ export const useModel = <
    */
   const selectPaginatedQuery = createSelector([selectQuery], (query) => {
     if (query?.pagination) {
-      const { content } = paginateData(query.ids || [], {
+      const { content } = paginateData(query?.ids || [], {
         page: query?.pagination.page,
         limit: query?.pagination.size,
       });
 
       return { ...query, ids: content };
     }
+
+    return { ...query, ids: buildEmptyIds(initialLoadingSize) };
   });
 
   return {

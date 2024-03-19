@@ -25,11 +25,11 @@ export const VideosDropdown: React.FC = () => {
 
   return (
     <Select
-      options={(entities || [])
-        .filter((item) => item.loading == false)
-        .map((item) => ({
-          label: item.entity?.title,
-          value: item.entity?.id,
+      options={entities
+        .filter((entity) => entity.loading == false)
+        .map((entity) => ({
+          label: entity.data?.title,
+          value: entity.id,
         }))}
       endReached={list}
     />
