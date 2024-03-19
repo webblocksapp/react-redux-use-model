@@ -1,7 +1,6 @@
-import { EntityActionType } from '@constants';
 import { useVideoCommentApiClient } from '@examples/apiClients';
 import { EntityName } from '@examples/constants';
-import { useModel } from '@hooks';
+import { EntityActionType, useModel } from 'react-redux-use-model';
 
 export const useVideoCommentModel = (options?: { queryKey?: string }) => {
   const videoCommentApiClient = useVideoCommentApiClient();

@@ -10,4 +10,13 @@ export default defineConfig({
     tsconfigPaths(),
     checker({ typescript: true, overlay: false }),
   ],
+  build: {
+    lib: {
+      entry: './src/index.ts',
+      formats: ['es', 'cjs'],
+      fileName: (format: string) => {
+        return `${format}/index.js`;
+      },
+    },
+  },
 });

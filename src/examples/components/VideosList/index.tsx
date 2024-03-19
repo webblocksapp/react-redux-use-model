@@ -6,12 +6,14 @@ import { VideoItem, Paginator } from '@examples/components';
 
 export interface VideosListProps {}
 
+const PAGINATION_PARAMS = { _page: 0, _size: 10 };
+
 export const VideosList: React.FC<VideosListProps> = () => {
   const videoModel = useVideoModel({ queryKey: QueryKey.VideoList });
   const videoQuery = useSelector(videoModel.selectQuery);
 
   useEffect(() => {
-    videoModel.list({ _page: 0 });
+    videoModel.list(PAGINATION_PARAMS);
   }, []);
 
   return (
@@ -33,7 +35,9 @@ export const VideosList: React.FC<VideosListProps> = () => {
           </div>
           <Paginator
             pagination={videoQuery?.pagination}
-            onClickPage={(index) => videoModel.list({ _page: index })}
+            onClickPage={(index) =>
+              videoModel.list({ ...PAGINATION_PARAMS, _page: index })
+            }
           />
           <pre>
             <code>{JSON.stringify(videoQuery?.pagination)}</code>

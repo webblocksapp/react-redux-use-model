@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Paginator, ProductItem } from '@examples/components';
 
+const PAGINATION_PARAMS = { _page: 0, _size: 10 };
+
 export const ProductList: React.FC = () => {
   const productModel = useProductModel({
     queryKey: QueryKey.ProductList,
@@ -11,7 +13,7 @@ export const ProductList: React.FC = () => {
   const productQuery = useSelector(productModel.selectQuery);
 
   useEffect(() => {
-    productModel.list({ _page: 0, _size: 10 });
+    productModel.list(PAGINATION_PARAMS);
   }, []);
 
   return (
@@ -33,7 +35,9 @@ export const ProductList: React.FC = () => {
           </div>
           <Paginator
             pagination={productQuery?.pagination}
-            onClickPage={(index) => productModel.list({ _page: index })}
+            onClickPage={(index) =>
+              productModel.list({ ...PAGINATION_PARAMS, _page: index })
+            }
           />
         </div>
         <pre

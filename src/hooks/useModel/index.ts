@@ -50,7 +50,7 @@ type RemoveResponse = {
 type QueryHandler =
   | {
       apiFn: (
-        paginationParams: PaginationParams | undefined,
+        paginationParams: PaginationParams,
         ...args: any
       ) => Promise<ListResponse>;
       action: EntityActionType.LIST;
@@ -509,6 +509,18 @@ export const useModel = <
   });
 
   /**
+   * Select pagination params
+   */
+  const selectPaginationParams = createSelector([selectQuery], (query) => {
+    const paginationParams = query?.params?.[0];
+    return {
+      ...paginationParams,
+      _size: paginationParams?._size || 10,
+      _page: paginationParams?._page || 0,
+    };
+  });
+
+  /**
    * Select the paginated query.
    */
   const selectPaginatedQuery = createSelector([selectQuery], (query) => {
@@ -529,5 +541,6 @@ export const useModel = <
     selectEntities,
     selectPaginatedQuery,
     selectQuery,
+    selectPaginationParams,
   };
 };

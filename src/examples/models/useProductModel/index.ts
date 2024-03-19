@@ -1,7 +1,6 @@
 import { EntityName } from '@examples/constants';
 import { useProductApiClient } from '@examples/apiClients';
-import { useModel } from '@hooks';
-import { EntityActionType } from '@constants';
+import { EntityActionType, useModel } from 'react-redux-use-model';
 
 export const useProductModel = (options?: { queryKey?: string }) => {
   const productApiClient = useProductApiClient();

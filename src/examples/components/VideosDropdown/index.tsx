@@ -7,17 +7,16 @@ import { useEffect, useState } from 'react';
 
 export const VideosDropdown: React.FC = () => {
   const videoModel = useVideoModel({ queryKey: QueryKey.VideosDropdown });
-  const query = useSelector((state: RootState) =>
-    videoModel.selectQuery(state)
-  );
-  const [params, setParams] = useState(query?.params?.[0]);
+  const query = useSelector(videoModel.selectQuery);
+  const paginationParams = useSelector(videoModel.selectPaginationParams);
+  const [params, setParams] = useState(paginationParams);
   const entities = useSelector((state: RootState) =>
     videoModel.selectEntities(state, query.ids)
   );
 
   const list = () => {
-    videoModel.list({ _page: params?._page, _size: 30 });
-    setParams((prev) => ({ ...prev, _page: (params?._page || 0) + 1 }));
+    videoModel.list({ _page: params._page, _size: 30 });
+    setParams((prev) => ({ ...prev, _page: params._page + 1 }));
   };
 
   useEffect(() => {

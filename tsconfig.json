@@ -29,7 +29,8 @@
       "@states/*": ["src/states/*"],
       "@store": ["src/store"],
       "@utils": ["src/utils"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "react-redux-use-model": ["src"]
     }
   },
   "references": [{ "path": "./tsconfig.node.json" }]

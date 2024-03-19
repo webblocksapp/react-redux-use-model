@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { Paginator, ProductItem } from '@examples/components';
 import { createRandomProduct } from '@examples/mocks';
 
+const PAGINATION_PARAMS = { _page: 0, _size: 10 };
+
 export const ProductCrud: React.FC = () => {
   const productModel = useProductModel({
     queryKey: QueryKey.ProductCrud,
@@ -16,7 +18,7 @@ export const ProductCrud: React.FC = () => {
   };
 
   useEffect(() => {
-    productModel.list();
+    productModel.list(PAGINATION_PARAMS);
   }, []);
 
   return (
@@ -35,13 +37,15 @@ export const ProductCrud: React.FC = () => {
               padding: 10,
             }}
           >
-            {productQuery?.ids?.map((id) => (
-              <ProductItem key={id} productId={id} />
+            {productQuery?.ids?.map((id, index) => (
+              <ProductItem index={index} key={id} productId={id} />
             ))}
           </div>
           <Paginator
             pagination={productQuery?.pagination}
-            onClickPage={(index) => productModel.list({ _page: index })}
+            onClickPage={(index) =>
+              productModel.list({ ...PAGINATION_PARAMS, _page: index })
+            }
           />
         </div>
         <pre

@@ -1,4 +1,4 @@
-import { Pagination, PaginationParams } from '@interfaces';
+import { Pagination, PaginationParams } from 'react-redux-use-model';
 import { ListResponse, Video } from '@examples/interfaces';
 import { axiosLocal } from '@examples/utils';
 

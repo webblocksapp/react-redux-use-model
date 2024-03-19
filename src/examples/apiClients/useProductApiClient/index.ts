@@ -1,10 +1,10 @@
-import { Pagination, PaginationParams } from '@interfaces';
+import { Pagination, PaginationParams } from 'react-redux-use-model';
 import { ListResponse, Product } from '@examples/interfaces';
 import { axiosLocal } from '@examples/utils';
 
 export const useProductApiClient = () => {
   const list = async (
-    params?: PaginationParams
+    params: PaginationParams
   ): Promise<{
     data: Product[];
     pagination: Pagination;
