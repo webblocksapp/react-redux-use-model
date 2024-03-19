@@ -10,7 +10,7 @@ export interface VideoItemProps {
 
 export const VideoItem: React.FC<VideoItemProps> = ({ videoId }) => {
   const videoModel = useVideoModel();
-  const { entity: video, loading } = useSelector((state: RootState) =>
+  const { data: video, loading } = useSelector((state: RootState) =>
     videoModel.selectEntity(state, videoId)
   );
 

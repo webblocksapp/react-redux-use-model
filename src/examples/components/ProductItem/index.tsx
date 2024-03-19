@@ -13,7 +13,7 @@ export const ProductItem: React.FC<ProductItemProps> = ({
   index,
 }) => {
   const productModel = useProductModel();
-  const { entity: product, loading } = useSelector((state: RootState) =>
+  const { data: product, loading } = useSelector((state: RootState) =>
     productModel.selectEntity(state, productId)
   );
 

@@ -1,7 +1,13 @@
-import { Entity, NormalizedEntitiesState, QueryState } from '@interfaces';
+import {
+  Entity,
+  NormalizedEntitiesState,
+  QueryState,
+  RootState,
+} from '@interfaces';
 import { createContext, useContext } from 'react';
 
 export type ModelContextType = {
+  getRootState: () => RootState;
   getNormalizedEntitiesState: () => NormalizedEntitiesState;
   findEntityState: (entityName: string) => NormalizedEntitiesState[string];
   findQuery: (

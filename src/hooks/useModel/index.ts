@@ -8,6 +8,7 @@ import {
   ForeignKey,
   AnyObject,
   PaginationParams,
+  NormalizedState,
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import {
@@ -452,19 +453,11 @@ export const useModel = <
       (_: RootState, ids: Array<string> | null | undefined) => ids,
     ],
     (state, ids) => {
-      const entities: Array<{
-        id: string;
-        data: NormalizeEntity<ExtractEntity<T>> | undefined;
-        loading: boolean;
-      }> = [];
+      const entities: Array<ReturnType<typeof buildSelectedEntity>> = [];
 
       if (ids) {
         for (const id of ids) {
-          const loading = Boolean(state?.byId?.[id]);
-          const entity = (id ? state?.byId?.[id] : undefined) as
-            | NormalizeEntity<ExtractEntity<T>>
-            | undefined;
-          entities.push({ id, data: entity, loading });
+          entities.push(buildSelectedEntity(state, id));
         }
       }
 
@@ -473,19 +466,26 @@ export const useModel = <
   );
 
   /**
+   * Util function for building the selected entity for entities selectors.
+   */
+  const buildSelectedEntity = (
+    state: NormalizedState | undefined,
+    entityId?: string
+  ) => {
+    entityId = entityId || emptyId();
+    const loading = state?.byId?.[entityId] === undefined;
+    const entity = (entityId ? state?.byId?.[entityId] : undefined) as
+      | NormalizeEntity<ExtractEntity<T>>
+      | undefined;
+    return { id: entityId, data: entity, loading };
+  };
+
+  /**
    * Select an entity value from the normalized list.
    */
   const selectEntity = createSelector(
-    [
-      selectNormalizedEntityState,
-      (_: RootState, id: string | null | undefined) => id,
-    ],
-    (state, id) => {
-      const entity = (id ? state?.byId?.[id] : undefined) as
-        | NormalizeEntity<ExtractEntity<T>>
-        | undefined;
-      return { entity, loading: entity ? false : true };
-    }
+    [selectNormalizedEntityState, (_: RootState, id?: string) => id],
+    (state, id) => buildSelectedEntity(state, id)
   );
 
   /**

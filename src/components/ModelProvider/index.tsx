@@ -11,6 +11,10 @@ export const ModelProvider: React.FC<ModelProviderProps> = ({
   store,
   children,
 }) => {
+  const getRootState: ModelContextType['getRootState'] = () => {
+    return store.getState();
+  };
+
   const getNormalizedEntitiesState: ModelContextType['getNormalizedEntitiesState'] =
     () => {
       return store.getState().normalizedEntitiesState;
@@ -36,6 +40,7 @@ export const ModelProvider: React.FC<ModelProviderProps> = ({
   return (
     <ModelContext.Provider
       value={{
+        getRootState,
         getNormalizedEntitiesState,
         findQuery,
         findEntity,
