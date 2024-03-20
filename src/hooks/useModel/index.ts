@@ -287,7 +287,7 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
       dispatchList({
         entities: response?.data || [],
         queryKey,
-        pagination: response.pagination
+        pagination: response?.pagination
           ? {
               ...response.pagination,
               page,
@@ -436,7 +436,7 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
     ],
     (state, ids) => {
       const entities: Array<ReturnType<typeof buildSelectedEntity>> = [];
-
+      console.log('MODEL: SELECTED ENTITIES', ids);
       if (ids) {
         for (const id of ids) {
           entities.push(buildSelectedEntity(state, id));

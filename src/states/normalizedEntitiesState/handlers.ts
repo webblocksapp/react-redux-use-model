@@ -61,7 +61,7 @@ export const list = (
 export const create = (
   entityName: string,
   entity: Entity,
-  queryKey: string | undefined,
+  _: string | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   let normalizedState: NormalizedEntitiesState = {};
@@ -84,20 +84,13 @@ export const create = (
                   operation: 'create',
                 }),
                 ids: (() => {
+                  const newIds = [...query.ids];
                   const { startIndex } = calcPaginationIndexes({
                     ...query.pagination,
                     page: query?.currentPage || query.pagination.page,
                   });
-
-                  if (entity.id && query.queryKey === queryKey) {
-                    const newIds = [...query.ids];
-                    newIds.splice(startIndex, 0, entity.id);
-                    return newIds;
-                  } else if (entity.id) {
-                    return [...query.ids, entity.id];
-                  }
-
-                  return query.ids;
+                  entity.id && newIds.splice(startIndex, 0, entity.id);
+                  return newIds;
                 })(),
               }
             : {}),
