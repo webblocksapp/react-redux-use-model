@@ -7,12 +7,11 @@ import { Paginator, ProductItem } from '@examples/components';
 const PAGINATION_PARAMS = { _page: 0, _size: 10 };
 
 export const ProductList: React.FC = () => {
-  const productModel = useProductModel({
-    queryKey: QueryKey.ProductList,
-  });
+  const productModel = useProductModel();
   const productQuery = useSelector(productModel.selectQuery);
 
   useEffect(() => {
+    productModel.setQueryKey(QueryKey.ProductList);
     productModel.list(PAGINATION_PARAMS);
   }, []);
 

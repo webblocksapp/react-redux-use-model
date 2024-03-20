@@ -8,9 +8,7 @@ import { createRandomProduct } from '@examples/mocks';
 const PAGINATION_PARAMS = { _page: 0, _size: 10 };
 
 export const ProductCrud: React.FC = () => {
-  const productModel = useProductModel({
-    queryKey: QueryKey.ProductCrud,
-  });
+  const productModel = useProductModel();
   const productQuery = useSelector(productModel.selectPaginatedQuery);
 
   const create = () => {
@@ -18,6 +16,7 @@ export const ProductCrud: React.FC = () => {
   };
 
   useEffect(() => {
+    productModel.setQueryKey(QueryKey.ProductCrud);
     productModel.list(PAGINATION_PARAMS);
   }, []);
 

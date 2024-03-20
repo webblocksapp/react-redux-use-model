@@ -2,7 +2,7 @@ import { useVideoCommentApiClient } from '@examples/apiClients';
 import { EntityName } from '@examples/constants';
 import { EntityActionType, useModel } from 'react-redux-use-model';
 
-export const useVideoCommentModel = (options?: { queryKey?: string }) => {
+export const useVideoCommentModel = () => {
   const videoCommentApiClient = useVideoCommentApiClient();
 
   const model = useModel({
@@ -16,7 +16,6 @@ export const useVideoCommentModel = (options?: { queryKey?: string }) => {
         },
       ],
     },
-    queryKey: options?.queryKey,
     handlers: {
       list: {
         action: EntityActionType.LIST,

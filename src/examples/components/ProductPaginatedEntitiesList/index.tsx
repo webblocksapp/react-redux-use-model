@@ -8,15 +8,14 @@ import { RootState } from '@interfaces';
 const PAGINATION_PARAMS = { _page: 0, _size: 10 };
 
 export const ProductPaginatedEntitiesList: React.FC = () => {
-  const productModel = useProductModel({
-    queryKey: QueryKey.ProductPaginatedEntitiesList,
-  });
+  const productModel = useProductModel();
   const productQuery = useSelector(productModel.selectPaginatedQuery);
   const entities = useSelector((state: RootState) =>
     productModel.selectEntities(state, productQuery.ids)
   );
 
   useEffect(() => {
+    productModel.setQueryKey(QueryKey.ProductPaginatedEntitiesList);
     productModel.list(PAGINATION_PARAMS);
   }, []);
 

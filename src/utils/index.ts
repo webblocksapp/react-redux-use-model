@@ -21,6 +21,7 @@ export * from './paginateData';
 export * from './removeArrayDuplicates';
 export * from './replaceArrayPortion';
 export * from './set';
+export * from './sleep';
 export * from './useDebounce';
 export * from './useModelContext';
 export * from './useQueryKey';

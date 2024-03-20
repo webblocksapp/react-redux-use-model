@@ -6,7 +6,7 @@ import { RootState } from '@interfaces';
 import { useEffect, useState } from 'react';
 
 export const VideosDropdown: React.FC = () => {
-  const videoModel = useVideoModel({ queryKey: QueryKey.VideosDropdown });
+  const videoModel = useVideoModel();
   const query = useSelector(videoModel.selectQuery);
   const paginationParams = useSelector(videoModel.selectPaginationParams);
   const [params, setParams] = useState(paginationParams);
@@ -20,6 +20,7 @@ export const VideosDropdown: React.FC = () => {
   };
 
   useEffect(() => {
+    videoModel.setQueryKey(QueryKey.VideosDropdown);
     list();
   }, []);
 
