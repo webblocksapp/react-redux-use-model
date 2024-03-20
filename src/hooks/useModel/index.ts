@@ -601,18 +601,25 @@ export const useModel = <
    */
   const selectPaginatedQuery = createSelector([selectQuery], (query) => {
     if (query?.pagination) {
+      const { size, totalElements, page } = query.pagination;
+      let { content: ids } = paginateData(query?.ids || [], {
+        page,
+        limit: size,
+      });
+
       const limit = calcPaginationLimit({
         page: query.currentPage || 0,
-        size: query.pagination.size,
-        totalElements: query.pagination.totalElements,
+        size,
+        totalElements,
       });
 
-      const { content } = paginateData(query?.ids || [], {
-        page: query.pagination.page,
-        limit,
-      });
+      if (limit !== size) {
+        ids = Array(limit)
+          .fill(null)
+          .map((_, i) => ids[i]);
+      }
 
-      return { ...query, ids: content };
+      return { ...query, ids };
     }
 
     return { ...query, ids: buildEmptyIds(initialLoadingSize) };
