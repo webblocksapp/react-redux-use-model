@@ -18,9 +18,10 @@ import {
   useModelContext,
   calcTotalPages,
   calcPaginationLimit,
+  useQueryKey,
 } from '@utils';
 import { useApiClients } from '@hooks';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 
@@ -102,14 +103,15 @@ export const useModel = <
 >(params: {
   handlers: T;
   entityName: string;
-  queryKey: string | undefined;
   schema?: ModelSchema;
   config?: {
     paginationSizeMultiplier?: number;
     initialLoadingSize?: number;
   };
 }) => {
-  const { handlers, entityName, queryKey, schema, config } = params;
+  const queryKey = useQueryKey();
+  const ref = queryKey.ref || useRef({ queryKey: '' });
+  const { handlers, entityName, schema, config } = params;
   const { paginationSizeMultiplier = 5, initialLoadingSize = 10 } =
     config || {};
   const { findQuery } = useModelContext();
@@ -137,10 +139,23 @@ export const useModel = <
   const dispatch = useDispatch<Dispatch<EntityAction>>();
 
   /**
+   * Get the query key from the ref.
+   */
+  const getQueryKey = () => ref.current.queryKey;
+
+  /**
+   * Set the query key from the ref.
+   */
+  const setQueryKey = (queryKey: string) => {
+    ref.current.queryKey = queryKey;
+  };
+
+  /**
    * Dispatch a list of entities.
    */
   const dispatchList = (params: {
     entities: Array<any>;
+    queryKey: string;
     pagination?: QueryState['pagination'];
     currentPage?: number;
     params: any;
@@ -148,7 +163,6 @@ export const useModel = <
   }) => {
     dispatch({
       type: EntityActionType.LIST,
-      queryKey,
       entityName,
       ...params,
     });
@@ -219,7 +233,7 @@ export const useModel = <
   /**
    * Get the pagination from the cached params inside a query.
    */
-  const getCachedPaginationParams = () => {
+  const getCachedPaginationParams = (queryKey: string) => {
     const query = findQuery(entityName, queryKey);
     let [cachedPaginationParams] = (query?.params || []) as ListApiFnParams<T>;
     return cachedPaginationParams;
@@ -228,7 +242,7 @@ export const useModel = <
   /**
    * Get the current page from the query.
    */
-  const getCurrentPage = () => {
+  const getCurrentPage = (queryKey: string) => {
     const query = findQuery(entityName, queryKey);
     return query?.currentPage;
   };
@@ -245,8 +259,9 @@ export const useModel = <
         >['apiFn']
       >
     ) => {
+      const queryKey = getQueryKey();
       const [paginationParams, ...restParams] = params;
-      let cachedPaginationParams = getCachedPaginationParams();
+      let cachedPaginationParams = getCachedPaginationParams(queryKey);
       const page = paginationParams?._page || 0;
       const size =
         paginationParams?._size || cachedPaginationParams?._size || 10;
@@ -280,10 +295,11 @@ export const useModel = <
         ] as typeof params,
       })) as ListResponse;
 
-      cachedPaginationParams = getCachedPaginationParams();
+      cachedPaginationParams = getCachedPaginationParams(queryKey);
 
       dispatchList({
         entities: response?.data || [],
+        queryKey,
         pagination: response.pagination
           ? {
               ...response.pagination,
@@ -295,7 +311,7 @@ export const useModel = <
               }),
             }
           : undefined,
-        currentPage: getCurrentPage(),
+        currentPage: getCurrentPage(queryKey),
         params,
         sizeMultiplier,
       });
@@ -314,6 +330,7 @@ export const useModel = <
         >['apiFn']
       >
     ) => {
+      const queryKey = getQueryKey();
       const { data } = (await runApi({
         apiName: handlerName,
         params,
@@ -334,6 +351,7 @@ export const useModel = <
 
       dispatchList({
         entities: response?.data || [],
+        queryKey,
         pagination: response.pagination,
         currentPage: query?.currentPage,
         params: query?.params,
@@ -353,6 +371,7 @@ export const useModel = <
         >['apiFn']
       >
     ) => {
+      const queryKey = getQueryKey();
       const { data } = (await runApi({
         apiName: handlerName,
         params,
@@ -374,6 +393,7 @@ export const useModel = <
 
       dispatchList({
         entities: response?.data || [],
+        queryKey,
         pagination: response.pagination,
         currentPage: query?.currentPage,
         params: query?.params,
@@ -515,6 +535,7 @@ export const useModel = <
    * Select the query.
    */
   const selectQuery = createSelector([selectQueries], (queries) => {
+    const queryKey = getQueryKey();
     const query = queries?.find((item) => item.queryKey == queryKey);
     return {
       ...query,
@@ -569,6 +590,7 @@ export const useModel = <
   return {
     ...buildModelMethods(),
     ...state,
+    setQueryKey,
     selectEntity,
     selectEntities,
     selectPaginatedQuery,

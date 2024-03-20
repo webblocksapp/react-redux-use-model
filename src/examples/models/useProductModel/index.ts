@@ -2,11 +2,10 @@ import { EntityName } from '@examples/constants';
 import { useProductApiClient } from '@examples/apiClients';
 import { EntityActionType, useModel } from 'react-redux-use-model';
 
-export const useProductModel = (options?: { queryKey?: string }) => {
+export const useProductModel = () => {
   const productApiClient = useProductApiClient();
   const model = useModel({
     entityName: EntityName.Products,
-    queryKey: options?.queryKey,
     config: { paginationSizeMultiplier: 5 },
     handlers: {
       list: {

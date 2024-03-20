@@ -23,6 +23,7 @@
       "@constants": ["src/constants"],
       "@interfaces": ["src/interfaces"],
       "@hooks": ["src/hooks"],
+      "@hocs": ["src/hocs"],
       "@models": ["src/models"],
       "@mocks/*": ["src/mocks/*"],
       "@states": ["src/states"],
