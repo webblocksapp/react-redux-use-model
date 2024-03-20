@@ -19,6 +19,8 @@ import {
   calcTotalPages,
   calcPaginationLimit,
   useQueryKey,
+  isLastPage,
+  isPageBlank,
 } from '@utils';
 import { useApiClients } from '@hooks';
 import { useMemo, useRef } from 'react';
@@ -193,7 +195,10 @@ export const useModel = <
   /**
    * Dispatch remove operation.
    */
-  const dispatchRemove = (params: { entityId: string }) => {
+  const dispatchRemove = (params: {
+    entityId: string;
+    currentPage?: number;
+  }) => {
     dispatch({
       type: EntityActionType.REMOVE,
       entityName,
@@ -414,12 +419,38 @@ export const useModel = <
         >['apiFn']
       >
     ) => {
+      const queryKey = getQueryKey();
       const { data } = (await runApi({
         apiName: handlerName,
         params,
       })) as RemoveResponse;
 
-      dispatchRemove({ entityId: data.id });
+      dispatchRemove({
+        entityId: data.id,
+        currentPage: getCurrentPage(queryKey),
+      });
+
+      const query = findQuery(entityName, queryKey);
+
+      if (query?.pagination && query.pagination.page == query?.currentPage) {
+        /**
+         * Page is decreased in one if it's detected the current page is the last page.
+         * Also if the current page is blank.
+         */
+        if (
+          isLastPage(query.pagination) &&
+          query.pagination.page == query.currentPage &&
+          isPageBlank(query.pagination)
+        ) {
+          const cachedPaginationParams = getCachedPaginationParams(queryKey);
+          dispatchGoToPage({
+            queryKey,
+            page: query.currentPage - 1,
+            size: cachedPaginationParams._size,
+            sizeMultiplier: paginationSizeMultiplier,
+          });
+        }
+      }
     };
   };
 
