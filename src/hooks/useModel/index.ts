@@ -31,9 +31,7 @@ type ListApiFnParams<
   T extends {
     [K in keyof T]: QueryHandler;
   }
-> = Parameters<
-  Extract<T[StringKey<keyof T>], { action: EntityActionType.LIST }>['apiFn']
->;
+> = Parameters<ExtractHandler<T, EntityActionType.LIST>['apiFn']>;
 
 type ListResponse = {
   data: Array<{ id: string }>;
@@ -52,6 +50,10 @@ type RemoveResponse = {
   data: { id?: string };
 };
 
+type QueryHandlers<T> = {
+  [K in keyof T]: QueryHandler;
+};
+
 type QueryHandler =
   | {
       apiFn: (
@@ -67,7 +69,6 @@ type QueryHandler =
   | {
       apiFn: (id: string, entity: any, ...args: any) => Promise<UpdateResponse>;
       action: EntityActionType.UPDATE;
-      optimistic?: boolean;
     }
   | {
       apiFn: (
@@ -78,15 +79,14 @@ type QueryHandler =
       action: EntityActionType.REMOVE;
     };
 
-type ExtractEntity<
-  T extends {
-    [K in keyof T]: QueryHandler;
-  }
-> = Awaited<
-  ReturnType<
-    Extract<T[StringKey<keyof T>], { action: EntityActionType.LIST }>['apiFn']
-  >
+type ExtractEntity<T extends QueryHandlers<T>> = Awaited<
+  ReturnType<ExtractHandler<T, EntityActionType.LIST>['apiFn']>
 >['data'][0];
+
+type ExtractHandler<
+  T extends QueryHandlers<T>,
+  TEntityActionType extends EntityActionType
+> = Extract<T[StringKey<keyof T>], { action: TEntityActionType }>;
 
 type NormalizeEntity<T extends AnyObject> = {
   [K in keyof T]: T[K] extends Array<{ id?: string }>
@@ -98,11 +98,7 @@ type NormalizeEntity<T extends AnyObject> = {
 
 type ModelSchema = { foreignKeys: Array<ForeignKey> };
 
-export const useModel = <
-  T extends {
-    [K in keyof T]: QueryHandler;
-  }
->(params: {
+export const useModel = <T extends QueryHandlers<T>>(params: {
   handlers: T;
   entityName: string;
   schema?: ModelSchema;
@@ -173,7 +169,10 @@ export const useModel = <
   /**
    * Dispatch a created entity.
    */
-  const dispatchCreate = (params: { entity: any }) => {
+  const dispatchCreate = (params: {
+    entity: any;
+    queryKey: string | undefined;
+  }) => {
     dispatch({
       type: EntityActionType.CREATE,
       entityName,
@@ -224,15 +223,6 @@ export const useModel = <
   };
 
   /**
-   * Get the list query handler name.
-   */
-  const getRefetchHandlerName = () => {
-    for (const [key, value] of Object.entries(handlers)) {
-      if ((value as QueryHandler).action === EntityActionType.LIST) return key;
-    }
-  };
-
-  /**
    * Get the pagination from the cached params inside a query.
    */
   const getCachedPaginationParams = (queryKey: string) => {
@@ -254,12 +244,7 @@ export const useModel = <
    */
   const buildListMethod = (handlerName: StringKey<keyof T>) => {
     return async (
-      ...params: Parameters<
-        Extract<
-          T[StringKey<keyof T>],
-          { action: EntityActionType.LIST }
-        >['apiFn']
-      >
+      ...params: Parameters<ExtractHandler<T, EntityActionType.LIST>['apiFn']>
     ) => {
       const queryKey = getQueryKey();
       const [paginationParams, ...restParams] = params;
@@ -325,12 +310,7 @@ export const useModel = <
    */
   const buildCreateMethod = (handlerName: StringKey<keyof T>) => {
     return async (
-      ...params: Parameters<
-        Extract<
-          T[StringKey<keyof T>],
-          { action: EntityActionType.CREATE }
-        >['apiFn']
-      >
+      ...params: Parameters<ExtractHandler<T, EntityActionType.CREATE>['apiFn']>
     ) => {
       const queryKey = getQueryKey();
       const { data } = (await runApi({
@@ -338,26 +318,7 @@ export const useModel = <
         params,
       })) as CreateResponse;
 
-      dispatchCreate({ entity: data });
-
-      const refetchHandlerName = getRefetchHandlerName();
-
-      if (refetchHandlerName === undefined) return;
-      if (queryKey === undefined) return;
-
-      const query = findQuery(entityName, queryKey);
-      const response = (await runApi({
-        apiName: refetchHandlerName as StringKey<keyof T>,
-        params: query?.params,
-      })) as ListResponse;
-
-      dispatchList({
-        entities: response?.data || [],
-        queryKey,
-        pagination: response.pagination,
-        currentPage: query?.currentPage,
-        params: query?.params,
-      });
+      dispatchCreate({ entity: data, queryKey });
     };
   };
 
@@ -366,14 +327,8 @@ export const useModel = <
    */
   const buildUpdateMethod = (handlerName: StringKey<keyof T>) => {
     return async (
-      ...params: Parameters<
-        Extract<
-          T[StringKey<keyof T>],
-          { action: EntityActionType.UPDATE }
-        >['apiFn']
-      >
+      ...params: Parameters<ExtractHandler<T, EntityActionType.UPDATE>['apiFn']>
     ) => {
-      const queryKey = getQueryKey();
       const { data } = (await runApi({
         apiName: handlerName,
         params,
@@ -381,26 +336,6 @@ export const useModel = <
       })) as UpdateResponse;
 
       dispatchUpdate({ entity: data });
-
-      const refetchHandlerName = getRefetchHandlerName();
-
-      if (refetchHandlerName === undefined) return;
-      if (queryKey === undefined) return;
-
-      const query = findQuery(entityName, queryKey);
-      const response = (await runApi({
-        apiName: refetchHandlerName as StringKey<keyof T>,
-        params: query?.params,
-      })) as ListResponse;
-
-      dispatchList({
-        entities: response?.data || [],
-        queryKey,
-        pagination: response.pagination,
-        currentPage: query?.currentPage,
-        params: query?.params,
-        sizeMultiplier: paginationSizeMultiplier,
-      });
     };
   };
 
@@ -409,12 +344,7 @@ export const useModel = <
    */
   const buildRemoveMethod = (handlerName: StringKey<keyof T>) => {
     return async (
-      ...params: Parameters<
-        Extract<
-          T[StringKey<keyof T>],
-          { action: EntityActionType.REMOVE }
-        >['apiFn']
-      >
+      ...params: Parameters<ExtractHandler<T, EntityActionType.REMOVE>['apiFn']>
     ) => {
       const [entityId] = params;
       const { data } = (await runApi({
@@ -575,12 +505,7 @@ export const useModel = <
         return item;
       }),
     } as QueryState<
-      Parameters<
-        Extract<
-          T[StringKey<keyof T>],
-          { action: EntityActionType.LIST }
-        >['apiFn']
-      >
+      Parameters<ExtractHandler<T, EntityActionType.LIST>['apiFn']>
     >;
   });
 

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { ProductCrud } from '@examples/components';
+import { ProductCrud, ProductPaginatedList } from '@examples/components';
 
 const meta: Meta<typeof ProductCrud> = {
   component: ProductCrud,
@@ -8,6 +8,15 @@ const meta: Meta<typeof ProductCrud> = {
 export default meta;
 type Story = StoryObj<typeof ProductCrud>;
 
-export const Primary: Story = {
+export const Overview: Story = {
   render: () => <ProductCrud />,
+};
+
+export const MultipleComponents: Story = {
+  render: () => (
+    <div>
+      <ProductCrud />
+      <ProductPaginatedList />
+    </div>
+  ),
 };

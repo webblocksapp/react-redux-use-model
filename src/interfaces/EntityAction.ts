@@ -16,6 +16,7 @@ export type EntityAction<TEntity extends { id: string } = any> =
       type: EntityActionType.CREATE;
       entityName: string;
       entity: TEntity;
+      queryKey: string | undefined;
     }
   | {
       type: EntityActionType.UPDATE;

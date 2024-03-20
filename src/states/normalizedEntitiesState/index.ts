@@ -21,7 +21,7 @@ export const normalizedEntitiesState = (
         state
       );
     case EntityActionType.CREATE:
-      return create(action.entityName, action.entity, state);
+      return create(action.entityName, action.entity, action.queryKey, state);
     case EntityActionType.UPDATE:
       return update(action.entityName, action.entity, state);
     case EntityActionType.REMOVE:

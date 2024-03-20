@@ -6,7 +6,9 @@ export const useProductModel = () => {
   const productApiClient = useProductApiClient();
   const model = useModel({
     entityName: EntityName.Products,
-    config: { paginationSizeMultiplier: 5 },
+    config: {
+      paginationSizeMultiplier: 5,
+    },
     handlers: {
       list: {
         apiFn: productApiClient.list,
