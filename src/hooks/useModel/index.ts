@@ -49,7 +49,7 @@ type UpdateResponse = {
 };
 
 type RemoveResponse = {
-  data: { id: string };
+  data: { id?: string };
 };
 
 type QueryHandler =
@@ -116,7 +116,7 @@ export const useModel = <
   const { handlers, entityName, schema, config } = params;
   const { paginationSizeMultiplier = 5, initialLoadingSize = 10 } =
     config || {};
-  const { findQuery } = useModelContext();
+  const { findQuery, findEntityState } = useModelContext();
 
   /**
    * Extract the apis from the handlers.
@@ -195,10 +195,7 @@ export const useModel = <
   /**
    * Dispatch remove operation.
    */
-  const dispatchRemove = (params: {
-    entityId: string;
-    currentPage?: number;
-  }) => {
+  const dispatchRemove = (params: { entityId: string }) => {
     dispatch({
       type: EntityActionType.REMOVE,
       entityName,
@@ -419,36 +416,39 @@ export const useModel = <
         >['apiFn']
       >
     ) => {
-      const queryKey = getQueryKey();
+      const [entityId] = params;
       const { data } = (await runApi({
         apiName: handlerName,
         params,
       })) as RemoveResponse;
 
       dispatchRemove({
-        entityId: data.id,
-        currentPage: getCurrentPage(queryKey),
+        entityId: data?.id || entityId,
       });
 
-      const query = findQuery(entityName, queryKey);
+      const entityState = findEntityState(entityName);
+      const queries = entityState?.queries || [];
 
-      if (query?.pagination && query.pagination.page == query?.currentPage) {
-        /**
-         * Page is decreased in one if it's detected the current page is the last page.
-         * Also if the current page is blank.
-         */
-        if (
-          isLastPage(query.pagination) &&
-          query.pagination.page == query.currentPage &&
-          isPageBlank(query.pagination)
-        ) {
-          const cachedPaginationParams = getCachedPaginationParams(queryKey);
-          dispatchGoToPage({
-            queryKey,
-            page: query.currentPage - 1,
-            size: cachedPaginationParams._size,
-            sizeMultiplier: paginationSizeMultiplier,
-          });
+      for (let query of queries) {
+        if (query.pagination && query.pagination.page == query.currentPage) {
+          /**
+           * Page is decreased in one on every query if it's detected that the
+           * current page is the last page and if the current page is blank.
+           */
+          if (
+            isLastPage(query.pagination) &&
+            query.pagination.page == query.currentPage &&
+            isPageBlank(query.pagination)
+          ) {
+            const queryKey = query.queryKey;
+            const cachedPaginationParams = getCachedPaginationParams(queryKey);
+            dispatchGoToPage({
+              queryKey,
+              page: query.currentPage - 1,
+              size: cachedPaginationParams._size,
+              sizeMultiplier: paginationSizeMultiplier,
+            });
+          }
         }
       }
     };
