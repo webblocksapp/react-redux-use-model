@@ -1,4 +1,4 @@
-import { BASE_URL } from '@examples/utils';
+import { BASE_URL, objectMatchCriteria } from '@examples/utils';
 import { paginateData } from '@utils';
 import { http, delay, HttpResponse } from 'msw';
 import { data } from '@examples/mocks/data';
@@ -10,7 +10,14 @@ export const productHandler = [
     const url = new URL(request.url);
     const size: any = url.searchParams.get('_size');
     const page: any = url.searchParams.get('_page');
-    const products = data.products;
+    const filter: any = url.searchParams.get('_filter');
+    let products = data.products;
+
+    if (filter) {
+      products = products.filter((item) =>
+        objectMatchCriteria(item, filter, ['name'])
+      );
+    }
 
     const { content, totalPages } = paginateData(products, {
       limit: size,

@@ -1,23 +1,31 @@
 import { QueryKey } from '@examples/constants';
 import { useProductModel } from '@examples/models';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Paginator, ProductItem } from '@examples/components';
 
-const PAGINATION_PARAMS = { _page: 0, _size: 10 };
-
 export const ProductPaginatedList: React.FC = () => {
+  const [params, setParams] = useState({ _page: 0, _size: 10, _filter: '' });
   const productModel = useProductModel({
     queryKey: QueryKey.ProductPaginatedList,
   });
   const productQuery = useSelector(productModel.selectPaginatedQuery);
 
   useEffect(() => {
-    productModel.list(PAGINATION_PARAMS);
-  }, []);
+    productModel.list(params);
+  }, [params._filter]);
 
   return (
     <div>
+      <input
+        placeholder="Search..."
+        onChange={(event) => {
+          setParams((prev) => ({
+            ...prev,
+            _filter: event.currentTarget.value,
+          }));
+        }}
+      />
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div
           style={{
@@ -36,7 +44,7 @@ export const ProductPaginatedList: React.FC = () => {
           <Paginator
             pagination={productQuery?.pagination}
             onClickPage={(index) =>
-              productModel.list({ ...PAGINATION_PARAMS, _page: index })
+              productModel.list({ ...params, _page: index })
             }
           />
           <pre>

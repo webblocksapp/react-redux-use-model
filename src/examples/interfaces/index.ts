@@ -1,4 +1,5 @@
 export * from './Comment';
+export * from './CommonObject';
 export * from './ListResponse';
 export * from './Product';
 export * from './ProductAction';
