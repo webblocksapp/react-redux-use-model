@@ -27,13 +27,6 @@ import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 
-type QueryHandlers<
-  T extends { [K in keyof T]: T[K] },
-  TEntity extends { id: string } = { id: string }
-> = {
-  [K in keyof T]: QueryHandler<TEntity>;
-};
-
 type ListApiFnParams<
   TEntity extends { id: string },
   T extends { [K in keyof T]: QueryHandler<TEntity> }
@@ -154,13 +147,11 @@ type NormalizeEntity<T extends AnyObject> = {
 
 type ModelSchema = { foreignKeys: Array<ForeignKey> };
 
-export const useModel = <TEntity extends { id: string }>(params: {
-  handlers: QueryHandlers<
-    {
-      [key: string]: QueryHandler<TEntity>;
-    },
-    TEntity
-  >;
+export const useModel = <
+  TEntity extends { id: string },
+  TQueryHandlers extends { [K in keyof TQueryHandlers]: QueryHandler<TEntity> }
+>(params: {
+  handlers: TQueryHandlers;
   entityName: string;
   schema?: ModelSchema;
   config?: {
