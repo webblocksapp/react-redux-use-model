@@ -27,67 +27,120 @@ import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 
-type QueryHandlers<T extends QueryHandlers<T>> = {
-  [K in keyof T]: QueryHandler;
+type QueryHandlers<
+  T extends { [K in keyof T]: T[K] },
+  TEntity extends { id: string } = { id: string }
+> = {
+  [K in keyof T]: QueryHandler<TEntity>;
 };
 
-type ListApiFnParams<T extends QueryHandlers<T>> = Parameters<
-  ExtractHandler<T, EntityActionType.LIST>['apiFn']
->;
+type ListApiFnParams<
+  TEntity extends { id: string },
+  T extends { [K in keyof T]: QueryHandler<TEntity> }
+> = Parameters<ExtractHandler<TEntity, T, EntityActionType.LIST>['apiFn']>;
 
 type ExtractApiFn<
-  T extends QueryHandlers<T>,
+  TEntity extends { id: string },
+  T extends { [K in keyof T]: QueryHandler<TEntity> },
   TEntityActionType extends EntityActionType
-> = ExtractHandler<T, TEntityActionType>['apiFn'];
+> = ExtractHandler<TEntity, T, TEntityActionType>['apiFn'];
 
-type ExtractEntity<T extends QueryHandlers<T>> = Awaited<
-  ReturnType<ExtractApiFn<T, EntityActionType.LIST>>
+type ExtractEntity<
+  TEntity extends { id: string },
+  T extends { [K in keyof T]: QueryHandler<TEntity> }
+> = Awaited<
+  ReturnType<ExtractApiFn<TEntity, T, EntityActionType.LIST>>
 >['data'][0];
 
-type ListResponse = {
-  data: Array<{ id: string }>;
+type ListResponse<TEntity extends { id: string }> = {
+  data: Array<TEntity>;
   pagination?: Pagination;
 };
 
-type CreateResponse = {
-  data: { id: string };
+type CreateResponse<TEntity extends { id: string }> = {
+  data: TEntity;
 };
 
-type UpdateResponse = {
-  data: { id: string };
+type UpdateResponse<TEntity extends { id: string }> = {
+  data: TEntity;
 };
 
-type RemoveResponse = {
-  data: { id?: string };
+type RemoveResponse<TEntity extends { id: string }> = {
+  data: TEntity;
 };
 
-type QueryHandler =
+type QueryHandler<TEntity extends { id: string } = { id: string }> =
   | {
       apiFn: (
         paginationParams: PaginationParams,
         ...args: any
-      ) => Promise<ListResponse>;
+      ) => Promise<ListResponse<TEntity>>;
       action: EntityActionType.LIST;
+      onSuccess?: (
+        data: Awaited<
+          ReturnType<
+            Extract<
+              QueryHandler<TEntity>,
+              { action: EntityActionType.LIST }
+            >['apiFn']
+          >
+        >
+      ) => void;
     }
   | {
-      apiFn: (...args: any) => Promise<CreateResponse>;
+      apiFn: (...args: any) => Promise<CreateResponse<TEntity>>;
       action: EntityActionType.CREATE;
+      onSuccess?: (
+        data: Awaited<
+          ReturnType<
+            Extract<
+              QueryHandler<TEntity>,
+              { action: EntityActionType.CREATE }
+            >['apiFn']
+          >
+        >
+      ) => void;
     }
   | {
-      apiFn: (id: string, entity: any, ...args: any) => Promise<UpdateResponse>;
+      apiFn: (
+        id: string,
+        entity: any,
+        ...args: any
+      ) => Promise<UpdateResponse<TEntity>>;
       action: EntityActionType.UPDATE;
+      onSuccess?: (
+        data: Awaited<
+          ReturnType<
+            Extract<
+              QueryHandler<TEntity>,
+              { action: EntityActionType.UPDATE }
+            >['apiFn']
+          >
+        >
+      ) => void;
     }
   | {
       apiFn: (
         id: string,
         entity?: any,
         ...args: any
-      ) => Promise<RemoveResponse>;
+      ) => Promise<RemoveResponse<TEntity>>;
       action: EntityActionType.REMOVE;
+      onSuccess?: (
+        data: Awaited<
+          ReturnType<
+            Extract<
+              QueryHandler<TEntity>,
+              { action: EntityActionType.REMOVE }
+            >['apiFn']
+          >
+        >
+      ) => void;
     };
 
 type ExtractHandler<
-  T extends QueryHandlers<T>,
+  TEntity extends { id: string },
+  T extends { [K in keyof T]: QueryHandler<TEntity> },
   TEntityActionType extends EntityActionType
 > = Extract<T[StringKey<keyof T>], { action: TEntityActionType }>;
 
@@ -101,8 +154,13 @@ type NormalizeEntity<T extends AnyObject> = {
 
 type ModelSchema = { foreignKeys: Array<ForeignKey> };
 
-export const useModel = <T extends QueryHandlers<T>>(params: {
-  handlers: T;
+export const useModel = <TEntity extends { id: string }>(params: {
+  handlers: QueryHandlers<
+    {
+      [key: string]: QueryHandler<TEntity>;
+    },
+    TEntity
+  >;
   entityName: string;
   schema?: ModelSchema;
   config?: {
@@ -122,9 +180,9 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
    */
   const apis = useMemo(() => {
     const apisFns = {} as {
-      [K in keyof T]: T[K]['apiFn'];
+      [K in keyof typeof handlers]: (typeof handlers)[K]['apiFn'];
     };
-    const keys = Object.keys(handlers) as Array<keyof T>;
+    const keys = Object.keys(handlers) as Array<keyof typeof handlers>;
     for (const key of keys) {
       apisFns[key] = handlers[key]['apiFn'];
     }
@@ -211,13 +269,15 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
    */
   const buildModelMethods = () => {
     const modelMethods = {} as {
-      [K in keyof T]: (...params: Parameters<T[K]['apiFn']>) => Promise<void>;
+      [K in keyof typeof handlers]: (
+        ...params: Parameters<(typeof handlers)[K]['apiFn']>
+      ) => Promise<void>;
     };
-    const keys = Object.keys(handlers) as Array<keyof T>;
+    const keys = Object.keys(handlers) as Array<keyof typeof handlers>;
 
     for (const key of keys) {
       modelMethods[key] = buildModelMethod(
-        key as StringKey<keyof T>,
+        key as StringKey<keyof typeof handlers>,
         handlers[key]
       );
     }
@@ -230,7 +290,10 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
    */
   const getCachedPaginationParams = (queryKey: string) => {
     const query = findQuery(entityName, queryKey);
-    let [cachedPaginationParams] = (query?.params || []) as ListApiFnParams<T>;
+    let [cachedPaginationParams] = (query?.params || []) as ListApiFnParams<
+      TEntity,
+      typeof handlers
+    >;
     return cachedPaginationParams;
   };
 
@@ -245,9 +308,11 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
   /**
    * Build the list method.
    */
-  const buildListMethod = (handlerName: StringKey<keyof T>) => {
+  const buildListMethod = (handlerName: StringKey<keyof typeof handlers>) => {
     return async (
-      ...params: Parameters<ExtractApiFn<T, EntityActionType.LIST>>
+      ...params: Parameters<
+        ExtractApiFn<TEntity, typeof handlers, EntityActionType.LIST>
+      >
     ) => {
       const queryKey = getQueryKey();
       const [paginationParams, ...restParams] = params;
@@ -283,7 +348,7 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
           },
           ...restParams,
         ] as typeof params,
-      })) as ListResponse;
+      })) as ListResponse<TEntity>;
 
       dispatchList({
         entities: response?.data || [],
@@ -309,15 +374,17 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
   /**
    * Build the create method.
    */
-  const buildCreateMethod = (handlerName: StringKey<keyof T>) => {
+  const buildCreateMethod = (handlerName: StringKey<keyof typeof handlers>) => {
     return async (
-      ...params: Parameters<ExtractApiFn<T, EntityActionType.CREATE>>
+      ...params: Parameters<
+        ExtractApiFn<TEntity, typeof handlers, EntityActionType.CREATE>
+      >
     ) => {
       const queryKey = getQueryKey();
       const { data } = (await runApi({
         apiName: handlerName,
         params,
-      })) as CreateResponse;
+      })) as CreateResponse<TEntity>;
 
       dispatchCreate({ entity: data, queryKey });
     };
@@ -326,15 +393,17 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
   /**
    * Build the update method
    */
-  const buildUpdateMethod = (handlerName: StringKey<keyof T>) => {
+  const buildUpdateMethod = (handlerName: StringKey<keyof typeof handlers>) => {
     return async (
-      ...params: Parameters<ExtractApiFn<T, EntityActionType.UPDATE>>
+      ...params: Parameters<
+        ExtractApiFn<TEntity, typeof handlers, EntityActionType.UPDATE>
+      >
     ) => {
       const { data } = (await runApi({
         apiName: handlerName,
         params,
         throwError: true,
-      })) as UpdateResponse;
+      })) as UpdateResponse<TEntity>;
 
       dispatchUpdate({ entity: data });
     };
@@ -343,15 +412,17 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
   /**
    * Build the remove method.
    */
-  const buildRemoveMethod = (handlerName: StringKey<keyof T>) => {
+  const buildRemoveMethod = (handlerName: StringKey<keyof typeof handlers>) => {
     return async (
-      ...params: Parameters<ExtractApiFn<T, EntityActionType.REMOVE>>
+      ...params: Parameters<
+        ExtractApiFn<TEntity, typeof handlers, EntityActionType.REMOVE>
+      >
     ) => {
       const [entityId] = params;
       const { data } = (await runApi({
         apiName: handlerName,
         params,
-      })) as RemoveResponse;
+      })) as RemoveResponse<TEntity>;
 
       dispatchRemove({
         entityId: data?.id || entityId,
@@ -389,8 +460,8 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
    * Orchestrate the api function with the state dispatcher.
    */
   const buildModelMethod = (
-    handlerName: StringKey<keyof T>,
-    handler: QueryHandler
+    handlerName: StringKey<keyof typeof handlers>,
+    handler: QueryHandler<TEntity>
   ) => {
     switch (handler.action) {
       case EntityActionType.LIST:
@@ -457,7 +528,7 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
     entityId = entityId || emptyId();
     const loading = state?.byId?.[entityId] === undefined;
     const entity = (entityId ? state?.byId?.[entityId] : undefined) as
-      | NormalizeEntity<ExtractEntity<T>>
+      | NormalizeEntity<ExtractEntity<TEntity, typeof handlers>>
       | undefined;
     return { id: entityId, data: entity, loading };
   };
@@ -505,7 +576,9 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
         return item;
       }),
     } as QueryState<
-      Parameters<ExtractHandler<T, EntityActionType.LIST>['apiFn']>
+      Parameters<
+        ExtractHandler<TEntity, typeof handlers, EntityActionType.LIST>['apiFn']
+      >
     >;
   });
 
