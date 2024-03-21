@@ -20,13 +20,18 @@ export const ProductPaginatedList: React.FC = withQueryKey(() => {
 
   useEffect(() => {
     if (params._filter) {
-      productModel.setQueryKey(QueryKey.ProductPaginatedFilteredList);
+      productModel.list({
+        queryKey: QueryKey.ProductPaginatedFilteredList,
+        paginationParams: params,
+        invalidateQuery: { strategy: 'onFilterChange' },
+      });
     } else {
-      productModel.setQueryKey(QueryKey.ProductPaginatedList);
+      productModel.list({
+        queryKey: QueryKey.ProductPaginatedList,
+        paginationParams: params,
+      });
     }
-
-    productModel.list(params);
-  }, [params._filter]);
+  }, [params]);
 
   return (
     <div>
@@ -52,7 +57,7 @@ export const ProductPaginatedList: React.FC = withQueryKey(() => {
           <Paginator
             pagination={productQuery?.pagination}
             onClickPage={(index) =>
-              productModel.list({ ...params, _page: index })
+              setParams((prev) => ({ ...prev, _page: index }))
             }
           />
           <pre>

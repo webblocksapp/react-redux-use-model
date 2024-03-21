@@ -13,6 +13,7 @@ export const useProductModel = () => {
       list: {
         apiFn: productApiClient.list,
         action: EntityActionType.LIST,
+        a: '',
       },
       create: {
         action: EntityActionType.CREATE,

@@ -1,21 +1,22 @@
 import { useVideoModel } from '@examples/models';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { VideoItem, Paginator } from '@examples/components';
 import { QueryKey } from '@examples/constants';
 
 export interface VideosListProps {}
 
-const PAGINATION_PARAMS = { _page: 0, _size: 10 };
-
 export const VideosList: React.FC<VideosListProps> = () => {
   const videoModel = useVideoModel();
   const videoQuery = useSelector(videoModel.selectQuery);
+  const [params, setParams] = useState({ _page: 0, _size: 10, _filter: '' });
 
   useEffect(() => {
-    videoModel.setQueryKey(QueryKey.VideoList);
-    videoModel.list(PAGINATION_PARAMS);
-  }, []);
+    videoModel.list({
+      queryKey: QueryKey.VideoList,
+      paginationParams: params,
+    });
+  }, [params]);
 
   return (
     <div>
@@ -37,7 +38,7 @@ export const VideosList: React.FC<VideosListProps> = () => {
           <Paginator
             pagination={videoQuery?.pagination}
             onClickPage={(index) =>
-              videoModel.list({ ...PAGINATION_PARAMS, _page: index })
+              setParams((prev) => ({ ...prev, _page: index }))
             }
           />
           <pre>

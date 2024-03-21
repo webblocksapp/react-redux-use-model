@@ -1,24 +1,25 @@
 import { QueryKey } from '@examples/constants';
 import { useProductModel } from '@examples/models';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Paginator, ProductItem } from '@examples/components';
 import { createRandomProduct } from '@examples/mocks';
 
-const PAGINATION_PARAMS = { _page: 0, _size: 10 };
-
 export const ProductCrud: React.FC = () => {
   const productModel = useProductModel();
   const productQuery = useSelector(productModel.selectPaginatedQuery);
+  const [params, setParams] = useState({ _page: 0, _size: 10, _filter: '' });
 
   const create = () => {
     productModel.create(createRandomProduct());
   };
 
   useEffect(() => {
-    productModel.setQueryKey(QueryKey.ProductCrud);
-    productModel.list(PAGINATION_PARAMS);
-  }, []);
+    productModel.list({
+      queryKey: QueryKey.ProductCrud,
+      paginationParams: params,
+    });
+  }, [params]);
 
   return (
     <div>
@@ -40,7 +41,7 @@ export const ProductCrud: React.FC = () => {
           <Paginator
             pagination={productQuery?.pagination}
             onClickPage={(index) =>
-              productModel.list({ ...PAGINATION_PARAMS, _page: index })
+              setParams((prev) => ({ ...prev, _page: index }))
             }
           />
           <div>

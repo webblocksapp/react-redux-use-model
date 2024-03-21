@@ -1,14 +1,11 @@
 import { EntityActionType, EntityHelperActionType } from '@constants';
 import {
   EntityAction,
-  Pagination,
   RootState,
   QueryState,
   StringKey,
-  ForeignKey,
-  AnyObject,
-  PaginationParams,
   NormalizedState,
+  AnyObject,
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import {
@@ -26,118 +23,20 @@ import { useApiClients } from '@hooks';
 import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuid } from 'uuid';
-
-type ListApiFnParams<
-  TEntity extends { id: string },
-  T extends { [K in keyof T]: QueryHandler<TEntity> }
-> = Parameters<ExtractHandler<TEntity, T, EntityActionType.LIST>['apiFn']>;
-
-type ListResponse<TEntity extends { id: string }> = {
-  data: Array<TEntity>;
-  pagination?: Pagination;
-};
-
-type CreateResponse<TEntity extends { id: string }> = {
-  data: TEntity;
-};
-
-type UpdateResponse<TEntity extends { id: string }> = {
-  data: TEntity;
-};
-
-type RemoveResponse<TEntity extends { id: string }> = {
-  data: TEntity;
-};
-
-type QueryHandler<TEntity extends { id: string } = { id: string }> =
-  | {
-      apiFn: (
-        paginationParams: PaginationParams,
-        ...args: any
-      ) => Promise<ListResponse<TEntity>>;
-      action: EntityActionType.LIST;
-      onSuccess?: (
-        data: Awaited<
-          ReturnType<
-            Extract<
-              QueryHandler<TEntity>,
-              { action: EntityActionType.LIST }
-            >['apiFn']
-          >
-        >
-      ) => void;
-    }
-  | {
-      apiFn: (...args: any) => Promise<CreateResponse<TEntity>>;
-      action: EntityActionType.CREATE;
-      onSuccess?: (
-        data: Awaited<
-          ReturnType<
-            Extract<
-              QueryHandler<TEntity>,
-              { action: EntityActionType.CREATE }
-            >['apiFn']
-          >
-        >
-      ) => void;
-    }
-  | {
-      apiFn: (
-        id: string,
-        entity: any,
-        ...args: any
-      ) => Promise<UpdateResponse<TEntity>>;
-      action: EntityActionType.UPDATE;
-      onSuccess?: (
-        data: Awaited<
-          ReturnType<
-            Extract<
-              QueryHandler<TEntity>,
-              { action: EntityActionType.UPDATE }
-            >['apiFn']
-          >
-        >
-      ) => void;
-    }
-  | {
-      apiFn: (
-        id: string,
-        entity?: any,
-        ...args: any
-      ) => Promise<RemoveResponse<TEntity>>;
-      action: EntityActionType.REMOVE;
-      onSuccess?: (
-        data: Awaited<
-          ReturnType<
-            Extract<
-              QueryHandler<TEntity>,
-              { action: EntityActionType.REMOVE }
-            >['apiFn']
-          >
-        >
-      ) => void;
-    };
-
-type ExtractHandler<
-  TEntity extends { id: string },
-  T extends { [K in keyof T]: QueryHandler<TEntity> },
-  TEntityActionType extends EntityActionType
-> = Extract<T[StringKey<keyof T>], { action: TEntityActionType }>;
-
-type NormalizeEntity<T extends AnyObject> = {
-  [K in keyof T]: T[K] extends Array<{ id?: string }>
-    ? Array<string>
-    : T[K] extends { id?: string }
-    ? string
-    : T[K];
-};
-
-type ModelSchema = { foreignKeys: Array<ForeignKey> };
-
-type ModelMethodParameters<
-  TEntity extends { id: string },
-  TQueryHandler extends QueryHandler<TEntity>
-> = Parameters<TQueryHandler['apiFn']>;
+import {
+  ApiFnParameters,
+  CreateResponse,
+  ExtractHandler,
+  ExtractQueryHandlerApiFnParameters,
+  InvalidateQueryStrategy,
+  ListResponse,
+  ModelMethodParameters,
+  ModelSchema,
+  NormalizeEntity,
+  QueryHandler,
+  RemoveResponse,
+  UpdateResponse,
+} from './types';
 
 export const useModel = <
   TEntity extends { id: string },
@@ -195,17 +94,31 @@ export const useModel = <
   /**
    * Method for resetting a query.
    */
-  const invalidateQuery = (queryKey: string, when: () => boolean) => {
-    if (when()) dispatchInvalidateQuery({ queryKey, initialLoadingSize });
+  const invalidateQuery = (
+    queryKey: string,
+    options: InvalidateQueryStrategy,
+    params: { _filterPrev?: string; _filter?: string; force?: boolean }
+  ) => {
+    switch (options.strategy) {
+      case 'always':
+        dispatchInvalidateQuery({ queryKey });
+        break;
+      case 'onFilterChange':
+        (params._filterPrev !== params._filter || params.force) &&
+          dispatchInvalidateQuery({ queryKey });
+        break;
+      case 'custom':
+        options.when() && dispatchInvalidateQuery({ queryKey });
+        break;
+      default:
+        break;
+    }
   };
 
   /**
    * Reset a query key.
    */
-  const dispatchInvalidateQuery = (params: {
-    queryKey: string;
-    initialLoadingSize: number;
-  }) => {
+  const dispatchInvalidateQuery = (params: { queryKey: string }) => {
     dispatch({
       type: EntityHelperActionType.INVALIDATE_QUERY,
       entityName,
@@ -272,21 +185,21 @@ export const useModel = <
    * Initialize model methods.
    */
   const buildModelMethods = () => {
-    const modelMethods = {} as {
-      [K in keyof typeof handlers]: (
-        ...params: ModelMethodParameters<TEntity, (typeof handlers)[K]>
-      ) => Promise<void>;
-    };
-    const keys = Object.keys(handlers) as Array<keyof typeof handlers>;
+    const modelMethods: AnyObject = {};
+    const keys = Object.keys(handlers);
 
     for (const key of keys) {
       modelMethods[key] = buildModelMethod(
-        key as StringKey<keyof typeof handlers>,
-        handlers[key]
+        key as StringKey<keyof TQueryHandlers>,
+        handlers[key as keyof typeof handlers]
       );
     }
 
-    return modelMethods;
+    return modelMethods as {
+      [K in keyof TQueryHandlers]: (
+        ...params: ModelMethodParameters<TEntity, TQueryHandlers[K]>
+      ) => Promise<void>;
+    };
   };
 
   /**
@@ -295,10 +208,13 @@ export const useModel = <
   const getCachedPaginationParams = (queryKey: string) => {
     const query = findQuery(entityName, queryKey);
     let params = query?.params as
-      | ListApiFnParams<TEntity, typeof handlers>
+      | ModelMethodParameters<
+          TEntity,
+          ExtractHandler<TEntity, TQueryHandlers, EntityActionType.LIST>
+        >
       | undefined;
 
-    return params?.[0];
+    return params?.[0]?.paginationParams;
   };
 
   /**
@@ -313,18 +229,23 @@ export const useModel = <
    * Build the list method.
    */
   const buildListMethod = (handlerName: StringKey<keyof typeof handlers>) => {
-    return async (
-      ...params: ModelMethodParameters<
+    return async <
+      THandler extends ExtractHandler<
         TEntity,
-        ExtractHandler<TEntity, TQueryHandlers, EntityActionType.LIST>
+        TQueryHandlers,
+        EntityActionType.LIST
       >
+    >(
+      ...params: ModelMethodParameters<TEntity, THandler>
     ) => {
+      const [options, ...restParams] = params;
+      const prevQueryKey = getQueryKey();
+      setQueryKey(options.queryKey);
       const queryKey = getQueryKey();
-      const [paginationParams, ...restParams] = params;
       const cachedPaginationParams = getCachedPaginationParams(queryKey);
-      const page = paginationParams?._page || 0;
+      const page = options.paginationParams?._page || 0;
       const size =
-        paginationParams?._size || cachedPaginationParams?._size || 10;
+        options.paginationParams?._size || cachedPaginationParams?._size || 10;
       const sizeMultiplier = paginationSizeMultiplier || 1;
 
       if (queryKey) {
@@ -336,11 +257,21 @@ export const useModel = <
         });
       }
 
+      if (
+        prevQueryKey !== queryKey &&
+        options.invalidateQuery &&
+        options.invalidateQuery.strategy === 'onFilterChange'
+      ) {
+        invalidateQuery(queryKey, options.invalidateQuery, {
+          force: true,
+        });
+      }
+
       const response = (await runApi({
         apiName: handlerName,
         params: [
           {
-            ...paginationParams,
+            ...options.paginationParams,
             _page: calcPage({
               page,
               size,
@@ -352,8 +283,15 @@ export const useModel = <
             }),
           },
           ...restParams,
-        ] as typeof params,
+        ] as ExtractQueryHandlerApiFnParameters<TEntity, THandler>,
       })) as ListResponse<TEntity>;
+
+      if (options.invalidateQuery) {
+        invalidateQuery(queryKey, options.invalidateQuery, {
+          _filter: options.paginationParams._filter,
+          _filterPrev: cachedPaginationParams?._filter,
+        });
+      }
 
       dispatchList({
         entities: response?.data || [],
@@ -401,7 +339,7 @@ export const useModel = <
    */
   const buildUpdateMethod = (handlerName: StringKey<keyof typeof handlers>) => {
     return async (
-      ...params: ModelMethodParameters<
+      ...params: ApiFnParameters<
         TEntity,
         ExtractHandler<TEntity, TQueryHandlers, EntityActionType.UPDATE>
       >
@@ -421,7 +359,7 @@ export const useModel = <
    */
   const buildRemoveMethod = (handlerName: StringKey<keyof typeof handlers>) => {
     return async (
-      ...params: ModelMethodParameters<
+      ...params: ApiFnParameters<
         TEntity,
         ExtractHandler<TEntity, TQueryHandlers, EntityActionType.REMOVE>
       >
