@@ -27,11 +27,22 @@ import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 
-type ListApiFnParams<
-  T extends {
-    [K in keyof T]: QueryHandler;
-  }
-> = Parameters<ExtractHandler<T, EntityActionType.LIST>['apiFn']>;
+type QueryHandlers<T extends QueryHandlers<T>> = {
+  [K in keyof T]: QueryHandler;
+};
+
+type ListApiFnParams<T extends QueryHandlers<T>> = Parameters<
+  ExtractHandler<T, EntityActionType.LIST>['apiFn']
+>;
+
+type ExtractApiFn<
+  T extends QueryHandlers<T>,
+  TEntityActionType extends EntityActionType
+> = ExtractHandler<T, TEntityActionType>['apiFn'];
+
+type ExtractEntity<T extends QueryHandlers<T>> = Awaited<
+  ReturnType<ExtractApiFn<T, EntityActionType.LIST>>
+>['data'][0];
 
 type ListResponse = {
   data: Array<{ id: string }>;
@@ -48,10 +59,6 @@ type UpdateResponse = {
 
 type RemoveResponse = {
   data: { id?: string };
-};
-
-type QueryHandlers<T> = {
-  [K in keyof T]: QueryHandler;
 };
 
 type QueryHandler =
@@ -78,10 +85,6 @@ type QueryHandler =
       ) => Promise<RemoveResponse>;
       action: EntityActionType.REMOVE;
     };
-
-type ExtractEntity<T extends QueryHandlers<T>> = Awaited<
-  ReturnType<ExtractHandler<T, EntityActionType.LIST>['apiFn']>
->['data'][0];
 
 type ExtractHandler<
   T extends QueryHandlers<T>,
@@ -244,7 +247,7 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
    */
   const buildListMethod = (handlerName: StringKey<keyof T>) => {
     return async (
-      ...params: Parameters<ExtractHandler<T, EntityActionType.LIST>['apiFn']>
+      ...params: Parameters<ExtractApiFn<T, EntityActionType.LIST>>
     ) => {
       const queryKey = getQueryKey();
       const [paginationParams, ...restParams] = params;
@@ -308,7 +311,7 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
    */
   const buildCreateMethod = (handlerName: StringKey<keyof T>) => {
     return async (
-      ...params: Parameters<ExtractHandler<T, EntityActionType.CREATE>['apiFn']>
+      ...params: Parameters<ExtractApiFn<T, EntityActionType.CREATE>>
     ) => {
       const queryKey = getQueryKey();
       const { data } = (await runApi({
@@ -325,7 +328,7 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
    */
   const buildUpdateMethod = (handlerName: StringKey<keyof T>) => {
     return async (
-      ...params: Parameters<ExtractHandler<T, EntityActionType.UPDATE>['apiFn']>
+      ...params: Parameters<ExtractApiFn<T, EntityActionType.UPDATE>>
     ) => {
       const { data } = (await runApi({
         apiName: handlerName,
@@ -342,7 +345,7 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
    */
   const buildRemoveMethod = (handlerName: StringKey<keyof T>) => {
     return async (
-      ...params: Parameters<ExtractHandler<T, EntityActionType.REMOVE>['apiFn']>
+      ...params: Parameters<ExtractApiFn<T, EntityActionType.REMOVE>>
     ) => {
       const [entityId] = params;
       const { data } = (await runApi({
