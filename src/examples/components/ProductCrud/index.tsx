@@ -22,9 +22,6 @@ export const ProductCrud: React.FC = () => {
 
   return (
     <div>
-      <div>
-        <button onClick={create}>Create random product</button>
-      </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div>
           <div
@@ -46,7 +43,11 @@ export const ProductCrud: React.FC = () => {
               productModel.list({ ...PAGINATION_PARAMS, _page: index })
             }
           />
+          <div>
+            <button onClick={create}>Create random product</button>
+          </div>
         </div>
+
         <pre
           style={{
             border: '1px solid black',

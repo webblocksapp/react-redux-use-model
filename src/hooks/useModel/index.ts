@@ -248,7 +248,7 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
     ) => {
       const queryKey = getQueryKey();
       const [paginationParams, ...restParams] = params;
-      let cachedPaginationParams = getCachedPaginationParams(queryKey);
+      const cachedPaginationParams = getCachedPaginationParams(queryKey);
       const page = paginationParams?._page || 0;
       const size =
         paginationParams?._size || cachedPaginationParams?._size || 10;
@@ -281,8 +281,6 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
           ...restParams,
         ] as typeof params,
       })) as ListResponse;
-
-      cachedPaginationParams = getCachedPaginationParams(queryKey);
 
       dispatchList({
         entities: response?.data || [],
@@ -436,7 +434,6 @@ export const useModel = <T extends QueryHandlers<T>>(params: {
     ],
     (state, ids) => {
       const entities: Array<ReturnType<typeof buildSelectedEntity>> = [];
-      console.log('MODEL: SELECTED ENTITIES', ids);
       if (ids) {
         for (const id of ids) {
           entities.push(buildSelectedEntity(state, id));
