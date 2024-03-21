@@ -20,9 +20,7 @@ export const ProductPaginatedList: React.FC = withQueryKey(() => {
 
   useEffect(() => {
     if (params._filter) {
-      productModel.setQueryKey(QueryKey.ProductPaginatedFilteredList, {
-        invalidateOnFilterChange: { _filter: params._filter },
-      });
+      productModel.setQueryKey(QueryKey.ProductPaginatedFilteredList);
     } else {
       productModel.setQueryKey(QueryKey.ProductPaginatedList);
     }

@@ -32,19 +32,6 @@ type ListApiFnParams<
   T extends { [K in keyof T]: QueryHandler<TEntity> }
 > = Parameters<ExtractHandler<TEntity, T, EntityActionType.LIST>['apiFn']>;
 
-type ExtractApiFn<
-  TEntity extends { id: string },
-  T extends { [K in keyof T]: QueryHandler<TEntity> },
-  TEntityActionType extends EntityActionType
-> = ExtractHandler<TEntity, T, TEntityActionType>['apiFn'];
-
-type ExtractEntity<
-  TEntity extends { id: string },
-  T extends { [K in keyof T]: QueryHandler<TEntity> }
-> = Awaited<
-  ReturnType<ExtractApiFn<TEntity, T, EntityActionType.LIST>>
->['data'][0];
-
 type ListResponse<TEntity extends { id: string }> = {
   data: Array<TEntity>;
   pagination?: Pagination;
@@ -147,6 +134,11 @@ type NormalizeEntity<T extends AnyObject> = {
 
 type ModelSchema = { foreignKeys: Array<ForeignKey> };
 
+type ModelMethodParameters<
+  TEntity extends { id: string },
+  TQueryHandler extends QueryHandler<TEntity>
+> = Parameters<TQueryHandler['apiFn']>;
+
 export const useModel = <
   TEntity extends { id: string },
   TQueryHandlers extends { [K in keyof TQueryHandlers]: QueryHandler<TEntity> }
@@ -196,19 +188,15 @@ export const useModel = <
   /**
    * Set the query key from the ref.
    */
-  const setQueryKey = (
-    queryKey: string,
-    options?: { invalidateOnFilterChange: { _filter: string } }
-  ) => {
-    const filter = options?.invalidateOnFilterChange?._filter;
-    if (filter) {
-      const cachedPaginationParams = getCachedPaginationParams(queryKey);
-      console.log(filter, cachedPaginationParams?._filter);
-      filter !== cachedPaginationParams?._filter &&
-        dispatchInvalidateQuery({ queryKey, initialLoadingSize });
-    }
-
+  const setQueryKey = (queryKey: string) => {
     ref.current.queryKey = queryKey;
+  };
+
+  /**
+   * Method for resetting a query.
+   */
+  const invalidateQuery = (queryKey: string, when: () => boolean) => {
+    if (when()) dispatchInvalidateQuery({ queryKey, initialLoadingSize });
   };
 
   /**
@@ -286,7 +274,7 @@ export const useModel = <
   const buildModelMethods = () => {
     const modelMethods = {} as {
       [K in keyof typeof handlers]: (
-        ...params: Parameters<(typeof handlers)[K]['apiFn']>
+        ...params: ModelMethodParameters<TEntity, (typeof handlers)[K]>
       ) => Promise<void>;
     };
     const keys = Object.keys(handlers) as Array<keyof typeof handlers>;
@@ -326,8 +314,9 @@ export const useModel = <
    */
   const buildListMethod = (handlerName: StringKey<keyof typeof handlers>) => {
     return async (
-      ...params: Parameters<
-        ExtractApiFn<TEntity, typeof handlers, EntityActionType.LIST>
+      ...params: ModelMethodParameters<
+        TEntity,
+        ExtractHandler<TEntity, TQueryHandlers, EntityActionType.LIST>
       >
     ) => {
       const queryKey = getQueryKey();
@@ -392,8 +381,9 @@ export const useModel = <
    */
   const buildCreateMethod = (handlerName: StringKey<keyof typeof handlers>) => {
     return async (
-      ...params: Parameters<
-        ExtractApiFn<TEntity, typeof handlers, EntityActionType.CREATE>
+      ...params: ModelMethodParameters<
+        TEntity,
+        ExtractHandler<TEntity, TQueryHandlers, EntityActionType.CREATE>
       >
     ) => {
       const queryKey = getQueryKey();
@@ -411,8 +401,9 @@ export const useModel = <
    */
   const buildUpdateMethod = (handlerName: StringKey<keyof typeof handlers>) => {
     return async (
-      ...params: Parameters<
-        ExtractApiFn<TEntity, typeof handlers, EntityActionType.UPDATE>
+      ...params: ModelMethodParameters<
+        TEntity,
+        ExtractHandler<TEntity, TQueryHandlers, EntityActionType.UPDATE>
       >
     ) => {
       const { data } = (await runApi({
@@ -430,8 +421,9 @@ export const useModel = <
    */
   const buildRemoveMethod = (handlerName: StringKey<keyof typeof handlers>) => {
     return async (
-      ...params: Parameters<
-        ExtractApiFn<TEntity, typeof handlers, EntityActionType.REMOVE>
+      ...params: ModelMethodParameters<
+        TEntity,
+        ExtractHandler<TEntity, TQueryHandlers, EntityActionType.REMOVE>
       >
     ) => {
       const [entityId] = params;
@@ -544,7 +536,7 @@ export const useModel = <
     entityId = entityId || emptyId();
     const loading = state?.byId?.[entityId] === undefined;
     const entity = (entityId ? state?.byId?.[entityId] : undefined) as
-      | NormalizeEntity<ExtractEntity<TEntity, typeof handlers>>
+      | NormalizeEntity<TEntity>
       | undefined;
     return { id: entityId, data: entity, loading };
   };
@@ -643,6 +635,7 @@ export const useModel = <
     ...buildModelMethods(),
     ...state,
     setQueryKey,
+    invalidateQuery,
     selectEntity,
     selectEntities,
     selectPaginatedQuery,
