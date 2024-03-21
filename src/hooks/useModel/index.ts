@@ -196,8 +196,33 @@ export const useModel = <
   /**
    * Set the query key from the ref.
    */
-  const setQueryKey = (queryKey: string) => {
+  const setQueryKey = (
+    queryKey: string,
+    options?: { invalidateOnFilterChange: { _filter: string } }
+  ) => {
+    const filter = options?.invalidateOnFilterChange?._filter;
+    if (filter) {
+      const cachedPaginationParams = getCachedPaginationParams(queryKey);
+      console.log(filter, cachedPaginationParams?._filter);
+      filter !== cachedPaginationParams?._filter &&
+        dispatchInvalidateQuery({ queryKey, initialLoadingSize });
+    }
+
     ref.current.queryKey = queryKey;
+  };
+
+  /**
+   * Reset a query key.
+   */
+  const dispatchInvalidateQuery = (params: {
+    queryKey: string;
+    initialLoadingSize: number;
+  }) => {
+    dispatch({
+      type: EntityHelperActionType.INVALIDATE_QUERY,
+      entityName,
+      ...params,
+    });
   };
 
   /**
@@ -281,11 +306,11 @@ export const useModel = <
    */
   const getCachedPaginationParams = (queryKey: string) => {
     const query = findQuery(entityName, queryKey);
-    let [cachedPaginationParams] = (query?.params || []) as ListApiFnParams<
-      TEntity,
-      typeof handlers
-    >;
-    return cachedPaginationParams;
+    let params = query?.params as
+      | ListApiFnParams<TEntity, typeof handlers>
+      | undefined;
+
+    return params?.[0];
   };
 
   /**
@@ -438,7 +463,7 @@ export const useModel = <
             dispatchGoToPage({
               queryKey,
               page: query.currentPage - 1,
-              size: cachedPaginationParams._size,
+              size: cachedPaginationParams?._size || 10,
               sizeMultiplier: paginationSizeMultiplier,
             });
           }

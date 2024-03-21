@@ -1,6 +1,13 @@
 import { EntityActionType, EntityHelperActionType } from '@constants';
 import { EntityAction, NormalizedEntitiesState } from '@interfaces';
-import { list, goToPage, create, update, remove } from './handlers';
+import {
+  list,
+  goToPage,
+  create,
+  update,
+  remove,
+  invalidateQuery,
+} from './handlers';
 
 const initialState: NormalizedEntitiesState = {};
 
@@ -40,6 +47,8 @@ export const normalizedEntitiesState = (
         action.sizeMultiplier,
         state
       );
+    case EntityHelperActionType.INVALIDATE_QUERY:
+      return invalidateQuery(action.entityName, action.queryKey, state);
     default:
       return state;
   }

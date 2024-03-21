@@ -256,3 +256,31 @@ export const goToPage = (
     },
   };
 };
+
+export const invalidateQuery = (
+  entityName: string,
+  queryKey: string,
+  state: NormalizedEntitiesState
+): NormalizedEntitiesState => {
+  const entityState = state[entityName];
+
+  return {
+    ...state,
+    [entityName]: {
+      ...entityState,
+      queries: entityState?.queries?.map((query) => {
+        if (query.queryKey === queryKey) {
+          return {
+            queryKey,
+            ids: [],
+            calculatedCurrentPage: undefined,
+            calculatedPagination: undefined,
+            currentPage: undefined,
+            params: undefined,
+          };
+        }
+        return query;
+      }),
+    },
+  };
+};

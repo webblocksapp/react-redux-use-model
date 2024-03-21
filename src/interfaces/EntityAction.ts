@@ -36,4 +36,9 @@ export type EntityAction<TEntity extends { id: string } = any> =
       page: number;
       size: number;
       sizeMultiplier: number;
+    }
+  | {
+      type: EntityHelperActionType.INVALIDATE_QUERY;
+      entityName: string;
+      queryKey: string;
     };
