@@ -39,7 +39,7 @@ import {
   UpdateResponse,
 } from '@interfaces';
 
-export const useBaseModel = <
+export const useModel = <
   TEntity extends { id: string },
   TQueryHandlers extends QueryHandlers<TEntity>
 >(params: {
@@ -581,17 +581,4 @@ export const useBaseModel = <
     selectQuery,
     selectPaginationParams,
   };
-};
-
-export const useModel = <TEntity extends { id: string }>(params: {
-  handlers: QueryHandlers<TEntity>;
-  entityName: string;
-  schema?: ModelSchema;
-  config?: {
-    paginationSizeMultiplier?: number;
-    initialLoadingSize?: number;
-  };
-}) => {
-  const baseModel = useBaseModel<TEntity, QueryHandlers<TEntity>>(params);
-  return baseModel;
 };

@@ -55,7 +55,10 @@ export type QueryHandler<TEntity extends { id: string } = { id: string }> =
       ) => void;
     }
   | {
-      apiFn: (...args: any) => Promise<CreateResponse<TEntity>>;
+      apiFn: (
+        entity: TEntity,
+        ...args: any
+      ) => Promise<CreateResponse<TEntity>>;
       action: EntityActionType.CREATE;
       onSuccess?: (
         data: Awaited<
@@ -71,7 +74,7 @@ export type QueryHandler<TEntity extends { id: string } = { id: string }> =
   | {
       apiFn: (
         id: string,
-        entity: any,
+        entity: TEntity,
         ...args: any
       ) => Promise<UpdateResponse<TEntity>>;
       action: EntityActionType.UPDATE;
@@ -89,7 +92,7 @@ export type QueryHandler<TEntity extends { id: string } = { id: string }> =
   | {
       apiFn: (
         id: string,
-        entity?: any,
+        entity?: TEntity,
         ...args: any
       ) => Promise<RemoveResponse<TEntity>>;
       action: EntityActionType.REMOVE;
