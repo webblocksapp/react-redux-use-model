@@ -14,6 +14,33 @@ export type QueryHandlers<
   [K in keyof T]: QueryHandler<TEntity>;
 };
 
+export type ListQueryHandler<TEntity extends { id: string }> = Extract<
+  QueryHandler<TEntity>,
+  { action: EntityActionType.LIST }
+>;
+
+export type CreateQueryHandler<TEntity extends { id: string }> = Extract<
+  QueryHandler<TEntity>,
+  { action: EntityActionType.CREATE }
+>;
+
+export type UpdateQueryHandler<TEntity extends { id: string }> = Extract<
+  QueryHandler<TEntity>,
+  { action: EntityActionType.UPDATE }
+>;
+
+export type RemoveQueryHandler<TEntity extends { id: string }> = Extract<
+  QueryHandler<TEntity>,
+  { action: EntityActionType.REMOVE }
+>;
+
+export type CrudQueryHandlers<TEntity extends { id: string }> = {
+  list: ListQueryHandler<TEntity>;
+  create: CreateQueryHandler<TEntity>;
+  update: UpdateQueryHandler<TEntity>;
+  remove: RemoveQueryHandler<TEntity>;
+};
+
 export type ListApiFnParams<
   TEntity extends { id: string },
   T extends { [K in keyof T]: QueryHandler<TEntity> }
@@ -90,11 +117,7 @@ export type QueryHandler<TEntity extends { id: string } = { id: string }> =
       ) => void;
     }
   | {
-      apiFn: (
-        id: string,
-        entity?: TEntity,
-        ...args: any
-      ) => Promise<RemoveResponse<TEntity>>;
+      apiFn: (id: string, ...args: any) => Promise<RemoveResponse<TEntity>>;
       action: EntityActionType.REMOVE;
       onSuccess?: (
         data: Awaited<
@@ -126,24 +149,36 @@ export type ModelSchema = { foreignKeys: Array<ForeignKey> };
 
 export type ApiFnParameters<
   TEntity extends { id: string },
-  TQueryHandler extends QueryHandler<TEntity>
-> = Parameters<TQueryHandler['apiFn']>;
+  TQueryHandler extends QueryHandler<TEntity>,
+  TEntityActionType extends EntityActionType
+> = Parameters<Extract<TQueryHandler, { action: TEntityActionType }>['apiFn']>;
 
 export type ExtractQueryHandlerApiFnParameters<
   TEntity extends { id: string },
-  TQueryHandler extends QueryHandler<TEntity>
-> = Parameters<TQueryHandler['apiFn']>;
+  TQueryHandler extends QueryHandler<TEntity>,
+  TEntityActionType extends EntityActionType
+> = Parameters<Extract<TQueryHandler, { action: TEntityActionType }>['apiFn']>;
 
 export type ExtractApiFnParametersArg1<
   TEntity extends { id: string },
   TQueryHandler extends QueryHandler<TEntity>,
-  TApiFnParameters extends ApiFnParameters<TEntity, TQueryHandler>
+  TEntityActionType extends EntityActionType,
+  TApiFnParameters extends ApiFnParameters<
+    TEntity,
+    TQueryHandler,
+    TEntityActionType
+  >
 > = TApiFnParameters extends [infer Arg1, ...infer _] ? Arg1 : never;
 
 export type ExcludeApiFnParametersArg1<
   TEntity extends { id: string },
   TQueryHandler extends QueryHandler<TEntity>,
-  TApiFnParameters extends ApiFnParameters<TEntity, TQueryHandler>
+  TEntityActionType extends EntityActionType,
+  TApiFnParameters extends ApiFnParameters<
+    TEntity,
+    TQueryHandler,
+    TEntityActionType
+  >
 > = TApiFnParameters extends [infer _, ...infer Rest] ? Rest : never;
 
 export type InvalidateQueryStrategy =
@@ -153,8 +188,9 @@ export type InvalidateQueryStrategy =
 
 export type ModelMethodParameters<
   TEntity extends { id: string },
-  TQueryHandler extends QueryHandler<TEntity>
-> = TQueryHandler extends { action: EntityActionType.LIST }
+  TQueryHandler extends QueryHandler<TEntity>,
+  TEntityActionType extends EntityActionType
+> = TEntityActionType extends EntityActionType.LIST
   ? [
       {
         queryKey: string;
@@ -162,13 +198,23 @@ export type ModelMethodParameters<
         paginationParams: ExtractApiFnParametersArg1<
           TEntity,
           TQueryHandler,
-          ExtractQueryHandlerApiFnParameters<TEntity, TQueryHandler>
+          TEntityActionType,
+          ExtractQueryHandlerApiFnParameters<
+            TEntity,
+            TQueryHandler,
+            TEntityActionType
+          >
         >;
       },
       ...ExcludeApiFnParametersArg1<
         TEntity,
         TQueryHandler,
-        ExtractQueryHandlerApiFnParameters<TEntity, TQueryHandler>
+        TEntityActionType,
+        ExtractQueryHandlerApiFnParameters<
+          TEntity,
+          TQueryHandler,
+          TEntityActionType
+        >
       >
     ]
-  : ApiFnParameters<TEntity, TQueryHandler>;
+  : ApiFnParameters<TEntity, TQueryHandler, TEntityActionType>;

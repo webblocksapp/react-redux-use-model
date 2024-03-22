@@ -3,12 +3,12 @@ import { useVideoApiClient } from '@examples/apiClients';
 import { EntityName } from '@examples/constants';
 import { Video } from '@examples/interfaces';
 import { useModel } from '@hooks';
-import { QueryHandlers } from '@interfaces';
+import { CrudQueryHandlers } from 'react-redux-use-model';
 
 export const useVideoModel = () => {
   const videoApiClient = useVideoApiClient();
 
-  const model = useModel<Video, QueryHandlers<Video>>({
+  const model = useModel<Video, CrudQueryHandlers<Video>>({
     entityName: EntityName.Videos,
     handlers: {
       list: {

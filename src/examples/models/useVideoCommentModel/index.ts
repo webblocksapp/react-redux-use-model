@@ -1,11 +1,16 @@
 import { useVideoCommentApiClient } from '@examples/apiClients';
 import { EntityName } from '@examples/constants';
-import { EntityActionType, useModel } from 'react-redux-use-model';
+import { VideoComment } from '@examples/interfaces';
+import {
+  CrudQueryHandlers,
+  EntityActionType,
+  useModel,
+} from 'react-redux-use-model';
 
 export const useVideoCommentModel = () => {
   const videoCommentApiClient = useVideoCommentApiClient();
 
-  const model = useModel({
+  const model = useModel<VideoComment, CrudQueryHandlers<VideoComment>>({
     entityName: EntityName.VideosComments,
     schema: {
       foreignKeys: [

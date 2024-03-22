@@ -24,7 +24,6 @@ import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import {
-  ApiFnParameters,
   CreateResponse,
   ExtractHandler,
   ExtractQueryHandlerApiFnParameters,
@@ -198,7 +197,11 @@ export const useModel = <
 
     return modelMethods as {
       [K in keyof TQueryHandlers]: (
-        ...params: ModelMethodParameters<TEntity, TQueryHandlers[K]>
+        ...params: ModelMethodParameters<
+          TEntity,
+          TQueryHandlers[K],
+          TQueryHandlers[K]['action']
+        >
       ) => Promise<void>;
     };
   };
@@ -211,7 +214,8 @@ export const useModel = <
     let params = query?.params as
       | ModelMethodParameters<
           TEntity,
-          ExtractHandler<TEntity, TQueryHandlers, EntityActionType.LIST>
+          TQueryHandlers[string],
+          EntityActionType.LIST
         >
       | undefined;
 
@@ -230,14 +234,12 @@ export const useModel = <
    * Build the list method.
    */
   const buildListMethod = (handlerName: StringKey<keyof TQueryHandlers>) => {
-    return async <
-      THandler extends ExtractHandler<
+    return async (
+      ...params: ModelMethodParameters<
         TEntity,
-        TQueryHandlers,
+        TQueryHandlers[string],
         EntityActionType.LIST
       >
-    >(
-      ...params: ModelMethodParameters<TEntity, THandler>
     ) => {
       const [options, ...restParams] = params;
       const prevQueryKey = getQueryKey();
@@ -284,7 +286,11 @@ export const useModel = <
             }),
           },
           ...restParams,
-        ] as ExtractQueryHandlerApiFnParameters<TEntity, THandler>,
+        ] as unknown as ExtractQueryHandlerApiFnParameters<
+          TEntity,
+          TQueryHandlers[string],
+          EntityActionType.LIST
+        >,
       })) as ListResponse<TEntity>;
 
       if (options.invalidateQuery) {
@@ -322,7 +328,8 @@ export const useModel = <
     return async (
       ...params: ModelMethodParameters<
         TEntity,
-        ExtractHandler<TEntity, TQueryHandlers, EntityActionType.CREATE>
+        TQueryHandlers[string],
+        EntityActionType.CREATE
       >
     ) => {
       const queryKey = getQueryKey();
@@ -340,9 +347,10 @@ export const useModel = <
    */
   const buildUpdateMethod = (handlerName: StringKey<keyof TQueryHandlers>) => {
     return async (
-      ...params: ApiFnParameters<
+      ...params: ModelMethodParameters<
         TEntity,
-        ExtractHandler<TEntity, TQueryHandlers, EntityActionType.UPDATE>
+        TQueryHandlers[string],
+        EntityActionType.UPDATE
       >
     ) => {
       const { data } = (await runApi({
@@ -360,9 +368,10 @@ export const useModel = <
    */
   const buildRemoveMethod = (handlerName: StringKey<keyof TQueryHandlers>) => {
     return async (
-      ...params: ApiFnParameters<
+      ...params: ModelMethodParameters<
         TEntity,
-        ExtractHandler<TEntity, TQueryHandlers, EntityActionType.REMOVE>
+        TQueryHandlers[string],
+        EntityActionType.REMOVE
       >
     ) => {
       const [entityId] = params;

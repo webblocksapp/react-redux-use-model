@@ -3,7 +3,10 @@ import { useProductApiClient } from '@examples/apiClients';
 import {
   EntityActionType,
   useModel,
-  QueryHandler,
+  ListQueryHandler,
+  CreateQueryHandler,
+  UpdateQueryHandler,
+  RemoveQueryHandler,
 } from 'react-redux-use-model';
 import { Product } from '@examples/interfaces';
 
@@ -12,11 +15,10 @@ export const useProductModel = () => {
   const model = useModel<
     Product,
     {
-      readonly [key in
-        | 'list'
-        | 'create'
-        | 'update'
-        | 'remove']: QueryHandler<Product>;
+      list: ListQueryHandler<Product>;
+      create: CreateQueryHandler<Product>;
+      update: UpdateQueryHandler<Product>;
+      remove: RemoveQueryHandler<Product>;
     }
   >({
     entityName: EntityName.Products,
