@@ -1,13 +1,15 @@
 import { QueryKey } from '@examples/constants';
 import { useProductModel } from '@examples/models';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Paginator, ProductItem } from '@examples/components';
-import { RootState } from '@interfaces';
-
-const PAGINATION_PARAMS = { _page: 0, _size: 10 };
+import { PaginationParams, RootState } from '@interfaces';
 
 export const ProductPaginatedEntitiesList: React.FC = () => {
+  const [params, setParams] = useState<PaginationParams>({
+    _page: 0,
+    _size: 10,
+  });
   const productModel = useProductModel();
   const productQuery = useSelector(productModel.selectPaginatedQuery);
   const entities = useSelector((state: RootState) =>
@@ -15,9 +17,11 @@ export const ProductPaginatedEntitiesList: React.FC = () => {
   );
 
   useEffect(() => {
-    productModel.setQueryKey(QueryKey.ProductPaginatedEntitiesList);
-    productModel.list(PAGINATION_PARAMS);
-  }, []);
+    productModel.list({
+      queryKey: QueryKey.ProductPaginatedEntitiesList,
+      paginationParams: params,
+    });
+  }, [params]);
 
   return (
     <div>
@@ -42,9 +46,9 @@ export const ProductPaginatedEntitiesList: React.FC = () => {
           </div>
           <Paginator
             pagination={productQuery?.pagination}
-            onClickPage={(index) =>
-              productModel.list({ ...PAGINATION_PARAMS, _page: index })
-            }
+            onClickPage={(index) => {
+              setParams((prev) => ({ ...prev, _page: index }));
+            }}
           />
           <pre>
             <code>{JSON.stringify(productQuery?.pagination)}</code>
