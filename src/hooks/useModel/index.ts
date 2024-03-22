@@ -34,13 +34,14 @@ import {
   ModelSchema,
   NormalizeEntity,
   QueryHandler,
+  QueryHandlers,
   RemoveResponse,
   UpdateResponse,
-} from './types';
+} from '@interfaces';
 
 export const useModel = <
   TEntity extends { id: string },
-  TQueryHandlers extends { [K in keyof TQueryHandlers]: QueryHandler<TEntity> }
+  TQueryHandlers extends QueryHandlers<TEntity>
 >(params: {
   handlers: TQueryHandlers;
   entityName: string;
@@ -62,9 +63,9 @@ export const useModel = <
    */
   const apis = useMemo(() => {
     const apisFns = {} as {
-      [K in keyof typeof handlers]: (typeof handlers)[K]['apiFn'];
+      [K in keyof TQueryHandlers]: TQueryHandlers[K]['apiFn'];
     };
-    const keys = Object.keys(handlers) as Array<keyof typeof handlers>;
+    const keys = Object.keys(handlers) as Array<keyof TQueryHandlers>;
     for (const key of keys) {
       apisFns[key] = handlers[key]['apiFn'];
     }
@@ -191,7 +192,7 @@ export const useModel = <
     for (const key of keys) {
       modelMethods[key] = buildModelMethod(
         key as StringKey<keyof TQueryHandlers>,
-        handlers[key as keyof typeof handlers]
+        handlers[key as keyof TQueryHandlers]
       );
     }
 
@@ -228,7 +229,7 @@ export const useModel = <
   /**
    * Build the list method.
    */
-  const buildListMethod = (handlerName: StringKey<keyof typeof handlers>) => {
+  const buildListMethod = (handlerName: StringKey<keyof TQueryHandlers>) => {
     return async <
       THandler extends ExtractHandler<
         TEntity,
@@ -317,7 +318,7 @@ export const useModel = <
   /**
    * Build the create method.
    */
-  const buildCreateMethod = (handlerName: StringKey<keyof typeof handlers>) => {
+  const buildCreateMethod = (handlerName: StringKey<keyof TQueryHandlers>) => {
     return async (
       ...params: ModelMethodParameters<
         TEntity,
@@ -337,7 +338,7 @@ export const useModel = <
   /**
    * Build the update method
    */
-  const buildUpdateMethod = (handlerName: StringKey<keyof typeof handlers>) => {
+  const buildUpdateMethod = (handlerName: StringKey<keyof TQueryHandlers>) => {
     return async (
       ...params: ApiFnParameters<
         TEntity,
@@ -357,7 +358,7 @@ export const useModel = <
   /**
    * Build the remove method.
    */
-  const buildRemoveMethod = (handlerName: StringKey<keyof typeof handlers>) => {
+  const buildRemoveMethod = (handlerName: StringKey<keyof TQueryHandlers>) => {
     return async (
       ...params: ApiFnParameters<
         TEntity,
@@ -406,7 +407,7 @@ export const useModel = <
    * Orchestrate the api function with the state dispatcher.
    */
   const buildModelMethod = (
-    handlerName: StringKey<keyof typeof handlers>,
+    handlerName: StringKey<keyof TQueryHandlers>,
     handler: QueryHandler<TEntity>
   ) => {
     switch (handler.action) {
@@ -523,7 +524,7 @@ export const useModel = <
       }),
     } as QueryState<
       Parameters<
-        ExtractHandler<TEntity, typeof handlers, EntityActionType.LIST>['apiFn']
+        ExtractHandler<TEntity, TQueryHandlers, EntityActionType.LIST>['apiFn']
       >
     >;
   });

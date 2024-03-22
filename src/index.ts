@@ -5,4 +5,4 @@ export { useDebounce, useQueryKey } from './utils';
 export { withQueryKey } from './hocs';
 export { normalizedEntitiesState } from './states';
 export type { ModelProviderProps } from './components';
-export type { Pagination, PaginationParams } from './interfaces';
+export type { Pagination, PaginationParams, QueryHandlers } from './interfaces';

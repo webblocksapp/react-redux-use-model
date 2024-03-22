@@ -1,10 +1,12 @@
 import { EntityName } from '@examples/constants';
 import { useProductApiClient } from '@examples/apiClients';
 import { EntityActionType, useModel } from 'react-redux-use-model';
+import { Product } from '@examples/interfaces';
+import { QueryHandlers } from '@interfaces';
 
 export const useProductModel = () => {
   const productApiClient = useProductApiClient();
-  const model = useModel({
+  const model = useModel<Product, QueryHandlers<Product>>({
     entityName: EntityName.Products,
     config: {
       paginationSizeMultiplier: 5,
@@ -13,7 +15,6 @@ export const useProductModel = () => {
       list: {
         apiFn: productApiClient.list,
         action: EntityActionType.LIST,
-        a: '',
       },
       create: {
         action: EntityActionType.CREATE,

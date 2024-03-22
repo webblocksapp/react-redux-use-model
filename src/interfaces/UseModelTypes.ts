@@ -7,6 +7,13 @@ import {
   StringKey,
 } from '@interfaces';
 
+export type QueryHandlers<
+  TEntity extends { id: string },
+  T extends { [K in keyof T]: T[K] } = { [key: string]: QueryHandler<TEntity> }
+> = {
+  [K in keyof T]: QueryHandler<TEntity>;
+};
+
 export type ListApiFnParams<
   TEntity extends { id: string },
   T extends { [K in keyof T]: QueryHandler<TEntity> }

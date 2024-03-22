@@ -14,15 +14,12 @@ export const VideosDropdown: React.FC = () => {
     videoModel.selectEntities(state, query.ids)
   );
 
-  const list = () => {
-    videoModel.list({ _page: params._page, _size: 30 });
-    setParams((prev) => ({ ...prev, _page: params._page + 1 }));
-  };
-
   useEffect(() => {
-    videoModel.setQueryKey(QueryKey.VideosDropdown);
-    list();
-  }, []);
+    videoModel.list({
+      queryKey: QueryKey.VideosDropdown,
+      paginationParams: params,
+    });
+  }, [params]);
 
   return (
     <Select
@@ -32,7 +29,9 @@ export const VideosDropdown: React.FC = () => {
           label: entity.data?.title,
           value: entity.id,
         }))}
-      endReached={list}
+      endReached={() => {
+        setParams((prev) => ({ ...prev, _page: params._page + 1 }));
+      }}
     />
   );
 };

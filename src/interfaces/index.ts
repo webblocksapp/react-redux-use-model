@@ -12,3 +12,4 @@ export * from './QueryHandlerOptions';
 export * from './QueryState';
 export * from './RootState';
 export * from './StringKey';
+export * from './UseModelTypes';
