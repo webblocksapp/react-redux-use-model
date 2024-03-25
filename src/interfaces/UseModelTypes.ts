@@ -7,6 +7,8 @@ import {
   StringKey,
 } from '@interfaces';
 
+export type BuildModelMethodOptions = { withResponse?: boolean };
+
 export type QueryHandlers<
   TEntity extends { id: string },
   T extends { [K in keyof T]: T[K] } = { [key: string]: QueryHandler<TEntity> }
@@ -71,15 +73,9 @@ export type QueryHandler<TEntity extends { id: string } = { id: string }> =
       ) => Promise<ListResponse<TEntity>>;
       action: EntityActionType.LIST;
       onSuccess?: (
-        data: Awaited<
-          ReturnType<
-            Extract<
-              QueryHandler<TEntity>,
-              { action: EntityActionType.LIST }
-            >['apiFn']
-          >
-        >
+        data: Awaited<ReturnType<ListQueryHandler<TEntity>['apiFn']>>
       ) => void;
+      onError?: (error: unknown) => void;
     }
   | {
       apiFn: (
@@ -88,15 +84,9 @@ export type QueryHandler<TEntity extends { id: string } = { id: string }> =
       ) => Promise<CreateResponse<TEntity>>;
       action: EntityActionType.CREATE;
       onSuccess?: (
-        data: Awaited<
-          ReturnType<
-            Extract<
-              QueryHandler<TEntity>,
-              { action: EntityActionType.CREATE }
-            >['apiFn']
-          >
-        >
+        data: Awaited<ReturnType<CreateQueryHandler<TEntity>['apiFn']>>
       ) => void;
+      onError?: (error: unknown) => void;
     }
   | {
       apiFn: (
@@ -106,29 +96,17 @@ export type QueryHandler<TEntity extends { id: string } = { id: string }> =
       ) => Promise<UpdateResponse<TEntity>>;
       action: EntityActionType.UPDATE;
       onSuccess?: (
-        data: Awaited<
-          ReturnType<
-            Extract<
-              QueryHandler<TEntity>,
-              { action: EntityActionType.UPDATE }
-            >['apiFn']
-          >
-        >
+        data: Awaited<ReturnType<UpdateQueryHandler<TEntity>['apiFn']>>
       ) => void;
+      onError?: (error: unknown) => void;
     }
   | {
       apiFn: (id: string, ...args: any) => Promise<RemoveResponse<TEntity>>;
       action: EntityActionType.REMOVE;
       onSuccess?: (
-        data: Awaited<
-          ReturnType<
-            Extract<
-              QueryHandler<TEntity>,
-              { action: EntityActionType.REMOVE }
-            >['apiFn']
-          >
-        >
+        data: Awaited<ReturnType<RemoveQueryHandler<TEntity>['apiFn']>>
       ) => void;
+      onError?: (error: unknown) => void;
     };
 
 export type ExtractHandler<

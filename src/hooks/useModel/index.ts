@@ -6,6 +6,11 @@ import {
   StringKey,
   NormalizedState,
   AnyObject,
+  BuildModelMethodOptions,
+  ListQueryHandler,
+  CreateQueryHandler,
+  UpdateQueryHandler,
+  RemoveQueryHandler,
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import {
@@ -193,6 +198,11 @@ export const useModel = <
         key as StringKey<keyof TQueryHandlers>,
         handlers[key as keyof TQueryHandlers]
       );
+
+      modelMethods[`${key}WithResponse`] = buildModelMethod(
+        key as StringKey<keyof TQueryHandlers>,
+        handlers[key as keyof TQueryHandlers]
+      );
     }
 
     return modelMethods as {
@@ -203,6 +213,14 @@ export const useModel = <
           TQueryHandlers[K]['action']
         >
       ) => Promise<void>;
+    } & {
+      [K in keyof TQueryHandlers as `${StringKey<K>}WithResponse`]: (
+        ...params: ModelMethodParameters<
+          TEntity,
+          TQueryHandlers[K],
+          TQueryHandlers[K]['action']
+        >
+      ) => ReturnType<TQueryHandlers[K]['apiFn']>;
     };
   };
 
@@ -233,7 +251,11 @@ export const useModel = <
   /**
    * Build the list method.
    */
-  const buildListMethod = (handlerName: StringKey<keyof TQueryHandlers>) => {
+  const buildListMethod = (
+    handlerName: StringKey<keyof TQueryHandlers>,
+    handler: ListQueryHandler<TEntity>,
+    methodOptions?: BuildModelMethodOptions
+  ) => {
     return async (
       ...params: ModelMethodParameters<
         TEntity,
@@ -270,61 +292,80 @@ export const useModel = <
         });
       }
 
-      const response = (await runApi({
-        apiName: handlerName,
-        params: [
-          {
-            ...options.paginationParams,
-            _page: calcPage({
-              page,
-              size,
-              sizeMultiplier,
-            }),
-            _size: calcPageSize({
-              size,
-              sizeMultiplier,
-            }),
-          },
-          ...restParams,
-        ] as unknown as ExtractQueryHandlerApiFnParameters<
-          TEntity,
-          TQueryHandlers[string],
-          EntityActionType.LIST
-        >,
-      })) as ListResponse<TEntity>;
-
-      if (options.invalidateQuery) {
-        invalidateQuery(queryKey, options.invalidateQuery, {
-          _filter: options.paginationParams._filter,
-          _filterPrev: cachedPaginationParams?._filter,
-        });
-      }
-
-      dispatchList({
-        entities: response?.data || [],
-        queryKey,
-        pagination: response?.pagination
-          ? {
-              ...response.pagination,
-              page,
-              size,
-              totalPages: calcTotalPages({
-                totalElements: response.pagination.totalElements,
+      try {
+        const response = (await runApi({
+          apiName: handlerName,
+          throwError: true,
+          params: [
+            {
+              ...options.paginationParams,
+              _page: calcPage({
+                page,
                 size,
+                sizeMultiplier,
               }),
-            }
-          : undefined,
-        currentPage: getCurrentPage(queryKey),
-        params,
-        sizeMultiplier,
-      });
+              _size: calcPageSize({
+                size,
+                sizeMultiplier,
+              }),
+            },
+            ...restParams,
+          ] as unknown as ExtractQueryHandlerApiFnParameters<
+            TEntity,
+            TQueryHandlers[string],
+            EntityActionType.LIST
+          >,
+        })) as ListResponse<TEntity>;
+
+        if (options.invalidateQuery) {
+          invalidateQuery(queryKey, options.invalidateQuery, {
+            _filter: options.paginationParams._filter,
+            _filterPrev: cachedPaginationParams?._filter,
+          });
+        }
+
+        dispatchList({
+          entities: response?.data || [],
+          queryKey,
+          pagination: response?.pagination
+            ? {
+                ...response.pagination,
+                page,
+                size,
+                totalPages: calcTotalPages({
+                  totalElements: response.pagination.totalElements,
+                  size,
+                }),
+              }
+            : undefined,
+          currentPage: getCurrentPage(queryKey),
+          params,
+          sizeMultiplier,
+        });
+
+        if (methodOptions?.withResponse) {
+          return response;
+        } else {
+          handler?.onSuccess?.(response);
+        }
+      } catch (error) {
+        if (methodOptions?.withResponse) {
+          throw error;
+        } else {
+          handler?.onError?.(error);
+        }
+      }
     };
   };
 
   /**
    * Build the create method.
    */
-  const buildCreateMethod = (handlerName: StringKey<keyof TQueryHandlers>) => {
+  const buildCreateMethod = (
+    handlerName: StringKey<keyof TQueryHandlers>,
+    handler: CreateQueryHandler<TEntity>,
+    methodOptions?: BuildModelMethodOptions
+  ) => {
     return async (
       ...params: ModelMethodParameters<
         TEntity,
@@ -333,19 +374,39 @@ export const useModel = <
       >
     ) => {
       const queryKey = getQueryKey();
-      const { data } = (await runApi({
-        apiName: handlerName,
-        params,
-      })) as CreateResponse<TEntity>;
 
-      dispatchCreate({ entity: data, queryKey });
+      try {
+        const response = (await runApi({
+          apiName: handlerName,
+          params,
+          throwError: true,
+        })) as CreateResponse<TEntity>;
+
+        dispatchCreate({ entity: response.data, queryKey });
+
+        if (methodOptions?.withResponse) {
+          return response;
+        } else {
+          handler?.onSuccess?.(response);
+        }
+      } catch (error) {
+        if (methodOptions?.withResponse) {
+          throw error;
+        } else {
+          handler?.onError?.(error);
+        }
+      }
     };
   };
 
   /**
    * Build the update method
    */
-  const buildUpdateMethod = (handlerName: StringKey<keyof TQueryHandlers>) => {
+  const buildUpdateMethod = (
+    handlerName: StringKey<keyof TQueryHandlers>,
+    handler: UpdateQueryHandler<TEntity>,
+    methodOptions?: BuildModelMethodOptions
+  ) => {
     return async (
       ...params: ModelMethodParameters<
         TEntity,
@@ -353,20 +414,38 @@ export const useModel = <
         EntityActionType.UPDATE
       >
     ) => {
-      const { data } = (await runApi({
-        apiName: handlerName,
-        params,
-        throwError: true,
-      })) as UpdateResponse<TEntity>;
+      try {
+        const response = (await runApi({
+          apiName: handlerName,
+          params,
+          throwError: true,
+        })) as UpdateResponse<TEntity>;
 
-      dispatchUpdate({ entity: data });
+        dispatchUpdate({ entity: response.data });
+
+        if (methodOptions?.withResponse) {
+          return response;
+        } else {
+          handler?.onSuccess?.(response);
+        }
+      } catch (error) {
+        if (methodOptions?.withResponse) {
+          throw error;
+        } else {
+          handler?.onError?.(error);
+        }
+      }
     };
   };
 
   /**
    * Build the remove method.
    */
-  const buildRemoveMethod = (handlerName: StringKey<keyof TQueryHandlers>) => {
+  const buildRemoveMethod = (
+    handlerName: StringKey<keyof TQueryHandlers>,
+    handler: RemoveQueryHandler<TEntity>,
+    methodOptions?: BuildModelMethodOptions
+  ) => {
     return async (
       ...params: ModelMethodParameters<
         TEntity,
@@ -374,39 +453,55 @@ export const useModel = <
         EntityActionType.REMOVE
       >
     ) => {
-      const [entityId] = params;
-      const { data } = (await runApi({
-        apiName: handlerName,
-        params,
-      })) as RemoveResponse<TEntity>;
+      try {
+        const [entityId] = params;
+        const response = (await runApi({
+          apiName: handlerName,
+          params,
+          throwError: true,
+        })) as RemoveResponse<TEntity>;
 
-      dispatchRemove({
-        entityId: data?.id || entityId,
-      });
+        dispatchRemove({
+          entityId: response.data?.id || entityId,
+        });
 
-      const entityState = findEntityState(entityName);
-      const queries = entityState?.queries || [];
+        const entityState = findEntityState(entityName);
+        const queries = entityState?.queries || [];
 
-      for (let query of queries) {
-        if (query.pagination && query.pagination.page == query.currentPage) {
-          /**
-           * Page is decreased in one on every query if it's detected that the
-           * current page is the last page and if the current page is blank.
-           */
-          if (
-            isLastPage(query.pagination) &&
-            query.pagination.page == query.currentPage &&
-            isPageBlank(query.pagination)
-          ) {
-            const queryKey = query.queryKey;
-            const cachedPaginationParams = getCachedPaginationParams(queryKey);
-            dispatchGoToPage({
-              queryKey,
-              page: query.currentPage - 1,
-              size: cachedPaginationParams?._size || 10,
-              sizeMultiplier: paginationSizeMultiplier,
-            });
+        for (let query of queries) {
+          if (query.pagination && query.pagination.page == query.currentPage) {
+            /**
+             * Page is decreased in one on every query if it's detected that the
+             * current page is the last page and if the current page is blank.
+             */
+            if (
+              isLastPage(query.pagination) &&
+              query.pagination.page == query.currentPage &&
+              isPageBlank(query.pagination)
+            ) {
+              const queryKey = query.queryKey;
+              const cachedPaginationParams =
+                getCachedPaginationParams(queryKey);
+              dispatchGoToPage({
+                queryKey,
+                page: query.currentPage - 1,
+                size: cachedPaginationParams?._size || 10,
+                sizeMultiplier: paginationSizeMultiplier,
+              });
+            }
           }
+        }
+
+        if (methodOptions?.withResponse) {
+          return response;
+        } else {
+          handler?.onSuccess?.(response);
+        }
+      } catch (error) {
+        if (methodOptions?.withResponse) {
+          throw error;
+        } else {
+          handler?.onError?.(error);
         }
       }
     };
@@ -417,17 +512,18 @@ export const useModel = <
    */
   const buildModelMethod = (
     handlerName: StringKey<keyof TQueryHandlers>,
-    handler: QueryHandler<TEntity>
+    handler: QueryHandler<TEntity>,
+    options?: BuildModelMethodOptions
   ) => {
     switch (handler.action) {
       case EntityActionType.LIST:
-        return buildListMethod(handlerName);
+        return buildListMethod(handlerName, handler, options);
       case EntityActionType.CREATE:
-        return buildCreateMethod(handlerName);
+        return buildCreateMethod(handlerName, handler, options);
       case EntityActionType.UPDATE:
-        return buildUpdateMethod(handlerName);
+        return buildUpdateMethod(handlerName, handler, options);
       case EntityActionType.REMOVE:
-        return buildRemoveMethod(handlerName);
+        return buildRemoveMethod(handlerName, handler, options);
       default:
         return async () => {};
     }
