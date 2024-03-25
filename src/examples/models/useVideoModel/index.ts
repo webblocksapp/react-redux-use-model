@@ -20,6 +20,7 @@ export const useVideoModel = () => {
         apiFn: videoApiClient.create,
       },
       update: { action: EntityActionType.UPDATE, apiFn: videoApiClient.update },
+      read: { action: EntityActionType.READ, apiFn: videoApiClient.read },
       remove: { action: EntityActionType.REMOVE, apiFn: videoApiClient.remove },
     },
   });

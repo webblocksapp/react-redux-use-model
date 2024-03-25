@@ -118,6 +118,40 @@ export const update = (
 
     normalizedState[key] = {
       ...entityState,
+      byId: {
+        ...entityState?.byId,
+        ...(entity.id
+          ? {
+              [entity.id]: {
+                ...entityState?.byId?.[entity.id],
+                ...value[entity.id],
+              },
+            }
+          : {}),
+      },
+      allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
+    };
+  }
+
+  return {
+    ...state,
+    ...normalizedState,
+  };
+};
+
+export const read = (
+  entityName: string,
+  entity: Entity,
+  state: NormalizedEntitiesState
+): NormalizedEntitiesState => {
+  let normalizedState: NormalizedEntitiesState = {};
+
+  for (let [key, value] of Object.entries(normalizer(entity, entityName))) {
+    const entityState = state[key];
+    const newIds = Object.keys(value);
+
+    normalizedState[key] = {
+      ...entityState,
       byId: { ...entityState?.byId, ...value },
       allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
     };

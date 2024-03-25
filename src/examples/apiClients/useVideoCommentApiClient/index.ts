@@ -45,6 +45,14 @@ export const useVideoCommentApiClient = () => {
     return { data };
   };
 
+  const read = async (id: string, entity: VideoComment) => {
+    const { data } = await axiosLocal.get<VideoComment>(
+      `/videos/${entity.videoId}/comments/${id}`
+    );
+
+    return { data };
+  };
+
   const remove = async (id: string, entity: VideoComment) => {
     const { data } = await axiosLocal.delete<VideoComment>(
       `/videos/${entity.videoId}/comments/${id}`
@@ -53,5 +61,5 @@ export const useVideoCommentApiClient = () => {
     return { data };
   };
 
-  return { list, create, update, remove };
+  return { list, create, update, remove, read };
 };

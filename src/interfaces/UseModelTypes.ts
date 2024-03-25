@@ -31,6 +31,11 @@ export type UpdateQueryHandler<TEntity extends { id: string }> = Extract<
   { action: EntityActionType.UPDATE }
 >;
 
+export type ReadQueryHandler<TEntity extends { id: string }> = Extract<
+  QueryHandler<TEntity>,
+  { action: EntityActionType.READ }
+>;
+
 export type RemoveQueryHandler<TEntity extends { id: string }> = Extract<
   QueryHandler<TEntity>,
   { action: EntityActionType.REMOVE }
@@ -41,6 +46,7 @@ export type CrudQueryHandlers<TEntity extends { id: string }> = {
   create: CreateQueryHandler<TEntity>;
   update: UpdateQueryHandler<TEntity>;
   remove: RemoveQueryHandler<TEntity>;
+  read: ReadQueryHandler<TEntity>;
 };
 
 export type ListApiFnParams<
@@ -58,6 +64,10 @@ export type CreateResponse<TEntity extends { id: string }> = {
 };
 
 export type UpdateResponse<TEntity extends { id: string }> = {
+  data: TEntity;
+};
+
+export type ReadResponse<TEntity extends { id: string }> = {
   data: TEntity;
 };
 
@@ -97,6 +107,14 @@ export type QueryHandler<TEntity extends { id: string } = { id: string }> =
       action: EntityActionType.UPDATE;
       onSuccess?: (
         data: Awaited<ReturnType<UpdateQueryHandler<TEntity>['apiFn']>>
+      ) => void;
+      onError?: (error: unknown) => void;
+    }
+  | {
+      apiFn: (id: string, ...args: any) => Promise<ReadResponse<TEntity>>;
+      action: EntityActionType.READ;
+      onSuccess?: (
+        data: Awaited<ReturnType<ReadQueryHandler<TEntity>['apiFn']>>
       ) => void;
       onError?: (error: unknown) => void;
     }

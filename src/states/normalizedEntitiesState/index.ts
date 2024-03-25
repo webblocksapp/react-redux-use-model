@@ -7,6 +7,7 @@ import {
   update,
   remove,
   invalidateQuery,
+  read,
 } from './handlers';
 
 const initialState: NormalizedEntitiesState = {};
@@ -31,6 +32,8 @@ export const normalizedEntitiesState = (
       return create(action.entityName, action.entity, action.queryKey, state);
     case EntityActionType.UPDATE:
       return update(action.entityName, action.entity, state);
+    case EntityActionType.READ:
+      return read(action.entityName, action.entity, state);
     case EntityActionType.REMOVE:
       return remove(
         action.entityName,

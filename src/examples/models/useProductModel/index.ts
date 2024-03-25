@@ -9,6 +9,7 @@ import {
   RemoveQueryHandler,
 } from 'react-redux-use-model';
 import { Product } from '@examples/interfaces';
+import { ReadQueryHandler } from '@interfaces';
 
 export const useProductModel = () => {
   const productApiClient = useProductApiClient();
@@ -18,6 +19,7 @@ export const useProductModel = () => {
       list: ListQueryHandler<Product>;
       create: CreateQueryHandler<Product>;
       update: UpdateQueryHandler<Product>;
+      read: ReadQueryHandler<Product>;
       remove: RemoveQueryHandler<Product>;
     }
   >({
@@ -29,6 +31,10 @@ export const useProductModel = () => {
       list: {
         apiFn: productApiClient.list,
         action: EntityActionType.LIST,
+      },
+      read: {
+        apiFn: productApiClient.read,
+        action: EntityActionType.READ,
       },
       create: {
         action: EntityActionType.CREATE,

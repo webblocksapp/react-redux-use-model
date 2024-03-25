@@ -34,6 +34,10 @@ export const useVideoCommentModel = () => {
         action: EntityActionType.UPDATE,
         apiFn: videoCommentApiClient.update,
       },
+      read: {
+        action: EntityActionType.READ,
+        apiFn: videoCommentApiClient.read,
+      },
       remove: {
         action: EntityActionType.REMOVE,
         apiFn: videoCommentApiClient.remove,

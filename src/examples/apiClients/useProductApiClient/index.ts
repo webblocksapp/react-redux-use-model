@@ -35,11 +35,17 @@ export const useProductApiClient = () => {
     return { data };
   };
 
+  const read = async (id: string) => {
+    const { data } = await axiosLocal.get<Product>(`/products/${id}`);
+
+    return { data };
+  };
+
   const remove = async (id: string) => {
     const { data } = await axiosLocal.delete<Product>(`/products/${id}`);
 
     return { data };
   };
 
-  return { list, create, update, remove };
+  return { list, create, update, read, remove };
 };

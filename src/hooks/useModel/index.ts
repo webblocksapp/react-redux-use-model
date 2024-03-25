@@ -11,6 +11,8 @@ import {
   CreateQueryHandler,
   UpdateQueryHandler,
   RemoveQueryHandler,
+  ReadQueryHandler,
+  ReadResponse,
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import {
@@ -169,6 +171,17 @@ export const useModel = <
   const dispatchUpdate = (params: { entity: any }) => {
     dispatch({
       type: EntityActionType.UPDATE,
+      entityName,
+      ...params,
+    });
+  };
+
+  /**
+   * Dispatch an read entity.
+   */
+  const dispatchRead = (params: { entity: any }) => {
+    dispatch({
+      type: EntityActionType.READ,
       entityName,
       ...params,
     });
@@ -439,6 +452,45 @@ export const useModel = <
   };
 
   /**
+   * Build the read method
+   */
+  const buildReadMethod = (
+    handlerName: StringKey<keyof TQueryHandlers>,
+    handler: ReadQueryHandler<TEntity>,
+    methodOptions?: BuildModelMethodOptions
+  ) => {
+    return async (
+      ...params: ModelMethodParameters<
+        TEntity,
+        TQueryHandlers[string],
+        EntityActionType.READ
+      >
+    ) => {
+      try {
+        const response = (await runApi({
+          apiName: handlerName,
+          params,
+          throwError: true,
+        })) as ReadResponse<TEntity>;
+
+        dispatchRead({ entity: response.data });
+
+        if (methodOptions?.withResponse) {
+          return response;
+        } else {
+          handler?.onSuccess?.(response);
+        }
+      } catch (error) {
+        if (methodOptions?.withResponse) {
+          throw error;
+        } else {
+          handler?.onError?.(error);
+        }
+      }
+    };
+  };
+
+  /**
    * Build the remove method.
    */
   const buildRemoveMethod = (
@@ -522,6 +574,8 @@ export const useModel = <
         return buildCreateMethod(handlerName, handler, options);
       case EntityActionType.UPDATE:
         return buildUpdateMethod(handlerName, handler, options);
+      case EntityActionType.READ:
+        return buildReadMethod(handlerName, handler, options);
       case EntityActionType.REMOVE:
         return buildRemoveMethod(handlerName, handler, options);
       default:

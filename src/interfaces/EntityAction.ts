@@ -24,6 +24,11 @@ export type EntityAction<TEntity extends { id: string } = any> =
       entity: TEntity;
     }
   | {
+      type: EntityActionType.READ;
+      entityName: string;
+      entity: TEntity;
+    }
+  | {
       type: EntityActionType.REMOVE;
       entityName: string;
       entityId: string;

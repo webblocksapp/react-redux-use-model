@@ -3,6 +3,7 @@ export enum EntityActionType {
   CREATE = 'ENTITY:CREATE',
   UPDATE = 'ENTITY:UPDATE',
   REMOVE = 'ENTITY:REMOVE',
+  READ = 'ENTITY:READ',
 }
 
 export enum EntityHelperActionType {
