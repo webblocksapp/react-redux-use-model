@@ -21,6 +21,7 @@ export const normalizedEntitiesState = (
       return list(
         action.entityName,
         action.entities,
+        action.schema,
         action.currentPage,
         action.queryKey,
         action.pagination,
@@ -29,18 +30,13 @@ export const normalizedEntitiesState = (
         state
       );
     case EntityActionType.CREATE:
-      return create(action.entityName, action.entity, action.queryKey, state);
+      return create(action.entityName, action.entity, action.schema, state);
     case EntityActionType.UPDATE:
-      return update(action.entityName, action.entity, state);
+      return update(action.entityName, action.entity, action.schema, state);
     case EntityActionType.READ:
-      return read(action.entityName, action.entity, state);
+      return read(action.entityName, action.entity, action.schema, state);
     case EntityActionType.REMOVE:
-      return remove(
-        action.entityName,
-        action.entityId,
-        action.foreignKeys,
-        state
-      );
+      return remove(action.entityName, action.entityId, action.schema, state);
     case EntityHelperActionType.GO_TO_PAGE:
       return goToPage(
         action.entityName,

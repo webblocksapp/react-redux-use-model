@@ -1,6 +1,6 @@
 import {
   Entity,
-  ForeignKey,
+  ModelSchema,
   NormalizedEntitiesState,
   QueryState,
 } from '@interfaces';
@@ -20,9 +20,16 @@ import {
   set,
 } from '@utils';
 
+const mapRelationships = (relationships: ModelSchema['relationships']) =>
+  (relationships || []).map((item) => ({
+    fieldName: item.fieldName,
+    newFieldName: item.entityName,
+  }));
+
 export const list = (
   entityName: string,
   entities: any[],
+  schema: ModelSchema | undefined,
   currentPage: number | undefined,
   queryKey: string | undefined,
   pagination: QueryState['pagination'],
@@ -31,8 +38,11 @@ export const list = (
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   let normalizedState: NormalizedEntitiesState = {};
+  const map = mapRelationships(schema?.relationships);
 
-  for (let [key, value] of Object.entries(normalizer(entities, entityName))) {
+  for (let [key, value] of Object.entries(
+    normalizer(entities, entityName, map)
+  )) {
     const entityState = state[key];
     const newIds = Object.keys(value);
 
@@ -61,12 +71,15 @@ export const list = (
 export const create = (
   entityName: string,
   entity: Entity,
-  _: string | undefined,
+  schema: ModelSchema | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   let normalizedState: NormalizedEntitiesState = {};
+  const map = mapRelationships(schema?.relationships);
 
-  for (let [key, value] of Object.entries(normalizer(entity, entityName))) {
+  for (let [key, value] of Object.entries(
+    normalizer(entity, entityName, map)
+  )) {
     const entityState = state[key];
     const newIds = Object.keys(value);
 
@@ -108,11 +121,15 @@ export const create = (
 export const update = (
   entityName: string,
   entity: Entity,
+  schema: ModelSchema | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   let normalizedState: NormalizedEntitiesState = {};
+  const map = mapRelationships(schema?.relationships);
 
-  for (let [key, value] of Object.entries(normalizer(entity, entityName))) {
+  for (let [key, value] of Object.entries(
+    normalizer(entity, entityName, map)
+  )) {
     const entityState = state[key];
     const newIds = Object.keys(value);
 
@@ -142,11 +159,15 @@ export const update = (
 export const read = (
   entityName: string,
   entity: Entity,
+  schema: ModelSchema | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   let normalizedState: NormalizedEntitiesState = {};
+  const map = mapRelationships(schema?.relationships);
 
-  for (let [key, value] of Object.entries(normalizer(entity, entityName))) {
+  for (let [key, value] of Object.entries(
+    normalizer(entity, entityName, map)
+  )) {
     const entityState = state[key];
     const newIds = Object.keys(value);
 
@@ -166,7 +187,7 @@ export const read = (
 export const remove = (
   entityName: string,
   entityId: string,
-  foreignKeys: Array<ForeignKey> | undefined,
+  schema: ModelSchema | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   let normalizedState: NormalizedEntitiesState = {};
@@ -198,7 +219,7 @@ export const remove = (
   }
 
   if (entity) {
-    for (let foreignKey of foreignKeys || []) {
+    for (let foreignKey of schema?.foreignKeys || []) {
       const foreignEntityName = foreignKey.foreignEntityName;
       const foreignKeyName = foreignKey.foreignKeyName;
       const foreignFieldName = foreignKey.foreignFieldName;

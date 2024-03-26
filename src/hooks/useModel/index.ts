@@ -147,6 +147,7 @@ export const useModel = <
     dispatch({
       type: EntityActionType.LIST,
       entityName,
+      schema,
       ...params,
     });
   };
@@ -161,6 +162,7 @@ export const useModel = <
     dispatch({
       type: EntityActionType.CREATE,
       entityName,
+      schema,
       ...params,
     });
   };
@@ -172,6 +174,7 @@ export const useModel = <
     dispatch({
       type: EntityActionType.UPDATE,
       entityName,
+      schema,
       ...params,
     });
   };
@@ -183,6 +186,7 @@ export const useModel = <
     dispatch({
       type: EntityActionType.READ,
       entityName,
+      schema,
       ...params,
     });
   };
@@ -194,7 +198,7 @@ export const useModel = <
     dispatch({
       type: EntityActionType.REMOVE,
       entityName,
-      foreignKeys: schema?.foreignKeys || [],
+      schema,
       ...params,
     });
   };

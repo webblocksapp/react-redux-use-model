@@ -1,11 +1,12 @@
 import { EntityActionType, EntityHelperActionType } from '@constants';
-import { QueryState, ForeignKey } from '@interfaces';
+import { QueryState, ModelSchema } from '@interfaces';
 
 export type EntityAction<TEntity extends { id: string } = any> =
   | {
       type: EntityActionType.LIST;
       entityName: string;
       entities: TEntity[];
+      schema: ModelSchema | undefined;
       queryKey: string | undefined;
       pagination?: QueryState['pagination'];
       sizeMultiplier?: number;
@@ -16,23 +17,25 @@ export type EntityAction<TEntity extends { id: string } = any> =
       type: EntityActionType.CREATE;
       entityName: string;
       entity: TEntity;
-      queryKey: string | undefined;
+      schema: ModelSchema | undefined;
     }
   | {
       type: EntityActionType.UPDATE;
       entityName: string;
       entity: TEntity;
+      schema: ModelSchema | undefined;
     }
   | {
       type: EntityActionType.READ;
       entityName: string;
       entity: TEntity;
+      schema: ModelSchema | undefined;
     }
   | {
       type: EntityActionType.REMOVE;
       entityName: string;
       entityId: string;
-      foreignKeys: Array<ForeignKey>;
+      schema: ModelSchema | undefined;
     }
   | {
       type: EntityHelperActionType.GO_TO_PAGE;

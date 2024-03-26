@@ -42,7 +42,47 @@ describe('normalizer', () => {
           comments: [2, 3],
         },
       },
-      ['products.comments']: {
+      comments: {
+        '1': { id: 1, detail: 'Nice shoes' },
+        '2': { id: 2, detail: 'Excellent shoes' },
+        '3': { id: 3, detail: 'Good product' },
+      },
+    });
+  });
+
+  it('Array with an entity with nested sub-entities and map', () => {
+    const data = [
+      {
+        id: 1,
+        name: 'Nike Black Shoes',
+        comments: [{ id: 1, detail: 'Nice shoes' }],
+      },
+      {
+        id: 2,
+        name: 'Nike White Shoes',
+        comments: [
+          { id: 2, detail: 'Excellent shoes' },
+          { id: 3, detail: 'Good product' },
+        ],
+      },
+    ];
+    const result = normalizer(data, 'products', [
+      { fieldName: 'comments', newFieldName: 'videos.comments' },
+    ]);
+    expect(result).toEqual({
+      products: {
+        '1': {
+          id: 1,
+          name: 'Nike Black Shoes',
+          comments: [1],
+        },
+        '2': {
+          id: 2,
+          name: 'Nike White Shoes',
+          comments: [2, 3],
+        },
+      },
+      ['videos.comments']: {
         '1': { id: 1, detail: 'Nice shoes' },
         '2': { id: 2, detail: 'Excellent shoes' },
         '3': { id: 3, detail: 'Good product' },

@@ -141,7 +141,10 @@ export type NormalizeEntity<T extends AnyObject> = {
     : T[K];
 };
 
-export type ModelSchema = { foreignKeys: Array<ForeignKey> };
+export type ModelSchema = {
+  foreignKeys?: Array<ForeignKey>;
+  relationships?: Array<{ fieldName: string; entityName: string }>;
+};
 
 export type ApiFnParameters<
   TEntity extends { id: string },

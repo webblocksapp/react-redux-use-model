@@ -10,6 +10,11 @@ export const useVideoModel = () => {
 
   const model = useModel<Video, CrudQueryHandlers<Video>>({
     entityName: EntityName.Videos,
+    schema: {
+      relationships: [
+        { fieldName: 'comments', entityName: EntityName.VideosComments },
+      ],
+    },
     handlers: {
       list: {
         action: EntityActionType.LIST,

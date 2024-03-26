@@ -11,6 +11,7 @@ describe('normalizedEntitiesState', () => {
         entities,
         entityName: 'Users',
         queryKey: 'UsersList',
+        schema: undefined,
       }
     );
 
@@ -43,6 +44,7 @@ describe('normalizedEntitiesState', () => {
         entityName: 'Users',
         queryKey: 'UsersList',
         pagination: { page: 0, size: 2, totalElements: 6, totalPages: 3 },
+        schema: undefined,
       }
     );
 
@@ -84,6 +86,7 @@ describe('normalizedEntitiesState', () => {
         entityName: 'Users',
         queryKey: 'UsersList',
         pagination: pagination1,
+        schema: undefined,
       }
     );
 
@@ -98,6 +101,7 @@ describe('normalizedEntitiesState', () => {
       entityName: 'Users',
       queryKey: 'UsersList',
       pagination: pagination2,
+      schema: undefined,
     });
 
     expect(state).toEqual({
@@ -135,6 +139,7 @@ describe('normalizedEntitiesState', () => {
         entities: entities1,
         queryKey: 'UsersList',
         entityName: 'Users',
+        schema: undefined,
       }
     );
 
@@ -142,6 +147,7 @@ describe('normalizedEntitiesState', () => {
       type: EntityActionType.UPDATE,
       entity: { id: '1', name: 'updated name 1' },
       entityName: 'Users',
+      schema: undefined,
     });
 
     expect(state).toEqual({
@@ -170,6 +176,7 @@ describe('normalizedEntitiesState', () => {
         queryKey: 'UsersList',
         entityName: 'Users',
         pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
+        schema: undefined,
       }
     );
 
@@ -177,7 +184,7 @@ describe('normalizedEntitiesState', () => {
       type: EntityActionType.REMOVE,
       entityId: '1',
       entityName: 'Users',
-      foreignKeys: [],
+      schema: { foreignKeys: [] },
     });
 
     expect(state).toEqual({
@@ -211,6 +218,7 @@ describe('normalizedEntitiesState', () => {
         queryKey: 'VideosList',
         entityName: 'Videos',
         pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
+        schema: undefined,
       }
     );
 
@@ -220,6 +228,7 @@ describe('normalizedEntitiesState', () => {
       entities: entities2,
       queryKey: 'CommentsList',
       entityName: 'Videos.Comments',
+      schema: undefined,
     });
 
     expect(state).toEqual({
@@ -256,13 +265,15 @@ describe('normalizedEntitiesState', () => {
       type: EntityActionType.REMOVE,
       entityId: '1',
       entityName: 'Videos.Comments',
-      foreignKeys: [
-        {
-          foreignEntityName: 'Videos',
-          foreignKeyName: 'videoId',
-          foreignFieldName: 'comments',
-        },
-      ],
+      schema: {
+        foreignKeys: [
+          {
+            foreignEntityName: 'Videos',
+            foreignKeyName: 'videoId',
+            foreignFieldName: 'comments',
+          },
+        ],
+      },
     });
 
     expect(state).toEqual({
