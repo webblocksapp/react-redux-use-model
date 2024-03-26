@@ -173,7 +173,17 @@ export const read = (
 
     normalizedState[key] = {
       ...entityState,
-      byId: { ...entityState?.byId, ...value },
+      byId: {
+        ...entityState?.byId,
+        ...(entity.id
+          ? {
+              [entity.id]: {
+                ...entityState?.byId?.[entity.id],
+                ...value[entity.id],
+              },
+            }
+          : {}),
+      },
       allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
     };
   }
