@@ -200,7 +200,7 @@ export const remove = (
   schema: ModelSchema | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
-  let normalizedState: NormalizedEntitiesState = {};
+  let updatedState: NormalizedEntitiesState = { ...state };
   let entity: Entity | undefined;
   const entityState = state[entityName];
 
@@ -209,22 +209,25 @@ export const remove = (
     const { [entityId]: removedEntity, ...restById } = byId;
 
     entity = removedEntity;
-    normalizedState[entityName] = {
-      ...entityState,
-      byId: restById,
-      allIds: (entityState?.allIds || []).filter((id) => id !== entityId),
-      queries: entityState?.queries?.map?.((query) => ({
-        ...query,
-        ids: query.ids.filter((id) => id !== entityId),
-        ...(query.pagination
-          ? {
-              pagination: handlePagination({
-                pagination: query.pagination,
-                operation: 'remove',
-              }),
-            }
-          : {}),
-      })),
+    updatedState = {
+      ...updatedState,
+      [entityName]: {
+        ...entityState,
+        byId: restById,
+        allIds: (entityState?.allIds || []).filter((id) => id !== entityId),
+        queries: entityState?.queries?.map?.((query) => ({
+          ...query,
+          ids: query.ids.filter((id) => id !== entityId),
+          ...(query.pagination
+            ? {
+                pagination: handlePagination({
+                  pagination: query.pagination,
+                  operation: 'remove',
+                }),
+              }
+            : {}),
+        })),
+      },
     };
   }
 
@@ -234,34 +237,41 @@ export const remove = (
       const foreignKeyName = foreignKey.foreignKeyName;
       const foreignFieldName = foreignKey.foreignFieldName;
 
-      const entityState = state[foreignEntityName];
       const result = entity[foreignKeyName];
       const foreignEntityIds = Array.isArray(result) ? result : [result];
 
       for (const foreignEntityId of foreignEntityIds) {
+        const entityState = updatedState[foreignEntityName];
+
         if (entityState?.byId) {
           const byId = entityState.byId;
           const { [foreignEntityId]: parentEntity, ...restById } = byId;
-          const entityIds = get<Array<string>>(parentEntity, foreignFieldName);
+          const entityIds = get<Array<string> | string>(
+            parentEntity,
+            foreignFieldName
+          );
+
           const updatedParentEntity = set(
             clone(parentEntity),
             foreignFieldName,
-            entityIds.filter((id) => id !== entity?.id)
+            Array.isArray(entityIds)
+              ? entityIds.filter((id) => id !== entity?.id)
+              : undefined
           );
 
-          normalizedState[foreignEntityName] = {
-            ...entityState,
-            byId: { [foreignEntityId]: updatedParentEntity, ...restById },
+          updatedState = {
+            ...updatedState,
+            [foreignEntityName]: {
+              ...entityState,
+              byId: { ...restById, [foreignEntityId]: updatedParentEntity },
+            },
           };
         }
       }
     }
   }
 
-  return {
-    ...state,
-    ...normalizedState,
-  };
+  return updatedState;
 };
 
 export const goToPage = (

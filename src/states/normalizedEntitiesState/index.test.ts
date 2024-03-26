@@ -306,4 +306,228 @@ describe('normalizedEntitiesState', () => {
       },
     });
   });
+
+  it('Dispatch remove action of entity with multiple foreign keys.', () => {
+    const entities1 = [
+      { id: '1', name: 'Business 1', associatedContacts: ['1', '2'] },
+      { id: '2', name: 'Business 2', associatedContacts: ['1'] },
+    ];
+    let state = normalizedEntitiesState(
+      {},
+      {
+        type: EntityActionType.LIST,
+        entities: entities1,
+        queryKey: 'BusinessesList',
+        entityName: 'Businesses',
+        pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
+        schema: undefined,
+      }
+    );
+
+    const entities2 = [
+      { id: '1', name: 'Contact 1', businessesIds: ['1', '2'] },
+    ];
+    state = normalizedEntitiesState(state, {
+      type: EntityActionType.LIST,
+      entities: entities2,
+      queryKey: 'ContactsList',
+      entityName: 'Contacts',
+      schema: undefined,
+    });
+
+    expect(state).toEqual({
+      Businesses: {
+        byId: {
+          '1': { id: '1', name: 'Business 1', associatedContacts: ['1', '2'] },
+          '2': { id: '2', name: 'Business 2', associatedContacts: ['1'] },
+        },
+        allIds: ['1', '2'],
+        queries: [
+          {
+            ids: ['1', '2'],
+            queryKey: 'BusinessesList',
+            pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
+            calculatedPagination: {
+              page: 0,
+              size: 10,
+              totalElements: 1,
+              totalPages: 1,
+            },
+          },
+        ],
+      },
+      Contacts: {
+        byId: {
+          '1': { id: '1', name: 'Contact 1', businessesIds: ['1', '2'] },
+        },
+        allIds: ['1'],
+        queries: [
+          {
+            ids: ['1'],
+            queryKey: 'ContactsList',
+          },
+        ],
+      },
+    });
+
+    state = normalizedEntitiesState(state, {
+      type: EntityActionType.REMOVE,
+      entityId: '1',
+      entityName: 'Contacts',
+      schema: {
+        foreignKeys: [
+          {
+            foreignEntityName: 'Businesses',
+            foreignKeyName: 'businessesIds',
+            foreignFieldName: 'associatedContacts',
+          },
+        ],
+      },
+    });
+
+    expect(state).toEqual({
+      Businesses: {
+        byId: {
+          '1': { id: '1', name: 'Business 1', associatedContacts: ['2'] },
+          '2': { id: '2', name: 'Business 2', associatedContacts: [] },
+        },
+        allIds: ['1', '2'],
+        queries: [
+          {
+            ids: ['1', '2'],
+            queryKey: 'BusinessesList',
+            pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
+            calculatedPagination: {
+              page: 0,
+              size: 10,
+              totalElements: 1,
+              totalPages: 1,
+            },
+          },
+        ],
+      },
+      Contacts: {
+        byId: {},
+        allIds: [],
+        queries: [
+          {
+            ids: [],
+            queryKey: 'ContactsList',
+          },
+        ],
+      },
+    });
+  });
+
+  it('Dispatch remove action of entity with multiple foreign keys and the relationship is not an array.', () => {
+    const entities1 = [
+      { id: '1', name: 'Business 1', associatedContact: '1' },
+      { id: '2', name: 'Business 2', associatedContact: '1' },
+    ];
+    let state = normalizedEntitiesState(
+      {},
+      {
+        type: EntityActionType.LIST,
+        entities: entities1,
+        queryKey: 'BusinessesList',
+        entityName: 'Businesses',
+        pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
+        schema: undefined,
+      }
+    );
+
+    const entities2 = [
+      { id: '1', name: 'Contact 1', businessesIds: ['1', '2'] },
+    ];
+    state = normalizedEntitiesState(state, {
+      type: EntityActionType.LIST,
+      entities: entities2,
+      queryKey: 'ContactsList',
+      entityName: 'Contacts',
+      schema: undefined,
+    });
+
+    expect(state).toEqual({
+      Businesses: {
+        byId: {
+          '1': { id: '1', name: 'Business 1', associatedContact: '1' },
+          '2': { id: '2', name: 'Business 2', associatedContact: '1' },
+        },
+        allIds: ['1', '2'],
+        queries: [
+          {
+            ids: ['1', '2'],
+            queryKey: 'BusinessesList',
+            pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
+            calculatedPagination: {
+              page: 0,
+              size: 10,
+              totalElements: 1,
+              totalPages: 1,
+            },
+          },
+        ],
+      },
+      Contacts: {
+        byId: {
+          '1': { id: '1', name: 'Contact 1', businessesIds: ['1', '2'] },
+        },
+        allIds: ['1'],
+        queries: [
+          {
+            ids: ['1'],
+            queryKey: 'ContactsList',
+          },
+        ],
+      },
+    });
+
+    state = normalizedEntitiesState(state, {
+      type: EntityActionType.REMOVE,
+      entityId: '1',
+      entityName: 'Contacts',
+      schema: {
+        foreignKeys: [
+          {
+            foreignEntityName: 'Businesses',
+            foreignKeyName: 'businessesIds',
+            foreignFieldName: 'associatedContact',
+          },
+        ],
+      },
+    });
+
+    expect(state).toEqual({
+      Businesses: {
+        byId: {
+          '1': { id: '1', name: 'Business 1', associatedContact: undefined },
+          '2': { id: '2', name: 'Business 2', associatedContact: undefined },
+        },
+        allIds: ['1', '2'],
+        queries: [
+          {
+            ids: ['1', '2'],
+            queryKey: 'BusinessesList',
+            pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
+            calculatedPagination: {
+              page: 0,
+              size: 10,
+              totalElements: 1,
+              totalPages: 1,
+            },
+          },
+        ],
+      },
+      Contacts: {
+        byId: {},
+        allIds: [],
+        queries: [
+          {
+            ids: [],
+            queryKey: 'ContactsList',
+          },
+        ],
+      },
+    });
+  });
 });
