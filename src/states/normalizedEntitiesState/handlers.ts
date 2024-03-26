@@ -235,22 +235,25 @@ export const remove = (
       const foreignFieldName = foreignKey.foreignFieldName;
 
       const entityState = state[foreignEntityName];
-      const foreignEntityId = entity[foreignKeyName];
+      const result = entity[foreignKeyName];
+      const foreignEntityIds = Array.isArray(result) ? result : [result];
 
-      if (entityState?.byId) {
-        const byId = entityState.byId;
-        const { [foreignEntityId]: parentEntity, ...restById } = byId;
-        const entityIds = get<Array<string>>(parentEntity, foreignFieldName);
-        const updatedParentEntity = set(
-          clone(parentEntity),
-          foreignFieldName,
-          entityIds.filter((id) => id !== entity?.id)
-        );
+      for (const foreignEntityId of foreignEntityIds) {
+        if (entityState?.byId) {
+          const byId = entityState.byId;
+          const { [foreignEntityId]: parentEntity, ...restById } = byId;
+          const entityIds = get<Array<string>>(parentEntity, foreignFieldName);
+          const updatedParentEntity = set(
+            clone(parentEntity),
+            foreignFieldName,
+            entityIds.filter((id) => id !== entity?.id)
+          );
 
-        normalizedState[foreignEntityName] = {
-          ...entityState,
-          byId: { [foreignEntityId]: updatedParentEntity, ...restById },
-        };
+          normalizedState[foreignEntityName] = {
+            ...entityState,
+            byId: { [foreignEntityId]: updatedParentEntity, ...restById },
+          };
+        }
       }
     }
   }
