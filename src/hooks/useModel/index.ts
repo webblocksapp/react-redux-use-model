@@ -540,7 +540,10 @@ export const useModel = <
                 getCachedPaginationParams(queryKey);
               dispatchGoToPage({
                 queryKey,
-                page: query.currentPage - 1,
+                page:
+                  query.currentPage > 0
+                    ? query.currentPage - 1
+                    : query.currentPage,
                 size: cachedPaginationParams?._size || 10,
                 sizeMultiplier: paginationSizeMultiplier,
               });

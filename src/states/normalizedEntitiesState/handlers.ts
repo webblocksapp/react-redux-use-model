@@ -37,7 +37,7 @@ export const list = (
   params: any,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
-  let normalizedState: NormalizedEntitiesState = {};
+  let updatedState = { ...state };
   const map = mapRelationships(schema?.relationships);
 
   for (let [key, value] of Object.entries(
@@ -46,26 +46,26 @@ export const list = (
     const entityState = state[key];
     const newIds = Object.keys(value);
 
-    normalizedState[key] = {
-      ...entityState,
-      byId: { ...entityState?.byId, ...value },
-      allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
-      queries: mergeQueries({
-        queries: entityState?.queries || [],
-        queryKey,
-        ids: newIds,
-        pagination,
-        sizeMultiplier,
-        currentPage,
-        params,
-      }),
+    updatedState = {
+      ...updatedState,
+      [key]: {
+        ...entityState,
+        byId: { ...entityState?.byId, ...value },
+        allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
+        queries: mergeQueries({
+          queries: entityState?.queries || [],
+          queryKey,
+          ids: newIds,
+          pagination,
+          sizeMultiplier,
+          currentPage,
+          params,
+        }),
+      },
     };
   }
 
-  return {
-    ...state,
-    ...normalizedState,
-  };
+  return updatedState;
 };
 
 export const create = (
@@ -74,7 +74,7 @@ export const create = (
   schema: ModelSchema | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
-  let normalizedState: NormalizedEntitiesState = {};
+  let updatedState = { ...state };
   const map = mapRelationships(schema?.relationships);
 
   for (let [key, value] of Object.entries(
@@ -83,39 +83,39 @@ export const create = (
     const entityState = state[key];
     const newIds = Object.keys(value);
 
-    normalizedState[key] = {
-      ...entityState,
-      byId: { ...entityState?.byId, ...value },
-      allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
-      queries: entityState?.queries?.map((query) => {
-        return {
-          ...query,
-          ...(query.pagination
-            ? {
-                pagination: handlePagination({
-                  pagination: query.pagination,
-                  operation: 'create',
-                }),
-                ids: (() => {
-                  const newIds = [...query.ids];
-                  const { startIndex } = calcPaginationIndexes({
-                    ...query.pagination,
-                    page: query?.currentPage || query.pagination.page,
-                  });
-                  entity.id && newIds.splice(startIndex, 0, entity.id);
-                  return newIds;
-                })(),
-              }
-            : {}),
-        };
-      }),
+    updatedState = {
+      ...updatedState,
+      [key]: {
+        ...entityState,
+        byId: { ...entityState?.byId, ...value },
+        allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
+        queries: entityState?.queries?.map((query) => {
+          return {
+            ...query,
+            ...(query.pagination
+              ? {
+                  pagination: handlePagination({
+                    pagination: query.pagination,
+                    operation: 'create',
+                  }),
+                  ids: (() => {
+                    const newIds = [...query.ids];
+                    const { startIndex } = calcPaginationIndexes({
+                      ...query.pagination,
+                      page: query?.currentPage || query.pagination.page,
+                    });
+                    entity.id && newIds.splice(startIndex, 0, entity.id);
+                    return newIds;
+                  })(),
+                }
+              : {}),
+          };
+        }),
+      },
     };
   }
 
-  return {
-    ...state,
-    ...normalizedState,
-  };
+  return updatedState;
 };
 
 export const update = (
@@ -124,7 +124,7 @@ export const update = (
   schema: ModelSchema | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
-  let normalizedState: NormalizedEntitiesState = {};
+  let updatedState = { ...state };
   const map = mapRelationships(schema?.relationships);
 
   for (let [key, value] of Object.entries(
@@ -133,27 +133,27 @@ export const update = (
     const entityState = state[key];
     const newIds = Object.keys(value);
 
-    normalizedState[key] = {
-      ...entityState,
-      byId: {
-        ...entityState?.byId,
-        ...(entity.id
-          ? {
-              [entity.id]: {
-                ...entityState?.byId?.[entity.id],
-                ...value[entity.id],
-              },
-            }
-          : {}),
+    updatedState = {
+      ...updatedState,
+      [key]: {
+        ...entityState,
+        byId: {
+          ...entityState?.byId,
+          ...(entity.id
+            ? {
+                [entity.id]: {
+                  ...entityState?.byId?.[entity.id],
+                  ...value[entity.id],
+                },
+              }
+            : {}),
+        },
+        allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
       },
-      allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
     };
   }
 
-  return {
-    ...state,
-    ...normalizedState,
-  };
+  return updatedState;
 };
 
 export const read = (
@@ -162,7 +162,7 @@ export const read = (
   schema: ModelSchema | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
-  let normalizedState: NormalizedEntitiesState = {};
+  let updatedState = { ...state };
   const map = mapRelationships(schema?.relationships);
 
   for (let [key, value] of Object.entries(
@@ -171,27 +171,27 @@ export const read = (
     const entityState = state[key];
     const newIds = Object.keys(value);
 
-    normalizedState[key] = {
-      ...entityState,
-      byId: {
-        ...entityState?.byId,
-        ...(entity.id
-          ? {
-              [entity.id]: {
-                ...entityState?.byId?.[entity.id],
-                ...value[entity.id],
-              },
-            }
-          : {}),
+    updatedState = {
+      ...updatedState,
+      [key]: {
+        ...entityState,
+        byId: {
+          ...entityState?.byId,
+          ...(entity.id
+            ? {
+                [entity.id]: {
+                  ...entityState?.byId?.[entity.id],
+                  ...value[entity.id],
+                },
+              }
+            : {}),
+        },
+        allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
       },
-      allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
     };
   }
 
-  return {
-    ...state,
-    ...normalizedState,
-  };
+  return updatedState;
 };
 
 export const remove = (
@@ -200,7 +200,7 @@ export const remove = (
   schema: ModelSchema | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
-  let updatedState: NormalizedEntitiesState = { ...state };
+  let updatedState = { ...state };
   let entity: Entity | undefined;
   const entityState = state[entityName];
 
