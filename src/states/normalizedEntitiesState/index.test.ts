@@ -530,4 +530,143 @@ describe('normalizedEntitiesState', () => {
       },
     });
   });
+
+  it('Dispatch create action of entity with foreign key.', () => {
+    const entities1 = [{ id: '1', name: 'Business 1' }];
+    let state = normalizedEntitiesState(
+      {},
+      {
+        type: EntityActionType.LIST,
+        entities: entities1,
+        queryKey: 'BusinessesList',
+        entityName: 'Businesses',
+        pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
+        schema: undefined,
+      }
+    );
+
+    state = normalizedEntitiesState(state, {
+      type: EntityActionType.LIST,
+      entities: [],
+      queryKey: 'ContactsList',
+      entityName: 'Contacts',
+      schema: undefined,
+      pagination: { page: 0, size: 10, totalElements: 0, totalPages: 1 },
+    });
+
+    state = normalizedEntitiesState(state, {
+      type: EntityActionType.CREATE,
+      entity: { id: '1', name: 'Contact 1', businessId: '1' },
+      entityName: 'Contacts',
+      schema: {
+        foreignKeys: [
+          {
+            foreignEntityName: 'Businesses',
+            foreignKeyName: 'businessId',
+            foreignFieldName: 'associatedContact',
+          },
+        ],
+      },
+    });
+
+    expect(state).toEqual({
+      Businesses: {
+        byId: {
+          '1': { id: '1', name: 'Business 1', associatedContact: '1' },
+        },
+        allIds: ['1'],
+        queries: [
+          {
+            ids: ['1'],
+            queryKey: 'BusinessesList',
+            pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
+            calculatedPagination: {
+              page: 0,
+              size: 10,
+              totalElements: 1,
+              totalPages: 1,
+            },
+          },
+        ],
+      },
+      Contacts: {
+        byId: {
+          '1': { id: '1', name: 'Contact 1', businessId: '1' },
+        },
+        allIds: ['1'],
+        queries: [
+          {
+            ids: ['1'],
+            queryKey: 'ContactsList',
+            calculatedPagination: {
+              page: 0,
+              size: 10,
+              totalElements: 0,
+              totalPages: 0,
+            },
+            pagination: {
+              page: 0,
+              size: 10,
+              totalElements: 1,
+              totalPages: 1,
+            },
+          },
+        ],
+      },
+    });
+  });
+
+  it('Dispatch create action of entity with multiple foreign keys.', () => {
+    const entities1 = [
+      { id: '1', name: 'Business 1' },
+      { id: '2', name: 'Business 2' },
+    ];
+    let state = normalizedEntitiesState(
+      {},
+      {
+        type: EntityActionType.LIST,
+        entities: entities1,
+        queryKey: 'BusinessesList',
+        entityName: 'Businesses',
+        pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
+        schema: undefined,
+      }
+    );
+
+    state = normalizedEntitiesState(state, {
+      type: EntityActionType.LIST,
+      entities: [],
+      queryKey: 'ContactsList',
+      entityName: 'Contacts',
+      schema: undefined,
+      pagination: { page: 0, size: 10, totalElements: 0, totalPages: 1 },
+    });
+
+    state = normalizedEntitiesState(state, {
+      type: EntityActionType.CREATE,
+      entity: { id: '1', name: 'Contact 1', businessesIds: ['1', '2'] },
+      entityName: 'Contacts',
+      schema: {
+        foreignKeys: [
+          {
+            foreignEntityName: 'Businesses',
+            foreignKeyName: 'businessesIds',
+            foreignFieldName: 'associatedContacts',
+            foreignFieldDataType: 'array',
+          },
+        ],
+      },
+    });
+
+    expect(state).toEqual(
+      expect.objectContaining({
+        Businesses: expect.objectContaining({
+          byId: expect.objectContaining({
+            '1': { id: '1', name: 'Business 1', associatedContacts: ['1'] },
+            '2': { id: '2', name: 'Business 2', associatedContacts: ['1'] },
+          }),
+        }),
+      })
+    );
+  });
 });

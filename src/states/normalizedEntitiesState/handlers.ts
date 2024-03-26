@@ -1,4 +1,5 @@
 import {
+  CrudOperation,
   Entity,
   ModelSchema,
   NormalizedEntitiesState,
@@ -25,6 +26,77 @@ const mapRelationships = (relationships: ModelSchema['relationships']) =>
     fieldName: item.fieldName,
     newFieldName: item.entityName,
   }));
+
+const handleForeignKeys = (
+  entity: any,
+  schema: ModelSchema,
+  state: NormalizedEntitiesState,
+  operation: CrudOperation
+) => {
+  for (let foreignKey of schema?.foreignKeys || []) {
+    const foreignEntityName = foreignKey.foreignEntityName;
+    const foreignKeyName = foreignKey.foreignKeyName;
+    const foreignFieldName = foreignKey.foreignFieldName;
+
+    const result = entity[foreignKeyName];
+    const foreignEntityIds = Array.isArray(result) ? result : [result];
+
+    for (const foreignEntityId of foreignEntityIds) {
+      const entityState = state[foreignEntityName];
+      if (entityState?.byId && foreignEntityId) {
+        const byId = entityState.byId;
+        const { [foreignEntityId]: parentEntity, ...restById } = byId;
+        const entityIds = get<Array<string> | string>(
+          parentEntity,
+          foreignFieldName
+        );
+
+        let updatedParentEntity;
+
+        switch (operation) {
+          case 'create': {
+            let value: any;
+
+            if (foreignKey.foreignFieldDataType === 'array') {
+              value = get(parentEntity, foreignFieldName) || [];
+              value = [...value, entity.id];
+            } else {
+              value = entity.id;
+            }
+
+            updatedParentEntity = set(
+              clone(parentEntity),
+              foreignFieldName,
+              value
+            );
+            break;
+          }
+          case 'remove':
+            updatedParentEntity = set(
+              clone(parentEntity),
+              foreignFieldName,
+              Array.isArray(entityIds)
+                ? entityIds.filter((id) => id !== entity?.id)
+                : undefined
+            );
+            break;
+          default:
+            break;
+        }
+
+        state = {
+          ...state,
+          [foreignEntityName]: {
+            ...entityState,
+            byId: { ...restById, [foreignEntityId]: updatedParentEntity },
+          },
+        };
+      }
+    }
+  }
+
+  return state;
+};
 
 export const list = (
   entityName: string,
@@ -105,6 +177,7 @@ export const create = (
                       page: query?.currentPage || query.pagination.page,
                     });
                     entity.id && newIds.splice(startIndex, 0, entity.id);
+
                     return newIds;
                   })(),
                 }
@@ -113,6 +186,10 @@ export const create = (
         }),
       },
     };
+  }
+
+  if (entity && schema) {
+    updatedState = handleForeignKeys(entity, schema, updatedState, 'create');
   }
 
   return updatedState;
@@ -231,44 +308,8 @@ export const remove = (
     };
   }
 
-  if (entity) {
-    for (let foreignKey of schema?.foreignKeys || []) {
-      const foreignEntityName = foreignKey.foreignEntityName;
-      const foreignKeyName = foreignKey.foreignKeyName;
-      const foreignFieldName = foreignKey.foreignFieldName;
-
-      const result = entity[foreignKeyName];
-      const foreignEntityIds = Array.isArray(result) ? result : [result];
-
-      for (const foreignEntityId of foreignEntityIds) {
-        const entityState = updatedState[foreignEntityName];
-
-        if (entityState?.byId) {
-          const byId = entityState.byId;
-          const { [foreignEntityId]: parentEntity, ...restById } = byId;
-          const entityIds = get<Array<string> | string>(
-            parentEntity,
-            foreignFieldName
-          );
-
-          const updatedParentEntity = set(
-            clone(parentEntity),
-            foreignFieldName,
-            Array.isArray(entityIds)
-              ? entityIds.filter((id) => id !== entity?.id)
-              : undefined
-          );
-
-          updatedState = {
-            ...updatedState,
-            [foreignEntityName]: {
-              ...entityState,
-              byId: { ...restById, [foreignEntityId]: updatedParentEntity },
-            },
-          };
-        }
-      }
-    }
+  if (entity && schema) {
+    updatedState = handleForeignKeys(entity, schema, updatedState, 'remove');
   }
 
   return updatedState;
