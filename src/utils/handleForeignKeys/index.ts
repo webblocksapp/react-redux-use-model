@@ -21,13 +21,13 @@ export const handleForeignKeys = (args: {
     const foreignKeyName = foreignKey.foreignKeyName;
     const foreignFieldName = foreignKey.foreignFieldName;
 
-    let prevForeignEntityIds: string[] = prevEntity?.[foreignKeyName] || [];
+    let prevForeignEntityIds: string[] =
+      operation === 'update' ? prevEntity?.[foreignKeyName] || [] : [];
     prevForeignEntityIds = Array.isArray(prevForeignEntityIds)
       ? prevForeignEntityIds
       : [prevForeignEntityIds];
 
-    let foreignEntityIds: string[] =
-      operation === 'update' ? entity[foreignKeyName] || [] : [];
+    let foreignEntityIds: string[] = entity[foreignKeyName] || [];
     foreignEntityIds = Array.isArray(foreignEntityIds)
       ? foreignEntityIds
       : [foreignEntityIds];
@@ -36,6 +36,8 @@ export const handleForeignKeys = (args: {
       prevForeignEntityIds,
       foreignEntityIds
     );
+
+    console.log(changes);
 
     state = handleForeignEntityIds({
       state,
