@@ -682,4 +682,84 @@ describe('normalizedEntitiesState', () => {
       })
     );
   });
+
+  it('Dispatch update action of entity with a key.', () => {
+    const entities1 = [{ id: '1', name: 'Business 1', associatedContact: '1' }];
+    let state = normalizedEntitiesState(
+      {},
+      {
+        type: EntityActionType.LIST,
+        entities: entities1,
+        queryKey: 'BusinessesList',
+        entityName: 'Businesses',
+        pagination: { page: 0, size: 10, totalElements: 1, totalPages: 1 },
+        schema: undefined,
+      }
+    );
+
+    state = normalizedEntitiesState(state, {
+      type: EntityActionType.LIST,
+      entities: [{ id: '1', name: 'Contact 1', businessId: '1' }],
+      queryKey: 'ContactsList',
+      entityName: 'Contacts',
+      schema: undefined,
+      pagination: { page: 0, size: 10, totalElements: 0, totalPages: 1 },
+    });
+
+    const updateConfig = {
+      type: EntityActionType.UPDATE as const,
+      entityName: 'Contacts',
+      schema: {
+        foreignKeys: [
+          {
+            foreignEntityName: 'Businesses',
+            foreignKeyName: 'businessId',
+            foreignFieldName: 'associatedContact',
+          } as const,
+        ],
+      },
+    };
+
+    state = normalizedEntitiesState(state, {
+      ...updateConfig,
+      prevEntity: { id: '1', name: 'Contact 1', businessId: '1' },
+      entity: { id: '1', name: 'Contact 1', businessId: undefined },
+    });
+
+    expect(state).toEqual(
+      expect.objectContaining({
+        Businesses: expect.objectContaining({
+          byId: expect.objectContaining({
+            '1': { id: '1', name: 'Business 1', associatedContact: undefined },
+          }),
+        }),
+        Contacts: expect.objectContaining({
+          byId: expect.objectContaining({
+            '1': { id: '1', name: 'Contact 1', businessId: undefined },
+          }),
+        }),
+      })
+    );
+
+    state = normalizedEntitiesState(state, {
+      ...updateConfig,
+      prevEntity: { id: '1', name: 'Contact 1' },
+      entity: { id: '1', name: 'Contact 1', businessId: '1' },
+    });
+
+    expect(state).toEqual(
+      expect.objectContaining({
+        Businesses: expect.objectContaining({
+          byId: expect.objectContaining({
+            '1': { id: '1', name: 'Business 1', associatedContact: '1' },
+          }),
+        }),
+        Contacts: expect.objectContaining({
+          byId: expect.objectContaining({
+            '1': { id: '1', name: 'Contact 1', businessId: '1' },
+          }),
+        }),
+      })
+    );
+  });
 });

@@ -37,8 +37,6 @@ export const handleForeignKeys = (args: {
       foreignEntityIds
     );
 
-    console.log(changes);
-
     state = handleForeignEntityIds({
       state,
       entity,
