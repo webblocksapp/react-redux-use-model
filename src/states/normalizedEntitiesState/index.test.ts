@@ -683,7 +683,7 @@ describe('normalizedEntitiesState', () => {
     );
   });
 
-  it('Dispatch update action of entity with a key.', () => {
+  it('Dispatch update action of entity with a foreign key.', () => {
     const entities1 = [{ id: '1', name: 'Business 1', associatedContact: '1' }];
     let state = normalizedEntitiesState(
       {},
