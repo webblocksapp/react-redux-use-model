@@ -23,6 +23,7 @@ export type EntityAction<TEntity extends { id: string } = any> =
       type: EntityActionType.UPDATE;
       entityName: string;
       entity: TEntity;
+      prevEntity?: TEntity;
       schema: ModelSchema | undefined;
     }
   | {

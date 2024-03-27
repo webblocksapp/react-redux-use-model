@@ -62,7 +62,7 @@ export const useModel = <
   const { handlers, entityName, schema, config } = params;
   const { paginationSizeMultiplier = 5, initialLoadingSize = 10 } =
     config || {};
-  const { findQuery, findEntityState } = useModelContext();
+  const { findQuery, findEntity, findEntityState } = useModelContext();
 
   /**
    * Extract the apis from the handlers.
@@ -170,7 +170,7 @@ export const useModel = <
   /**
    * Dispatch an updated entity.
    */
-  const dispatchUpdate = (params: { entity: any }) => {
+  const dispatchUpdate = (params: { entity: any; prevEntity: any }) => {
     dispatch({
       type: EntityActionType.UPDATE,
       entityName,
@@ -432,13 +432,15 @@ export const useModel = <
       >
     ) => {
       try {
+        const [entityId] = params;
+        const prevEntity = findEntity(entityName, entityId);
         const response = (await runApi({
           apiName: handlerName,
           params,
           throwError: true,
         })) as UpdateResponse<TEntity>;
 
-        dispatchUpdate({ entity: response.data });
+        dispatchUpdate({ entity: response.data, prevEntity });
 
         if (methodOptions?.withResponse) {
           return response;

@@ -32,7 +32,13 @@ export const normalizedEntitiesState = (
     case EntityActionType.CREATE:
       return create(action.entityName, action.entity, action.schema, state);
     case EntityActionType.UPDATE:
-      return update(action.entityName, action.entity, action.schema, state);
+      return update(
+        action.entityName,
+        action.entity,
+        action.prevEntity,
+        action.schema,
+        state
+      );
     case EntityActionType.READ:
       return read(action.entityName, action.entity, action.schema, state);
     case EntityActionType.REMOVE:

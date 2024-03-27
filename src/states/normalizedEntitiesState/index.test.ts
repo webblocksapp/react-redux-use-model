@@ -642,9 +642,8 @@ describe('normalizedEntitiesState', () => {
       pagination: { page: 0, size: 10, totalElements: 0, totalPages: 1 },
     });
 
-    state = normalizedEntitiesState(state, {
-      type: EntityActionType.CREATE,
-      entity: { id: '1', name: 'Contact 1', businessesIds: ['1', '2'] },
+    const createConfig = {
+      type: EntityActionType.CREATE as const,
       entityName: 'Contacts',
       schema: {
         foreignKeys: [
@@ -653,9 +652,19 @@ describe('normalizedEntitiesState', () => {
             foreignKeyName: 'businessesIds',
             foreignFieldName: 'associatedContacts',
             foreignFieldDataType: 'array',
-          },
+          } as const,
         ],
       },
+    };
+
+    state = normalizedEntitiesState(state, {
+      ...createConfig,
+      entity: { id: '1', name: 'Contact 1', businessesIds: ['1', '2'] },
+    });
+
+    state = normalizedEntitiesState(state, {
+      ...createConfig,
+      entity: { id: '2', name: 'Contact 2', businessesIds: ['2'] },
     });
 
     expect(state).toEqual(
@@ -663,7 +672,11 @@ describe('normalizedEntitiesState', () => {
         Businesses: expect.objectContaining({
           byId: expect.objectContaining({
             '1': { id: '1', name: 'Business 1', associatedContacts: ['1'] },
-            '2': { id: '2', name: 'Business 2', associatedContacts: ['1'] },
+            '2': {
+              id: '2',
+              name: 'Business 2',
+              associatedContacts: ['1', '2'],
+            },
           }),
         }),
       })
