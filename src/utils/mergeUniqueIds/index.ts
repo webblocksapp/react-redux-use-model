@@ -1,6 +1,9 @@
-export const mergeUniqueIds = (ids1: string[], ids2: string[]) => {
+export const mergeUniqueIds = (
+  ids1: Array<string | number>,
+  ids2: Array<string | number>
+) => {
   const allIds = [...ids1, ...ids2];
-  let uniqueIds: string[] = [];
+  let uniqueIds: Array<string | number> = [];
 
   for (let id of allIds) {
     if (uniqueIds.includes(id)) continue;

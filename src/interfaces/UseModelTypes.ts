@@ -1,6 +1,7 @@
 import { EntityActionType } from '@constants';
 import {
   AnyObject,
+  Entity,
   ForeignKey,
   Pagination,
   PaginationParams,
@@ -10,7 +11,7 @@ import {
 export type BuildModelMethodOptions = { withResponse?: boolean };
 
 export type QueryHandlers<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   T extends { [K in keyof T]: T[K] } = { [key: string]: QueryHandler<TEntity> }
 > = {
   [K in keyof T]: QueryHandler<TEntity>;
@@ -19,12 +20,12 @@ export type QueryHandlers<
 export type ListApiFnParams = [PaginationParams, ...args: any];
 
 export type ListApiFn<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TParams extends ListApiFnParams = ListApiFnParams
 > = (...args: TParams) => Promise<ListResponse<TEntity>>;
 
 export type ListQueryHandler<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TParams extends ListApiFnParams = ListApiFnParams
 > = {
   apiFn: ListApiFn<TEntity, TParams>;
@@ -35,18 +36,15 @@ export type ListQueryHandler<
   onError?: (error: unknown) => void;
 };
 
-export type CreateApiFnParams<TEntity extends { id: string }> = [
-  TEntity,
-  ...args: any
-];
+export type CreateApiFnParams<TEntity extends Entity> = [TEntity, ...args: any];
 
 export type CreateApiFn<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TParams extends CreateApiFnParams<TEntity> = CreateApiFnParams<TEntity>
 > = (...args: TParams) => Promise<CreateResponse<TEntity>>;
 
 export type CreateQueryHandler<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TParams extends CreateApiFnParams<TEntity> = CreateApiFnParams<TEntity>
 > = {
   apiFn: CreateApiFn<TEntity, TParams>;
@@ -57,19 +55,19 @@ export type CreateQueryHandler<
   onError?: (error: unknown) => void;
 };
 
-export type UpdateApiFnParams<TEntity extends { id: string }> = [
+export type UpdateApiFnParams<TEntity extends Entity> = [
   string,
   TEntity,
   ...args: any
 ];
 
 export type UpdateApiFn<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TParams extends UpdateApiFnParams<TEntity> = UpdateApiFnParams<TEntity>
 > = (...args: TParams) => Promise<UpdateResponse<TEntity>>;
 
 export type UpdateQueryHandler<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TParams extends UpdateApiFnParams<TEntity> = UpdateApiFnParams<TEntity>
 > = {
   apiFn: UpdateApiFn<TEntity, TParams>;
@@ -83,12 +81,12 @@ export type UpdateQueryHandler<
 export type ReadApiFnParams = [string, ...args: any];
 
 export type ReadApiFn<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TParams extends ReadApiFnParams = ReadApiFnParams
 > = (...args: TParams) => Promise<ReadResponse<TEntity>>;
 
 export type ReadQueryHandler<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TParams extends ReadApiFnParams = ReadApiFnParams
 > = {
   apiFn: ReadApiFn<TEntity, TParams>;
@@ -102,12 +100,12 @@ export type ReadQueryHandler<
 export type RemoveApiFnParams = [string, ...args: any];
 
 export type RemoveApiFn<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TParams extends RemoveApiFnParams = RemoveApiFnParams
 > = (...args: TParams) => Promise<RemoveResponse<TEntity>>;
 
 export type RemoveQueryHandler<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TParams extends RemoveApiFnParams = RemoveApiFnParams
 > = {
   apiFn: RemoveApiFn<TEntity, TParams>;
@@ -118,7 +116,7 @@ export type RemoveQueryHandler<
   onError?: (error: unknown) => void;
 };
 
-export type CrudQueryHandlers<TEntity extends { id: string }> = {
+export type CrudQueryHandlers<TEntity extends Entity> = {
   list: ListQueryHandler<TEntity>;
   create: CreateQueryHandler<TEntity>;
   update: UpdateQueryHandler<TEntity>;
@@ -126,28 +124,28 @@ export type CrudQueryHandlers<TEntity extends { id: string }> = {
   read: ReadQueryHandler<TEntity>;
 };
 
-export type ListResponse<TEntity extends { id: string }> = {
+export type ListResponse<TEntity extends Entity> = {
   data: Array<TEntity>;
   pagination?: Pagination;
 };
 
-export type CreateResponse<TEntity extends { id: string }> = {
+export type CreateResponse<TEntity extends Entity> = {
   data: TEntity;
 };
 
-export type UpdateResponse<TEntity extends { id: string }> = {
+export type UpdateResponse<TEntity extends Entity> = {
   data: TEntity;
 };
 
-export type ReadResponse<TEntity extends { id: string }> = {
+export type ReadResponse<TEntity extends Entity> = {
   data: TEntity;
 };
 
-export type RemoveResponse<TEntity extends { id: string }> = {
+export type RemoveResponse<TEntity extends Entity> = {
   data: TEntity;
 };
 
-export type QueryHandler<TEntity extends { id: string } = { id: string }> =
+export type QueryHandler<TEntity extends Entity = Entity> =
   | ListQueryHandler<TEntity>
   | CreateQueryHandler<TEntity>
   | UpdateQueryHandler<TEntity>
@@ -155,7 +153,7 @@ export type QueryHandler<TEntity extends { id: string } = { id: string }> =
   | RemoveQueryHandler<TEntity>;
 
 export type ExtractHandler<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   T extends { [K in keyof T]: QueryHandler<TEntity> },
   TEntityActionType extends EntityActionType
 > = Extract<T[StringKey<keyof T>], { action: TEntityActionType }>;
@@ -172,25 +170,28 @@ export type NormalizeEntity<T extends AnyObject> = {
     : T[K];
 };
 
-export type ModelSchema = {
+export type ModelSchema<TEntity extends Entity = Entity> = {
   foreignKeys?: Array<ForeignKey>;
-  relationships?: Array<{ fieldName: string; entityName: string }>;
+  relationships?: Array<{
+    fieldName: string;
+    entityName: string | ((entity: TEntity) => string);
+  }>;
 };
 
 export type ApiFnParameters<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TQueryHandler extends QueryHandler<TEntity>,
   TEntityActionType extends EntityActionType
 > = Parameters<Extract<TQueryHandler, { action: TEntityActionType }>['apiFn']>;
 
 export type ExtractQueryHandlerApiFnParameters<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TQueryHandler extends QueryHandler<TEntity>,
   TEntityActionType extends EntityActionType
 > = Parameters<Extract<TQueryHandler, { action: TEntityActionType }>['apiFn']>;
 
 export type ExtractApiFnParametersArg1<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TQueryHandler extends QueryHandler<TEntity>,
   TEntityActionType extends EntityActionType,
   TApiFnParameters extends ApiFnParameters<
@@ -201,7 +202,7 @@ export type ExtractApiFnParametersArg1<
 > = TApiFnParameters extends [infer Arg1, ...infer _] ? Arg1 : never;
 
 export type ExcludeApiFnParametersArg1<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TQueryHandler extends QueryHandler<TEntity>,
   TEntityActionType extends EntityActionType,
   TApiFnParameters extends ApiFnParameters<
@@ -217,7 +218,7 @@ export type InvalidateQueryStrategy =
   | { strategy: 'custom'; when: () => boolean };
 
 export type ModelMethodParameters<
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TQueryHandler extends QueryHandler<TEntity>,
   TEntityActionType extends EntityActionType
 > = TEntityActionType extends EntityActionType.LIST

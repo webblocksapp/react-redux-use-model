@@ -6,8 +6,8 @@ import {
 } from '@utils';
 
 export const mergeIds = (
-  originalIds: string[],
-  newIds: string[],
+  originalIds: Array<string | number>,
+  newIds: Array<string | number>,
   pagination?: Pagination,
   options?: { replaceWhenEmpty: boolean }
 ) => {

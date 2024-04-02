@@ -1,16 +1,21 @@
-export const normalizer = <
-  T extends Array<{ id?: string | number }> | { id?: string | number }
->(
+import { AnyObject, Entity } from '@interfaces';
+
+export const normalizer = <T extends Array<Entity> | Entity>(
   data: T,
   fieldName: string,
-  map: Array<{ fieldName: string; newFieldName: string }> = [],
-  result: any = {}
+  map: Array<{
+    fieldName: string;
+    newFieldName: string | ((entity: Entity) => string);
+  }> = [],
+  result: AnyObject = {}
 ): { [key: string]: { [key: string]: { id?: string } } } => {
   const newFieldName = map.find(
     (item) => item.fieldName == fieldName
   )?.newFieldName;
 
-  fieldName = newFieldName ? newFieldName : fieldName;
+  if (typeof newFieldName === 'string') {
+    fieldName = newFieldName ? newFieldName : fieldName;
+  }
 
   if (result[fieldName] === undefined) {
     result[fieldName] = {};
@@ -35,6 +40,22 @@ export const normalizer = <
         ) {
           result[fieldName][data.id][key] = value.map((item) => item.id);
           normalizer(value, key, map, result);
+        } else if (typeof value === 'object' && (value as Entity).id) {
+          result[fieldName][data.id][key] = (value as Entity).id;
+
+          const newFieldName = map.find(
+            (item) => item.fieldName == key
+          )?.newFieldName;
+
+          if (typeof newFieldName === 'string') {
+            fieldName = newFieldName ? newFieldName : key;
+          }
+
+          if (typeof newFieldName === 'function') {
+            fieldName = newFieldName(data);
+          }
+
+          normalizer(value, fieldName, map, result);
         }
       }
     }

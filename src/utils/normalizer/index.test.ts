@@ -89,4 +89,56 @@ describe('normalizer', () => {
       },
     });
   });
+
+  it('Dynamic mapping', () => {
+    const data = [
+      {
+        id: '1a',
+        type: 'Clothes',
+        data: { id: '1a', name: 'Nike Black Shoes' },
+      },
+      {
+        id: '1b',
+        type: 'Contact',
+        data: { id: '1b', firstName: 'William' },
+      },
+    ];
+    const result = normalizer(data, 'searchResults', [
+      {
+        fieldName: 'data',
+        newFieldName: (entity) => {
+          const value = entity as (typeof data)[0];
+          switch (value.type) {
+            case 'Clothes':
+              return 'clothes';
+            case 'Contact':
+              return 'contacts';
+            default:
+              return '';
+          }
+        },
+      },
+    ]);
+
+    expect(result).toEqual({
+      searchResults: {
+        '1a': {
+          id: '1a',
+          type: 'Clothes',
+          data: '1a',
+        },
+        '1b': {
+          id: '1b',
+          type: 'Contact',
+          data: '1b',
+        },
+      },
+      clothes: {
+        '1a': { id: '1a', name: 'Nike Black Shoes' },
+      },
+      contacts: {
+        '1b': { id: '1b', firstName: 'William' },
+      },
+    });
+  });
 });

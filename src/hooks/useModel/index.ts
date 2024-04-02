@@ -13,6 +13,7 @@ import {
   RemoveQueryHandler,
   ReadQueryHandler,
   ReadResponse,
+  Entity,
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import {
@@ -46,12 +47,12 @@ import {
 } from '@interfaces';
 
 export const useModel = <
-  TEntity extends { id: string },
+  TEntity extends Entity,
   TQueryHandlers extends QueryHandlers<TEntity>
 >(params: {
   handlers: TQueryHandlers;
   entityName: string;
-  schema?: ModelSchema;
+  schema?: ModelSchema<TEntity>;
   config?: {
     paginationSizeMultiplier?: number;
     initialLoadingSize?: number;
@@ -84,7 +85,7 @@ export const useModel = <
   /**
    * Dispatch initialization.
    */
-  const dispatch = useDispatch<Dispatch<EntityAction>>();
+  const dispatch = useDispatch<Dispatch<EntityAction<TEntity>>>();
 
   /**
    * Get the query key from the ref.
@@ -194,7 +195,7 @@ export const useModel = <
   /**
    * Dispatch remove operation.
    */
-  const dispatchRemove = (params: { entityId: string }) => {
+  const dispatchRemove = (params: { entityId: string | number }) => {
     dispatch({
       type: EntityActionType.REMOVE,
       entityName,

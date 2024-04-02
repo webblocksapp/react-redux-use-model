@@ -1,10 +1,8 @@
 import { QueryKeyContext, QueryKeyContextType } from '@utils';
 import { useRef } from 'react';
 
-export const withQueryKey = <T extends JSX.IntrinsicAttributes>(
-  Component: React.FC<T>
-) => {
-  return (props: T) => {
+export const withQueryKey = <T,>(Component: React.FC<T>) => {
+  return (props: T & JSX.IntrinsicAttributes) => {
     const ref: QueryKeyContextType['ref'] = useRef<{
       queryKey: string;
     }>({

@@ -1,1 +1,1 @@
-export type Entity = { id?: string; [key: string]: any };
+export type Entity = { id?: string | number };
