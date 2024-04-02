@@ -165,6 +165,10 @@ export type NormalizeEntity<T extends AnyObject> = {
     ? Array<string>
     : T[K] extends { id?: string }
     ? string
+    : T[K] extends Array<{ id?: string }> | undefined
+    ? Array<string> | undefined
+    : T[K] extends { id?: string } | undefined
+    ? string | undefined
     : T[K];
 };
 

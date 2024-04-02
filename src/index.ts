@@ -6,13 +6,14 @@ export { withQueryKey } from './hocs';
 export { normalizedEntitiesState } from './states';
 export type { ModelProviderProps } from './components';
 export type {
+  CreateQueryHandler,
+  CrudQueryHandlers,
+  ListQueryHandler,
+  NormalizeEntity,
   Pagination,
   PaginationParams,
   QueryHandler,
-  CrudQueryHandlers,
-  ListQueryHandler,
-  CreateQueryHandler,
-  UpdateQueryHandler,
-  RemoveQueryHandler,
   ReadQueryHandler,
+  RemoveQueryHandler,
+  UpdateQueryHandler,
 } from './interfaces';
