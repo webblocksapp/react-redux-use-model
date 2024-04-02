@@ -5,7 +5,7 @@ export const normalizer = <T extends Array<Entity> | Entity>(
   fieldName: string,
   map: Array<{
     fieldName: string;
-    newFieldName: string | ((entity: Entity) => string);
+    newFieldName: string | ((entity: Entity) => string | undefined);
   }> = [],
   result: AnyObject = {}
 ): { [key: string]: { [key: string]: { id?: string } } } => {
@@ -52,7 +52,7 @@ export const normalizer = <T extends Array<Entity> | Entity>(
           }
 
           if (typeof newFieldName === 'function') {
-            fieldName = newFieldName(data);
+            fieldName = newFieldName(data) || key;
           }
 
           normalizer(value, fieldName, map, result);

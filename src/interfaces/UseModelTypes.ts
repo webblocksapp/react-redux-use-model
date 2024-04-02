@@ -174,7 +174,7 @@ export type ModelSchema<TEntity extends Entity = Entity> = {
   foreignKeys?: Array<ForeignKey>;
   relationships?: Array<{
     fieldName: string;
-    entityName: string | ((entity: TEntity) => string);
+    entityName: string | ((entity: TEntity) => string | undefined);
   }>;
 };
 
