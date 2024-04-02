@@ -50,4 +50,9 @@ export type EntityAction<TEntity extends { id: string } = any> =
       type: EntityHelperActionType.INVALIDATE_QUERY;
       entityName: string;
       queryKey: string;
+    }
+  | {
+      type: EntityHelperActionType.INITIALIZE_QUERY;
+      entityName: string;
+      queryKey: string;
     };

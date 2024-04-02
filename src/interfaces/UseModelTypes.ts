@@ -16,30 +16,107 @@ export type QueryHandlers<
   [K in keyof T]: QueryHandler<TEntity>;
 };
 
-export type ListQueryHandler<TEntity extends { id: string }> = Extract<
-  QueryHandler<TEntity>,
-  { action: EntityActionType.LIST }
->;
+export type ListApiFnParams = [PaginationParams, ...args: any];
 
-export type CreateQueryHandler<TEntity extends { id: string }> = Extract<
-  QueryHandler<TEntity>,
-  { action: EntityActionType.CREATE }
->;
+export type ListApiFn<
+  TEntity extends { id: string },
+  TParams extends ListApiFnParams = ListApiFnParams
+> = (...args: TParams) => Promise<ListResponse<TEntity>>;
 
-export type UpdateQueryHandler<TEntity extends { id: string }> = Extract<
-  QueryHandler<TEntity>,
-  { action: EntityActionType.UPDATE }
->;
+export type ListQueryHandler<
+  TEntity extends { id: string },
+  TParams extends ListApiFnParams = ListApiFnParams
+> = {
+  apiFn: ListApiFn<TEntity, TParams>;
+  action: EntityActionType.LIST;
+  onSuccess?: (
+    data: Awaited<ReturnType<ListQueryHandler<TEntity>['apiFn']>>
+  ) => void;
+  onError?: (error: unknown) => void;
+};
 
-export type ReadQueryHandler<TEntity extends { id: string }> = Extract<
-  QueryHandler<TEntity>,
-  { action: EntityActionType.READ }
->;
+export type CreateApiFnParams<TEntity extends { id: string }> = [
+  TEntity,
+  ...args: any
+];
 
-export type RemoveQueryHandler<TEntity extends { id: string }> = Extract<
-  QueryHandler<TEntity>,
-  { action: EntityActionType.REMOVE }
->;
+export type CreateApiFn<
+  TEntity extends { id: string },
+  TParams extends CreateApiFnParams<TEntity> = CreateApiFnParams<TEntity>
+> = (...args: TParams) => Promise<CreateResponse<TEntity>>;
+
+export type CreateQueryHandler<
+  TEntity extends { id: string },
+  TParams extends CreateApiFnParams<TEntity> = CreateApiFnParams<TEntity>
+> = {
+  apiFn: CreateApiFn<TEntity, TParams>;
+  action: EntityActionType.CREATE;
+  onSuccess?: (
+    data: Awaited<ReturnType<CreateQueryHandler<TEntity>['apiFn']>>
+  ) => void;
+  onError?: (error: unknown) => void;
+};
+
+export type UpdateApiFnParams<TEntity extends { id: string }> = [
+  string,
+  TEntity,
+  ...args: any
+];
+
+export type UpdateApiFn<
+  TEntity extends { id: string },
+  TParams extends UpdateApiFnParams<TEntity> = UpdateApiFnParams<TEntity>
+> = (...args: TParams) => Promise<UpdateResponse<TEntity>>;
+
+export type UpdateQueryHandler<
+  TEntity extends { id: string },
+  TParams extends UpdateApiFnParams<TEntity> = UpdateApiFnParams<TEntity>
+> = {
+  apiFn: UpdateApiFn<TEntity, TParams>;
+  action: EntityActionType.UPDATE;
+  onSuccess?: (
+    data: Awaited<ReturnType<UpdateQueryHandler<TEntity>['apiFn']>>
+  ) => void;
+  onError?: (error: unknown) => void;
+};
+
+export type ReadApiFnParams = [string, ...args: any];
+
+export type ReadApiFn<
+  TEntity extends { id: string },
+  TParams extends ReadApiFnParams = ReadApiFnParams
+> = (...args: TParams) => Promise<ReadResponse<TEntity>>;
+
+export type ReadQueryHandler<
+  TEntity extends { id: string },
+  TParams extends ReadApiFnParams = ReadApiFnParams
+> = {
+  apiFn: ReadApiFn<TEntity, TParams>;
+  action: EntityActionType.READ;
+  onSuccess?: (
+    data: Awaited<ReturnType<ReadQueryHandler<TEntity>['apiFn']>>
+  ) => void;
+  onError?: (error: unknown) => void;
+};
+
+export type RemoveApiFnParams = [string, ...args: any];
+
+export type RemoveApiFn<
+  TEntity extends { id: string },
+  TParams extends RemoveApiFnParams = RemoveApiFnParams
+> = (...args: TParams) => Promise<RemoveResponse<TEntity>>;
+
+export type RemoveQueryHandler<
+  TEntity extends { id: string },
+  TParams extends RemoveApiFnParams = RemoveApiFnParams
+> = {
+  apiFn: RemoveApiFn<TEntity, TParams>;
+  action: EntityActionType.REMOVE;
+  onSuccess?: (
+    data: Awaited<ReturnType<RemoveQueryHandler<TEntity>['apiFn']>>
+  ) => void;
+  onError?: (error: unknown) => void;
+};
 
 export type CrudQueryHandlers<TEntity extends { id: string }> = {
   list: ListQueryHandler<TEntity>;
@@ -48,11 +125,6 @@ export type CrudQueryHandlers<TEntity extends { id: string }> = {
   remove: RemoveQueryHandler<TEntity>;
   read: ReadQueryHandler<TEntity>;
 };
-
-export type ListApiFnParams<
-  TEntity extends { id: string },
-  T extends { [K in keyof T]: QueryHandler<TEntity> }
-> = Parameters<ExtractHandler<TEntity, T, EntityActionType.LIST>['apiFn']>;
 
 export type ListResponse<TEntity extends { id: string }> = {
   data: Array<TEntity>;
@@ -76,56 +148,11 @@ export type RemoveResponse<TEntity extends { id: string }> = {
 };
 
 export type QueryHandler<TEntity extends { id: string } = { id: string }> =
-  | {
-      apiFn: (
-        paginationParams: PaginationParams,
-        ...args: any
-      ) => Promise<ListResponse<TEntity>>;
-      action: EntityActionType.LIST;
-      onSuccess?: (
-        data: Awaited<ReturnType<ListQueryHandler<TEntity>['apiFn']>>
-      ) => void;
-      onError?: (error: unknown) => void;
-    }
-  | {
-      apiFn: (
-        entity: TEntity,
-        ...args: any
-      ) => Promise<CreateResponse<TEntity>>;
-      action: EntityActionType.CREATE;
-      onSuccess?: (
-        data: Awaited<ReturnType<CreateQueryHandler<TEntity>['apiFn']>>
-      ) => void;
-      onError?: (error: unknown) => void;
-    }
-  | {
-      apiFn: (
-        id: string,
-        entity: TEntity,
-        ...args: any
-      ) => Promise<UpdateResponse<TEntity>>;
-      action: EntityActionType.UPDATE;
-      onSuccess?: (
-        data: Awaited<ReturnType<UpdateQueryHandler<TEntity>['apiFn']>>
-      ) => void;
-      onError?: (error: unknown) => void;
-    }
-  | {
-      apiFn: (id: string, ...args: any) => Promise<ReadResponse<TEntity>>;
-      action: EntityActionType.READ;
-      onSuccess?: (
-        data: Awaited<ReturnType<ReadQueryHandler<TEntity>['apiFn']>>
-      ) => void;
-      onError?: (error: unknown) => void;
-    }
-  | {
-      apiFn: (id: string, ...args: any) => Promise<RemoveResponse<TEntity>>;
-      action: EntityActionType.REMOVE;
-      onSuccess?: (
-        data: Awaited<ReturnType<RemoveQueryHandler<TEntity>['apiFn']>>
-      ) => void;
-      onError?: (error: unknown) => void;
-    };
+  | ListQueryHandler<TEntity>
+  | CreateQueryHandler<TEntity>
+  | UpdateQueryHandler<TEntity>
+  | ReadQueryHandler<TEntity>
+  | RemoveQueryHandler<TEntity>;
 
 export type ExtractHandler<
   TEntity extends { id: string },

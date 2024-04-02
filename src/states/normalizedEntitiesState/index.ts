@@ -8,6 +8,7 @@ import {
   remove,
   invalidateQuery,
   read,
+  initializeQuery,
 } from './handlers';
 
 const initialState: NormalizedEntitiesState = {};
@@ -54,6 +55,8 @@ export const normalizedEntitiesState = (
       );
     case EntityHelperActionType.INVALIDATE_QUERY:
       return invalidateQuery(action.entityName, action.queryKey, state);
+    case EntityHelperActionType.INITIALIZE_QUERY:
+      return initializeQuery(action.entityName, action.queryKey, state);
     default:
       return state;
   }

@@ -19,6 +19,32 @@ import {
   normalizer,
 } from '@utils';
 
+export const initializeQuery = (
+  entityName: string,
+  queryKey: string | undefined,
+  state: NormalizedEntitiesState
+): NormalizedEntitiesState => {
+  let updatedState = { ...state };
+  const entityState = state[entityName];
+
+  if (
+    entityState?.queries?.some((query) => query.queryKey === queryKey) ||
+    queryKey === undefined
+  ) {
+    return state;
+  }
+
+  updatedState = {
+    ...updatedState,
+    [entityName]: {
+      ...entityState,
+      queries: [...(entityState?.queries || []), { queryKey, ids: [] }],
+    },
+  };
+
+  return updatedState;
+};
+
 export const list = (
   entityName: string,
   entities: Entity[],

@@ -284,6 +284,7 @@ export const useModel = <
       const prevQueryKey = getQueryKey();
       setQueryKey(options.queryKey);
       const queryKey = getQueryKey();
+      dispatchInitializeQuery({ queryKey });
       const cachedPaginationParams = getCachedPaginationParams(queryKey);
       const page = options.paginationParams?._page || 0;
       const size =
@@ -608,6 +609,17 @@ export const useModel = <
   };
 
   /**
+   * Handles query initialization.
+   */
+  const dispatchInitializeQuery = (params: { queryKey: string }) => {
+    dispatch({
+      type: EntityHelperActionType.INITIALIZE_QUERY,
+      entityName,
+      ...params,
+    });
+  };
+
+  /**
    * Selects normalized entity state by the entity name.
    */
   const selectNormalizedEntityState = (state: RootState) =>
@@ -642,10 +654,11 @@ export const useModel = <
   ) => {
     entityId = entityId || emptyId();
     const loading = state?.byId?.[entityId] === undefined;
-    const entity = (entityId ? state?.byId?.[entityId] : undefined) as
+    const data = (entityId ? state?.byId?.[entityId] : undefined) as
       | NormalizeEntity<TEntity>
       | undefined;
-    return { id: entityId, data: entity, loading };
+
+    return { id: entityId, data, loading };
   };
 
   /**

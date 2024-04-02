@@ -9,4 +9,5 @@ export enum EntityActionType {
 export enum EntityHelperActionType {
   GO_TO_PAGE = 'ENTITY:GO_TO_PAGE',
   INVALIDATE_QUERY = 'ENTITY:INVALIDATE_QUERY',
+  INITIALIZE_QUERY = 'ENTITY:INITIALIZE_QUERY',
 }
