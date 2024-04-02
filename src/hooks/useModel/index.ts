@@ -705,6 +705,7 @@ export const useModel = <
         return item;
       }),
     } as QueryState<
+      TEntity,
       Parameters<
         ExtractHandler<TEntity, TQueryHandlers, EntityActionType.LIST>['apiFn']
       >

@@ -236,7 +236,7 @@ export const read = (
 
 export const remove = (
   entityName: string,
-  entityId: string,
+  entityId: string | number,
   schema: ModelSchema | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
