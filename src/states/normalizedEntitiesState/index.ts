@@ -60,6 +60,7 @@ export const normalizedEntitiesState = (
         action.entityName,
         action.queryKey,
         action.initialLoadingSize,
+        action.timestamp,
         state
       );
     default:

@@ -6,6 +6,7 @@ export enum EntityName {
 
 export enum QueryKey {
   ProductList = 'ProductList',
+  FilteredProductList = 'FilteredProductList',
   ProductPaginatedList = 'ProductPaginatedList',
   ProductPaginatedFilteredList = 'ProductPaginatedFilteredList',
   ProductPaginatedEntitiesList = 'ProductPaginatedList',

@@ -56,4 +56,5 @@ export type EntityAction<TEntity extends Entity = Entity> =
       entityName: string;
       queryKey: string;
       initialLoadingSize: number;
+      timestamp: number;
     };

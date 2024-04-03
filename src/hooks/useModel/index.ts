@@ -26,6 +26,7 @@ import {
   useQueryKey,
   isLastPage,
   isPageBlank,
+  now,
 } from '@utils';
 import { useApiClients } from '@hooks';
 import { useMemo, useRef } from 'react';
@@ -283,9 +284,10 @@ export const useModel = <
     ) => {
       const [options, ...restParams] = params;
       const prevQueryKey = getQueryKey();
+      const timestamp = now();
       setQueryKey(options.queryKey);
       const queryKey = getQueryKey();
-      dispatchInitializeQuery({ queryKey });
+      dispatchInitializeQuery({ queryKey, timestamp });
       const cachedPaginationParams = getCachedPaginationParams(queryKey);
       const page = options.paginationParams?._page || 0;
       const size =
@@ -612,7 +614,10 @@ export const useModel = <
   /**
    * Handles query initialization.
    */
-  const dispatchInitializeQuery = (params: { queryKey: string }) => {
+  const dispatchInitializeQuery = (params: {
+    queryKey: string;
+    timestamp: number;
+  }) => {
     dispatch({
       type: EntityHelperActionType.INITIALIZE_QUERY,
       entityName,

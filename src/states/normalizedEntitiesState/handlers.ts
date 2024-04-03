@@ -23,6 +23,7 @@ export const initializeQuery = (
   entityName: string,
   queryKey: string | undefined,
   initialLoadingSize: number,
+  timestamp: number,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   let updatedState = { ...state };
@@ -41,7 +42,7 @@ export const initializeQuery = (
       ...entityState,
       queries: [
         ...(entityState?.queries || []),
-        { queryKey, ids: Array(initialLoadingSize).fill(null) },
+        { queryKey, ids: Array(initialLoadingSize).fill(null), timestamp },
       ],
     },
   };
@@ -362,6 +363,7 @@ export const invalidateQuery = (
       queries: entityState?.queries?.map((query) => {
         if (query.queryKey === queryKey) {
           return {
+            ...query,
             queryKey,
             ids: [],
             calculatedCurrentPage: undefined,
