@@ -28,12 +28,10 @@ export const normalizer = <T extends Array<Entity> | Entity>(
   } else {
     for (const [key, value] of Object.entries(data)) {
       if (data.id && result[fieldName][data.id] === undefined) {
-        result[fieldName][data.id] = {};
+        result[fieldName][data.id] = data;
       }
 
       if (data.id) {
-        result[fieldName][data.id][key] = value;
-
         if (
           Array.isArray(value) &&
           value.some((item) => item?.id !== undefined)
@@ -54,7 +52,6 @@ export const normalizer = <T extends Array<Entity> | Entity>(
           if (typeof newFieldName === 'function') {
             fieldName = newFieldName(data) || key;
           }
-
           normalizer(value, fieldName, map, result);
         }
       }

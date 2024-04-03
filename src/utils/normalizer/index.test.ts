@@ -94,13 +94,13 @@ describe('normalizer', () => {
     const data = [
       {
         id: '1a',
-        type: 'Clothes',
         data: { id: '1a', name: 'Nike Black Shoes' },
+        type: 'Clothes',
       },
       {
         id: '1b',
-        type: 'Contact',
         data: { id: '1b', firstName: 'William' },
+        type: 'Contact',
       },
     ];
     const result = normalizer(data, 'searchResults', [
@@ -124,13 +124,13 @@ describe('normalizer', () => {
       searchResults: {
         '1a': {
           id: '1a',
-          type: 'Clothes',
           data: '1a',
+          type: 'Clothes',
         },
         '1b': {
           id: '1b',
-          type: 'Contact',
           data: '1b',
+          type: 'Contact',
         },
       },
       clothes: {
