@@ -12,6 +12,7 @@ export const mergeQueries = (args: {
   sizeMultiplier?: number;
   currentPage?: number;
   params?: any;
+  invalidatedQuery?: boolean;
 }): QueryState[] => {
   const {
     queries,
@@ -21,6 +22,7 @@ export const mergeQueries = (args: {
     sizeMultiplier,
     currentPage,
     params,
+    invalidatedQuery,
   } = args;
 
   if (queryKey === undefined) return queries;
@@ -40,7 +42,9 @@ export const mergeQueries = (args: {
   if (queries.some((item) => queryExists(item, queryKey))) {
     return queries.map((item) => {
       if (queryExists(item, queryKey)) {
-        let mergedIds = mergeIds(item.ids, ids, calculatedPagination);
+        let mergedIds = invalidatedQuery
+          ? ids
+          : mergeIds(item.ids, ids, calculatedPagination);
 
         if (pagination?.totalElements) {
           mergedIds = removeArrayExcess(mergedIds, pagination.totalElements);

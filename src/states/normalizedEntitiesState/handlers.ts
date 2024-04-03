@@ -76,9 +76,7 @@ export const list = (
       [key]: {
         ...entityState,
         byId: { ...entityState?.byId, ...value },
-        allIds: invalidatedQuery
-          ? newIds
-          : mergeUniqueIds(entityState?.allIds || [], newIds),
+        allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
         ...(entityName === key
           ? {
               queries: mergeQueries({
@@ -89,6 +87,7 @@ export const list = (
                 sizeMultiplier,
                 currentPage,
                 params,
+                invalidatedQuery,
               }),
             }
           : {}),
