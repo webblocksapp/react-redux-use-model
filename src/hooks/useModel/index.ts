@@ -627,6 +627,18 @@ export const useModel = <
     state.normalizedEntitiesState[entityName];
 
   /**
+   * Select all loaded entities from the normalized list.
+   */
+  const selectAllEntities = createSelector(
+    [selectNormalizedEntityState],
+    (state) => {
+      return Object.values(state?.byId || {}) as Array<
+        NormalizeEntity<TEntity>
+      >;
+    }
+  );
+
+  /**
    * Select multiple entities values from the normalized list.
    */
   const selectEntities = createSelector(
@@ -695,22 +707,29 @@ export const useModel = <
   /**
    * Select the query.
    */
-  const selectQuery = createSelector([selectQueries], (queries) => {
-    const queryKey = getQueryKey();
-    const query = queries?.find((item) => item.queryKey == queryKey);
-    return {
-      ...query,
-      ids: query?.ids?.map((item) => {
-        if (item === null || item === undefined) return emptyId();
-        return item;
-      }),
-    } as QueryState<
-      TEntity,
-      Parameters<
-        ExtractHandler<TEntity, TQueryHandlers, EntityActionType.LIST>['apiFn']
-      >
-    >;
-  });
+  const selectQuery = createSelector(
+    [selectQueries, (_: RootState, queryKey?: string) => queryKey],
+    (queries, queryKey) => {
+      queryKey = queryKey || getQueryKey();
+      const query = queries?.find((item) => item.queryKey == queryKey);
+      return {
+        ...query,
+        ids: query?.ids?.map((item) => {
+          if (item === null || item === undefined) return emptyId();
+          return item;
+        }),
+      } as QueryState<
+        TEntity,
+        Parameters<
+          ExtractHandler<
+            TEntity,
+            TQueryHandlers,
+            EntityActionType.LIST
+          >['apiFn']
+        >
+      >;
+    }
+  );
 
   /**
    * Select pagination params
@@ -760,6 +779,7 @@ export const useModel = <
     invalidateQuery,
     selectEntity,
     selectEntities,
+    selectAllEntities,
     selectPaginatedQuery,
     selectQuery,
     selectPaginationParams,

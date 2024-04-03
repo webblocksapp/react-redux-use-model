@@ -15,6 +15,7 @@ export const mergeIds = (
     const { startIndex, endIndex } = calcPaginationIndexes({
       page: pagination.page,
       size: pagination.size,
+      totalElements: pagination.totalElements,
     });
 
     return replaceArrayPortion({

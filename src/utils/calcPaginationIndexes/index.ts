@@ -12,7 +12,9 @@ import { Pagination } from '@interfaces';
  * // Result: { startIndex: 10, endIndex: 19 }
  */
 export const calcPaginationIndexes = (
-  pagination: Omit<Pagination, 'totalPages' | 'totalElements'>,
+  pagination: Omit<Pagination, 'totalPages' | 'totalElements'> & {
+    totalElements: number | undefined;
+  },
   zeroBased = true
 ): { startIndex: number; endIndex: number } => {
   // Extract size and page from pagination parameters
@@ -23,10 +25,17 @@ export const calcPaginationIndexes = (
   // Calculate offset based on zeroBased flag
   const startIndexOffset = zeroBased ? 0 : 1;
   const endIndexOffset = zeroBased ? 1 : 0;
+  const lastIndex = (pagination?.totalElements || 10) - 1;
+
+  if (pagination?.totalElements === undefined) {
+    console.warn('Missing totalElements for calculating pagination indexes');
+  }
 
   // Calculate start and end indexes
   const startIndex = (page - startIndexOffset) * size;
-  const endIndex = size * (page + endIndexOffset) - 1;
+  let endIndex = size * (page + endIndexOffset) - 1;
+
+  endIndex = endIndex >= lastIndex ? lastIndex : endIndex;
 
   // Return the result as an object
   return { startIndex, endIndex };
