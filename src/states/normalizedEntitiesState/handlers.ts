@@ -76,15 +76,19 @@ export const list = (
         ...entityState,
         byId: { ...entityState?.byId, ...value },
         allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
-        queries: mergeQueries({
-          queries: entityState?.queries || [],
-          queryKey,
-          ids: newIds,
-          pagination,
-          sizeMultiplier,
-          currentPage,
-          params,
-        }),
+        ...(entityName === key
+          ? {
+              queries: mergeQueries({
+                queries: entityState?.queries || [],
+                queryKey,
+                ids: newIds,
+                pagination,
+                sizeMultiplier,
+                currentPage,
+                params,
+              }),
+            }
+          : {}),
       },
     };
   }
