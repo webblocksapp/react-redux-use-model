@@ -59,6 +59,7 @@ export const list = (
   pagination: QueryState['pagination'],
   sizeMultiplier: number | undefined,
   params: any,
+  invalidatedQuery: boolean | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   let updatedState = { ...state };
@@ -75,7 +76,9 @@ export const list = (
       [key]: {
         ...entityState,
         byId: { ...entityState?.byId, ...value },
-        allIds: mergeUniqueIds(entityState?.allIds || [], newIds),
+        allIds: invalidatedQuery
+          ? newIds
+          : mergeUniqueIds(entityState?.allIds || [], newIds),
         ...(entityName === key
           ? {
               queries: mergeQueries({
@@ -356,6 +359,7 @@ export const goToPage = (
 export const invalidateQuery = (
   entityName: string,
   queryKey: string,
+  ids: Array<string | number> = [],
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   const entityState = state[entityName];
@@ -369,7 +373,7 @@ export const invalidateQuery = (
           return {
             ...query,
             queryKey,
-            ids: [],
+            ids,
             calculatedCurrentPage: undefined,
             calculatedPagination: undefined,
             currentPage: undefined,

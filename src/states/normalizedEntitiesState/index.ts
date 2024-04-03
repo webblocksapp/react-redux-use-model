@@ -28,6 +28,7 @@ export const normalizedEntitiesState = (
         action.pagination,
         action.sizeMultiplier,
         action.params,
+        action.invalidatedQuery,
         state
       );
     case EntityActionType.CREATE:
@@ -54,7 +55,12 @@ export const normalizedEntitiesState = (
         state
       );
     case EntityHelperActionType.INVALIDATE_QUERY:
-      return invalidateQuery(action.entityName, action.queryKey, state);
+      return invalidateQuery(
+        action.entityName,
+        action.queryKey,
+        action.ids,
+        state
+      );
     case EntityHelperActionType.INITIALIZE_QUERY:
       return initializeQuery(
         action.entityName,

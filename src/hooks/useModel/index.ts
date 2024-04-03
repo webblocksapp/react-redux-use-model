@@ -60,7 +60,7 @@ export const useModel = <
   };
 }) => {
   const queryKey = useQueryKey();
-  const ref = queryKey.ref || useRef({ queryKey: '' });
+  const ref = useRef({ queryKey: '', ...queryKey.ref?.current });
   const { handlers, entityName, schema, config } = params;
   const { paginationSizeMultiplier = 5, initialLoadingSize = 10 } =
     config || {};
@@ -101,33 +101,31 @@ export const useModel = <
   };
 
   /**
-   * Method for resetting a query.
+   * Method for invalidating a query.
    */
-  const invalidateQuery = (
-    queryKey: string,
-    options: InvalidateQueryStrategy,
+  const isQueryInvalidated = (
+    options: InvalidateQueryStrategy | undefined,
     params: { _filterPrev?: string; _filter?: string; force?: boolean }
   ) => {
-    switch (options.strategy) {
+    switch (options?.strategy) {
       case 'always':
-        dispatchInvalidateQuery({ queryKey });
-        break;
+        return true;
       case 'onFilterChange':
-        (params._filterPrev !== params._filter || params.force) &&
-          dispatchInvalidateQuery({ queryKey });
-        break;
+        return params._filterPrev !== params._filter || params.force;
       case 'custom':
-        options.when() && dispatchInvalidateQuery({ queryKey });
-        break;
+        return options.when();
       default:
-        break;
+        return false;
     }
   };
 
   /**
    * Reset a query key.
    */
-  const dispatchInvalidateQuery = (params: { queryKey: string }) => {
+  const dispatchInvalidateQuery = (params: {
+    queryKey: string;
+    ids: Array<string | number>;
+  }) => {
     dispatch({
       type: EntityHelperActionType.INVALIDATE_QUERY,
       entityName,
@@ -145,6 +143,7 @@ export const useModel = <
     currentPage?: number;
     params: any;
     sizeMultiplier?: number;
+    invalidatedQuery?: boolean;
   }) => {
     dispatch({
       type: EntityActionType.LIST,
@@ -284,6 +283,7 @@ export const useModel = <
     ) => {
       const [options, ...restParams] = params;
       const prevQueryKey = getQueryKey();
+      const prevQuery = findQuery(entityName, prevQueryKey);
       const timestamp = now();
       setQueryKey(options.queryKey);
       const queryKey = getQueryKey();
@@ -304,13 +304,11 @@ export const useModel = <
       }
 
       if (
-        prevQueryKey !== queryKey &&
         options.invalidateQuery &&
-        options.invalidateQuery.strategy === 'onFilterChange'
+        options.invalidateQuery.strategy === 'onFilterChange' &&
+        isQueryInvalidated(options.invalidateQuery, { force: true })
       ) {
-        invalidateQuery(queryKey, options.invalidateQuery, {
-          force: true,
-        });
+        dispatchInvalidateQuery({ queryKey, ids: prevQuery?.ids || [] });
       }
 
       try {
@@ -338,15 +336,14 @@ export const useModel = <
           >,
         })) as ListResponse<TEntity>;
 
-        if (options.invalidateQuery) {
-          invalidateQuery(queryKey, options.invalidateQuery, {
-            _filter: options.paginationParams._filter,
-            _filterPrev: cachedPaginationParams?._filter,
-          });
-        }
+        const invalidatedQuery = isQueryInvalidated(options?.invalidateQuery, {
+          _filter: options.paginationParams._filter,
+          _filterPrev: cachedPaginationParams?._filter,
+        });
 
         dispatchList({
           entities: response?.data || [],
+          invalidatedQuery,
           queryKey,
           pagination: response?.pagination
             ? {
@@ -781,8 +778,6 @@ export const useModel = <
   return {
     ...buildModelMethods(),
     ...state,
-    setQueryKey,
-    invalidateQuery,
     selectEntity,
     selectEntities,
     selectAllEntities,

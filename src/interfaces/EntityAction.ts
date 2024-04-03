@@ -11,6 +11,7 @@ export type EntityAction<TEntity extends Entity = Entity> =
       pagination?: QueryState['pagination'];
       sizeMultiplier?: number;
       currentPage?: number;
+      invalidatedQuery?: boolean;
       params?: any;
     }
   | {
@@ -50,6 +51,7 @@ export type EntityAction<TEntity extends Entity = Entity> =
       type: EntityHelperActionType.INVALIDATE_QUERY;
       entityName: string;
       queryKey: string;
+      ids: Array<string | number>;
     }
   | {
       type: EntityHelperActionType.INITIALIZE_QUERY;

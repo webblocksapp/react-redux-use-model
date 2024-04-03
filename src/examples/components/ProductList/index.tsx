@@ -14,7 +14,6 @@ export const ProductList: React.FC = () => {
   });
 
   useEffect(() => {
-    productModel.setQueryKey(QueryKey.ProductList);
     if (params._filter) {
       productModel.list({
         queryKey: QueryKey.FilteredProductList,
