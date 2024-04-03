@@ -8,6 +8,7 @@ export type { ModelProviderProps } from './components';
 export type {
   CreateQueryHandler,
   CrudQueryHandlers,
+  InvalidateQueryStrategy,
   ListQueryHandler,
   NormalizeEntity,
   Pagination,
