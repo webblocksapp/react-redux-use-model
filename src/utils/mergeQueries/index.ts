@@ -1,5 +1,5 @@
 import { QueryState } from '@interfaces';
-import { calcPage, calcPagination, mergeIds } from '@utils';
+import { calcPage, calcPagination, mergeIds, removeArrayExcess } from '@utils';
 
 const queryExists = (item: QueryState, queryKey: string) =>
   item.queryKey == queryKey;
@@ -40,9 +40,15 @@ export const mergeQueries = (args: {
   if (queries.some((item) => queryExists(item, queryKey))) {
     return queries.map((item) => {
       if (queryExists(item, queryKey)) {
+        let mergedIds = mergeIds(item.ids, ids, calculatedPagination);
+
+        if (pagination?.totalElements) {
+          mergedIds = removeArrayExcess(mergedIds, pagination.totalElements);
+        }
+
         return {
           ...item,
-          ids: mergeIds(item.ids, ids, calculatedPagination),
+          ids: mergedIds,
           params,
           ...(pagination
             ? {

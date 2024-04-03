@@ -616,6 +616,7 @@ export const useModel = <
     dispatch({
       type: EntityHelperActionType.INITIALIZE_QUERY,
       entityName,
+      initialLoadingSize,
       ...params,
     });
   };

@@ -55,4 +55,5 @@ export type EntityAction<TEntity extends Entity = Entity> =
       type: EntityHelperActionType.INITIALIZE_QUERY;
       entityName: string;
       queryKey: string;
+      initialLoadingSize: number;
     };

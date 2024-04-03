@@ -24,6 +24,7 @@ export * from './normalizer';
 export * from './now';
 export * from './paginateData';
 export * from './removeArrayDuplicates';
+export * from './removeArrayExcess';
 export * from './replaceArrayPortion';
 export * from './set';
 export * from './sleep';

@@ -22,6 +22,7 @@ import {
 export const initializeQuery = (
   entityName: string,
   queryKey: string | undefined,
+  initialLoadingSize: number,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   let updatedState = { ...state };
@@ -38,7 +39,10 @@ export const initializeQuery = (
     ...updatedState,
     [entityName]: {
       ...entityState,
-      queries: [...(entityState?.queries || []), { queryKey, ids: [] }],
+      queries: [
+        ...(entityState?.queries || []),
+        { queryKey, ids: Array(initialLoadingSize).fill(null) },
+      ],
     },
   };
 
