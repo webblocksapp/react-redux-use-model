@@ -304,6 +304,8 @@ export const useModel = <
       }
 
       if (
+        prevQuery &&
+        prevQueryKey !== queryKey &&
         options.invalidateQuery &&
         options.invalidateQuery.strategy === 'onFilterChange' &&
         isQueryInvalidated(options.invalidateQuery, { force: true })
