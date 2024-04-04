@@ -309,45 +309,41 @@ export const goToPage = (
     [entityName]: {
       ...entityState,
       queries: entityState?.queries?.map((item) => {
-        if (item.queryKey === queryKey) {
-          if (item.pagination === undefined) {
-            console.warn('queryData lacks of pagination object.');
-          } else {
-            const pagination = {
-              ...item.pagination,
-              page,
-            };
+        if (item.queryKey === queryKey && item.pagination) {
+          const pagination = {
+            ...item.pagination,
+            page,
+          };
 
-            const calculatedPagination = calcPagination({
-              page,
-              size,
-              sizeMultiplier,
-              totalPages: pagination.totalPages,
-              totalElements: pagination.totalElements,
-            });
+          const calculatedPagination = calcPagination({
+            page,
+            size,
+            sizeMultiplier,
+            totalPages: pagination.totalPages,
+            totalElements: pagination.totalElements,
+          });
 
-            const calculatedCurrentPage = calcPage({
-              page,
-              size,
-              sizeMultiplier,
-            });
+          const calculatedCurrentPage = calcPage({
+            page,
+            size,
+            sizeMultiplier,
+          });
 
-            return {
-              ...item,
-              ids: mergeIds(
-                item.ids,
-                buildEmptyIds({
-                  size: calcPageSize({ size: pagination.size, sizeMultiplier }),
-                }),
-                pagination,
-                { replaceWhenEmpty: true }
-              ),
+          return {
+            ...item,
+            ids: mergeIds(
+              item.ids,
+              buildEmptyIds({
+                size: calcPageSize({ size: pagination.size, sizeMultiplier }),
+              }),
               pagination,
-              calculatedPagination,
-              currentPage: page,
-              calculatedCurrentPage,
-            };
-          }
+              { replaceWhenEmpty: true }
+            ),
+            pagination,
+            calculatedPagination,
+            currentPage: page,
+            calculatedCurrentPage,
+          };
         }
         return item;
       }),
