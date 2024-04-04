@@ -46,7 +46,7 @@ export const mergeQueries = (args: {
           ? ids
           : mergeIds(item.ids, ids, calculatedPagination);
 
-        if (pagination?.totalElements) {
+        if (pagination?.totalElements !== undefined) {
           mergedIds = removeArrayExcess(mergedIds, pagination.totalElements);
         }
 

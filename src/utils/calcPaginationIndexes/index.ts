@@ -25,7 +25,7 @@ export const calcPaginationIndexes = (
   // Calculate offset based on zeroBased flag
   const startIndexOffset = zeroBased ? 0 : 1;
   const endIndexOffset = zeroBased ? 1 : 0;
-  const lastIndex = (pagination?.totalElements || 10) - 1;
+  const lastIndex = (pagination?.totalElements || 1) - 1;
 
   if (pagination?.totalElements === undefined) {
     console.warn('Missing totalElements for calculating pagination indexes');
