@@ -11,10 +11,55 @@ react-redux-use-model is a library built on top of react-redux and Redux Toolkit
 
 ## Installation
 
-You can install react-redux-use-model via npm:
+Make sure you have previously installed the following dependencies:
+
+```bash
+npm install @reduxjs/toolkit react-redux
+```
+
+After that you can install `react-redux-use-model`:
 
 ```bash
 npm install react-redux-use-model
+```
+
+## Project Setup
+
+`store.ts` file definition:
+
+```ts
+import {
+  configureStore,
+  combineReducers as combineStates,
+} from '@reduxjs/toolkit';
+import { normalizedEntitiesState } from 'react-redux-use-model';
+
+export const rootState = combineStates({
+  normalizedEntitiesState,
+});
+
+export const store = configureStore({
+  reducer: rootState,
+});
+```
+
+`main.tsx` file definition:
+
+```tsx
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { ModelProvider } from 'react-redux-use-model';
+import store from './store';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <Provider store={store}>
+    <ModelProvider store={store}>
+      <App />
+    </ModelProvider>
+  </Provider>
+);
 ```
 
 ⚠️ Note: This documentation is a work in progress. New updates and improvements will be published periodically. Check back for the latest changes and enhancements!
