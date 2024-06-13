@@ -2,6 +2,6 @@ import { products } from './products';
 import { videos } from './videos';
 
 export const data = {
-  products: products(0),
+  products: products(100),
   videos: videos(100),
 };

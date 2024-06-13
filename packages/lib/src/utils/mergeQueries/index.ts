@@ -87,6 +87,12 @@ export const mergeQueries = (args: {
         currentPage,
         calculatedCurrentPage,
         params,
+        loading: false,
+        listing: false,
+        creating: false,
+        updating: false,
+        reading: false,
+        removing: false,
       },
     ];
   }

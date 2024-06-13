@@ -59,4 +59,22 @@ export type EntityAction<TEntity extends Entity = Entity> =
       queryKey: string;
       initialLoadingSize: number;
       timestamp: number;
+    }
+  | {
+      type: EntityHelperActionType.INITIALIZE_QUERY;
+      entityName: string;
+      queryKey: string;
+      initialLoadingSize: number;
+      timestamp: number;
+    }
+  | {
+      type: EntityHelperActionType.UPDATE_QUERY_LOADERS;
+      entityName: string;
+      queryKey: string;
+      loading?: boolean;
+      listing?: boolean;
+      creating?: boolean;
+      updating?: boolean;
+      removing?: boolean;
+      reading?: boolean;
     };

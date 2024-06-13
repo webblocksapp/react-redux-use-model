@@ -9,6 +9,7 @@ import {
   invalidateQuery,
   read,
   initializeQuery,
+  updateQueryLoaders,
 } from './handlers';
 
 const initialState: NormalizedEntitiesState = {};
@@ -67,6 +68,20 @@ export const normalizedEntitiesState = (
         action.queryKey,
         action.initialLoadingSize,
         action.timestamp,
+        state
+      );
+    case EntityHelperActionType.UPDATE_QUERY_LOADERS:
+      return updateQueryLoaders(
+        action.entityName,
+        action.queryKey,
+        {
+          loading: action.loading,
+          listing: action.listing,
+          creating: action.creating,
+          updating: action.updating,
+          removing: action.removing,
+          reading: action.reading,
+        },
         state
       );
     default:

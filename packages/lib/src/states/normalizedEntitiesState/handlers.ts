@@ -21,33 +21,70 @@ import {
 
 export const initializeQuery = (
   entityName: string,
-  queryKey: string | undefined,
+  queryKey: string,
   initialLoadingSize: number,
   timestamp: number,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
-  let updatedState = { ...state };
   const entityState = state[entityName];
 
-  if (
-    entityState?.queries?.some((query) => query.queryKey === queryKey) ||
-    queryKey === undefined
-  ) {
-    return state;
-  }
-
-  updatedState = {
-    ...updatedState,
+  return {
+    ...state,
     [entityName]: {
       ...entityState,
       queries: [
         ...(entityState?.queries || []),
-        { queryKey, ids: Array(initialLoadingSize).fill(null), timestamp },
+        {
+          queryKey,
+          ids: Array(initialLoadingSize).fill(null),
+          timestamp,
+          loading: true,
+          listing: false,
+          creating: false,
+          updating: false,
+          removing: false,
+          reading: false,
+        },
       ],
     },
   };
+};
 
-  return updatedState;
+export const updateQueryLoaders = (
+  entityName: string,
+  queryKey: string,
+  loaders: {
+    loading?: boolean;
+    listing?: boolean;
+    creating?: boolean;
+    updating?: boolean;
+    removing?: boolean;
+    reading?: boolean;
+  },
+  state: NormalizedEntitiesState
+): NormalizedEntitiesState => {
+  const entityState = state[entityName];
+
+  return {
+    ...state,
+    [entityName]: {
+      ...entityState,
+      queries: (entityState?.queries || []).map((query) => {
+        if (query.queryKey === queryKey) {
+          return {
+            ...query,
+            loading: loaders.loading ?? query.loading,
+            listing: loaders.listing ?? query.listing,
+            creating: loaders.creating ?? query.creating,
+            updating: loaders.updating ?? query.updating,
+            removing: loaders.removing ?? query.removing,
+            reading: loaders.reading ?? query.reading,
+          };
+        }
+        return query;
+      }),
+    },
+  };
 };
 
 export const list = (

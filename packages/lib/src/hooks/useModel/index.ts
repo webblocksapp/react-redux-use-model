@@ -134,6 +134,25 @@ export const useModel = <
   };
 
   /**
+   * Update a query loader.
+   */
+  const dispatchUpdateQueryLoaders = (params: {
+    queryKey: string;
+    loading?: boolean;
+    listing?: boolean;
+    creating?: boolean;
+    updating?: boolean;
+    removing?: boolean;
+    reading?: boolean;
+  }) => {
+    dispatch({
+      type: EntityHelperActionType.UPDATE_QUERY_LOADERS,
+      entityName,
+      ...params,
+    });
+  };
+
+  /**
    * Dispatch a list of entities.
    */
   const dispatchList = (params: {
@@ -285,9 +304,19 @@ export const useModel = <
       const prevQueryKey = getQueryKey();
       const prevQuery = findQuery(entityName, prevQueryKey);
       const timestamp = now();
+
       setQueryKey(options.queryKey);
+
       const queryKey = getQueryKey();
-      dispatchInitializeQuery({ queryKey, timestamp });
+      const foundQuery = findQuery(entityName, queryKey);
+
+      /**
+       * Query is initialized if no prev query exists.
+       */
+      if (foundQuery === undefined) {
+        dispatchInitializeQuery({ queryKey, timestamp });
+      }
+
       const cachedPaginationParams = getCachedPaginationParams(queryKey);
       const page = options.paginationParams?._page || 0;
       const size =
@@ -374,6 +403,8 @@ export const useModel = <
         } else {
           handler?.onError?.(error);
         }
+      } finally {
+        dispatchUpdateQueryLoaders({ queryKey, loading: false });
       }
     };
   };
