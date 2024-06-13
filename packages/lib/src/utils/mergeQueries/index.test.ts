@@ -13,6 +13,7 @@ describe('mergeQueries', () => {
         queryKey: 'QueryKey',
         ids: ['1', '2'],
         pagination: undefined,
+        hasRecords: true,
       },
     ]);
   });
@@ -30,7 +31,7 @@ describe('mergeQueries', () => {
           updating: false,
           reading: false,
           removing: false,
-          hasRecords: false,
+          hasRecords: true,
         },
       ],
       queryKey: 'QueryKey',
@@ -41,7 +42,7 @@ describe('mergeQueries', () => {
       {
         queryKey: 'QueryKey',
         ids: ['1', '2', '3', '4'],
-        pagination: {},
+        pagination: undefined,
       },
     ]);
   });
@@ -59,7 +60,7 @@ describe('mergeQueries', () => {
           updating: false,
           reading: false,
           removing: false,
-          hasRecords: false,
+          hasRecords: true,
         },
       ],
       queryKey: undefined,
@@ -219,7 +220,7 @@ describe('mergeQueries', () => {
           updating: false,
           reading: false,
           removing: false,
-          hasRecords: false,
+          hasRecords: true,
         },
       ],
       queryKey: 'QueryKey',
@@ -264,6 +265,7 @@ describe('mergeQueries', () => {
         updating: false,
         reading: false,
         removing: false,
+        hasRecords: true,
       },
     ]);
   });
