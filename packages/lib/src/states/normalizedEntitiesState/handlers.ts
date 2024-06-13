@@ -52,7 +52,7 @@ export const initializeQuery = (
 
 export const updateQueryLoaders = (
   entityName: string,
-  queryKey: string,
+  queryKey: string | undefined,
   loaders: {
     loading?: boolean;
     listing?: boolean;
@@ -70,7 +70,11 @@ export const updateQueryLoaders = (
     [entityName]: {
       ...entityState,
       queries: (entityState?.queries || []).map((query) => {
-        if (query.queryKey === queryKey) {
+        if (
+          query.queryKey === queryKey ||
+          queryKey === undefined ||
+          queryKey === ''
+        ) {
           return {
             ...query,
             loading: loaders.loading ?? query.loading,

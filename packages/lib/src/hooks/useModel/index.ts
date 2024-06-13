@@ -343,6 +343,8 @@ export const useModel = <
       }
 
       try {
+        dispatchUpdateQueryLoaders({ queryKey, listing: true });
+
         const response = (await runApi({
           apiName: handlerName,
           throwError: true,
@@ -404,7 +406,11 @@ export const useModel = <
           handler?.onError?.(error);
         }
       } finally {
-        dispatchUpdateQueryLoaders({ queryKey, loading: false });
+        dispatchUpdateQueryLoaders({
+          queryKey,
+          listing: false,
+          loading: false,
+        });
       }
     };
   };
@@ -427,6 +433,7 @@ export const useModel = <
       const queryKey = getQueryKey();
 
       try {
+        dispatchUpdateQueryLoaders({ queryKey, creating: true });
         const response = (await runApi({
           apiName: handlerName,
           params,
@@ -446,6 +453,8 @@ export const useModel = <
         } else {
           handler?.onError?.(error);
         }
+      } finally {
+        dispatchUpdateQueryLoaders({ queryKey, creating: false });
       }
     };
   };
@@ -465,7 +474,10 @@ export const useModel = <
         EntityActionType.UPDATE
       >
     ) => {
+      const queryKey = getQueryKey();
+
       try {
+        dispatchUpdateQueryLoaders({ queryKey, updating: true });
         const [entityId] = params;
         const prevEntity = findEntity(entityName, entityId);
         const response = (await runApi({
@@ -487,6 +499,8 @@ export const useModel = <
         } else {
           handler?.onError?.(error);
         }
+      } finally {
+        dispatchUpdateQueryLoaders({ queryKey, updating: false });
       }
     };
   };
@@ -506,7 +520,11 @@ export const useModel = <
         EntityActionType.READ
       >
     ) => {
+      const queryKey = getQueryKey();
+
       try {
+        dispatchUpdateQueryLoaders({ queryKey, reading: true });
+
         const response = (await runApi({
           apiName: handlerName,
           params,
@@ -526,6 +544,8 @@ export const useModel = <
         } else {
           handler?.onError?.(error);
         }
+      } finally {
+        dispatchUpdateQueryLoaders({ queryKey, reading: false });
       }
     };
   };
@@ -545,7 +565,11 @@ export const useModel = <
         EntityActionType.REMOVE
       >
     ) => {
+      const queryKey = getQueryKey();
+
       try {
+        dispatchUpdateQueryLoaders({ queryKey, removing: true });
+
         const [entityId] = params;
         const response = (await runApi({
           apiName: handlerName,
@@ -598,6 +622,8 @@ export const useModel = <
         } else {
           handler?.onError?.(error);
         }
+      } finally {
+        dispatchUpdateQueryLoaders({ queryKey, removing: false });
       }
     };
   };
