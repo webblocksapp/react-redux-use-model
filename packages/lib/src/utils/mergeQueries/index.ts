@@ -93,6 +93,7 @@ export const mergeQueries = (args: {
         updating: false,
         reading: false,
         removing: false,
+        hasRecords: Boolean(ids.length),
       },
     ];
   }

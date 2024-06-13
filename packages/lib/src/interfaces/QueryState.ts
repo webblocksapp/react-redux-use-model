@@ -9,6 +9,7 @@ export type QueryState<TEntity extends Entity = Entity, TParams = any> = {
   updating: boolean;
   reading: boolean;
   removing: boolean;
+  hasRecords: boolean;
   timestamp?: number;
   params?: TParams;
   pagination?: Pagination;

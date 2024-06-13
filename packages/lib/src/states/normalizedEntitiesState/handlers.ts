@@ -27,6 +27,7 @@ export const initializeQuery = (
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   const entityState = state[entityName];
+  const tempIds = Array(initialLoadingSize).fill(null);
 
   return {
     ...state,
@@ -36,7 +37,7 @@ export const initializeQuery = (
         ...(entityState?.queries || []),
         {
           queryKey,
-          ids: Array(initialLoadingSize).fill(null),
+          ids: tempIds,
           timestamp,
           loading: true,
           listing: false,
@@ -44,6 +45,7 @@ export const initializeQuery = (
           updating: false,
           removing: false,
           reading: false,
+          hasRecords: Boolean(tempIds.length),
         },
       ],
     },
@@ -179,6 +181,7 @@ export const create = (
 
                     return newIds;
                   })(),
+                  hasRecords: Boolean(newIds.length),
                 }
               : {}),
           };
@@ -307,18 +310,22 @@ export const remove = (
         ...entityState,
         byId: restById,
         allIds: (entityState?.allIds || []).filter((id) => id !== entityId),
-        queries: entityState?.queries?.map?.((query) => ({
-          ...query,
-          ids: query.ids.filter((id) => id !== entityId),
-          ...(query.pagination
-            ? {
-                pagination: handlePagination({
-                  pagination: query.pagination,
-                  operation: 'remove',
-                }),
-              }
-            : {}),
-        })),
+        queries: entityState?.queries?.map?.((query) => {
+          const filteredIds = query.ids.filter((id) => id !== entityId);
+          return {
+            ...query,
+            ids: filteredIds,
+            hasRecords: Boolean(filteredIds.length),
+            ...(query.pagination
+              ? {
+                  pagination: handlePagination({
+                    pagination: query.pagination,
+                    operation: 'remove',
+                  }),
+                }
+              : {}),
+          };
+        }),
       },
     };
   }
