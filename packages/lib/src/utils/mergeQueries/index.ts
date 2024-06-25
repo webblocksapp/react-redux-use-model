@@ -72,6 +72,7 @@ export const mergeQueries = (args: {
             : undefined),
           currentPage,
           calculatedCurrentPage,
+          hasRecords: Boolean(ids.length),
         };
       }
       return item;

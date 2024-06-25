@@ -314,7 +314,8 @@ export const useModel = <
        * Query is initialized if no prev query exists.
        */
       if (foundQuery === undefined) {
-        dispatchInitializeQuery({ queryKey, timestamp });
+        const hasRecords = options.paginationParams._filter ? false : true;
+        dispatchInitializeQuery({ queryKey, timestamp, hasRecords });
       }
 
       const cachedPaginationParams = getCachedPaginationParams(queryKey);
@@ -673,11 +674,13 @@ export const useModel = <
   const dispatchInitializeQuery = (params: {
     queryKey: string;
     timestamp: number;
+    hasRecords?: boolean;
   }) => {
     dispatch({
       type: EntityHelperActionType.INITIALIZE_QUERY,
       entityName,
       initialLoadingSize,
+      hasRecords: params.hasRecords,
       ...params,
     });
   };
