@@ -11,7 +11,9 @@ export const mergeIds = (
   pagination?: Pagination,
   options?: { replaceWhenEmpty: boolean }
 ) => {
-  if (pagination) {
+  if (pagination && !originalIds.length) {
+    return originalIds;
+  } else if (pagination) {
     const { startIndex, endIndex } = calcPaginationIndexes({
       page: pagination.page,
       size: pagination.size,
