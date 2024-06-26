@@ -52,6 +52,7 @@ export type EntityAction<TEntity extends Entity = Entity> =
       entityName: string;
       queryKey: string;
       ids: Array<string | number>;
+      initialLoadingSize: number;
     }
   | {
       type: EntityHelperActionType.INITIALIZE_QUERY;
@@ -59,7 +60,6 @@ export type EntityAction<TEntity extends Entity = Entity> =
       queryKey: string;
       initialLoadingSize: number;
       timestamp: number;
-      hasRecords: boolean | undefined;
     }
   | {
       type: EntityHelperActionType.UPDATE_QUERY_LOADERS;

@@ -129,6 +129,7 @@ export const useModel = <
     dispatch({
       type: EntityHelperActionType.INVALIDATE_QUERY,
       entityName,
+      initialLoadingSize,
       ...params,
     });
   };
@@ -314,8 +315,7 @@ export const useModel = <
        * Query is initialized if no prev query exists.
        */
       if (foundQuery === undefined) {
-        const hasRecords = options.paginationParams._filter ? false : true;
-        dispatchInitializeQuery({ queryKey, timestamp, hasRecords });
+        dispatchInitializeQuery({ queryKey, timestamp });
       }
 
       const cachedPaginationParams = getCachedPaginationParams(queryKey);
@@ -674,13 +674,11 @@ export const useModel = <
   const dispatchInitializeQuery = (params: {
     queryKey: string;
     timestamp: number;
-    hasRecords?: boolean;
   }) => {
     dispatch({
       type: EntityHelperActionType.INITIALIZE_QUERY,
       entityName,
       initialLoadingSize,
-      hasRecords: params.hasRecords,
       ...params,
     });
   };

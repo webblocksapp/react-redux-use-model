@@ -60,6 +60,7 @@ export const normalizedEntitiesState = (
         action.entityName,
         action.queryKey,
         action.ids,
+        action.initialLoadingSize,
         state
       );
     case EntityHelperActionType.INITIALIZE_QUERY:
@@ -68,7 +69,6 @@ export const normalizedEntitiesState = (
         action.queryKey,
         action.initialLoadingSize,
         action.timestamp,
-        action.hasRecords,
         state
       );
     case EntityHelperActionType.UPDATE_QUERY_LOADERS:

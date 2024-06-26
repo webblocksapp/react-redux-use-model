@@ -2,7 +2,6 @@ import {
   Entity,
   ModelSchema,
   NormalizedEntitiesState,
-  Pagination,
   QueryState,
 } from '@interfaces';
 import {
@@ -25,7 +24,6 @@ export const initializeQuery = (
   queryKey: string,
   initialLoadingSize: number,
   timestamp: number,
-  hasRecords: boolean | undefined,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   const entityState = state[entityName];
@@ -47,8 +45,7 @@ export const initializeQuery = (
           updating: false,
           removing: false,
           reading: false,
-          hasRecords: hasRecords ?? Boolean(tempIds.length),
-          pagination: { size: initialLoadingSize } as Pagination,
+          hasRecords: Boolean(tempIds.length),
         },
       ],
     },
@@ -405,10 +402,12 @@ export const goToPage = (
 export const invalidateQuery = (
   entityName: string,
   queryKey: string,
-  ids: Array<string | number> = [],
+  ids: Array<string | number>,
+  initialLoadingSize: number,
   state: NormalizedEntitiesState
 ): NormalizedEntitiesState => {
   const entityState = state[entityName];
+  const tempIds = ids.length ? ids : Array(initialLoadingSize).fill(null);
 
   return {
     ...state,
@@ -419,11 +418,12 @@ export const invalidateQuery = (
           return {
             ...query,
             queryKey,
-            ids,
+            ids: tempIds,
             calculatedCurrentPage: undefined,
             calculatedPagination: undefined,
             currentPage: undefined,
             params: undefined,
+            hasRecords: Boolean(tempIds.length),
           };
         }
         return query;
