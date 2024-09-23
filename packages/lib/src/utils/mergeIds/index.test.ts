@@ -6,6 +6,16 @@ describe('mergeIds', () => {
     expect(ids).toMatchObject(['1', '2', '3', '4', '5']);
   });
 
+  it('Merge unique ids when original ids are empty', () => {
+    const ids = mergeIds([], ['1'], {
+      totalElements: 1,
+      size: 50,
+      page: 0,
+      totalPages: 1,
+    });
+    expect(ids).toMatchObject(['1']);
+  });
+
   it('Merge unique ids with pagination', () => {
     const ids = mergeIds(['1', '2'], ['4', '5'], {
       page: 2,
