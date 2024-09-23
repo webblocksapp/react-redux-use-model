@@ -38,7 +38,11 @@ export const normalizer = <T extends Array<Entity> | Entity>(
         ) {
           result[fieldName][data.id][key] = value.map((item) => item.id);
           normalizer(value, key, map, result);
-        } else if (typeof value === 'object' && (value as Entity).id) {
+        } else if (
+          typeof value === 'object' &&
+          value !== null &&
+          (value as Entity).id
+        ) {
           result[fieldName][data.id][key] = (value as Entity).id;
 
           const newFieldName = map.find(
