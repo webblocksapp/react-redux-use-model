@@ -239,7 +239,8 @@ export const useModel = <
 
       modelMethods[`${key}WithResponse`] = buildModelMethod(
         key as StringKey<keyof TQueryHandlers>,
-        handlers[key as keyof TQueryHandlers]
+        handlers[key as keyof TQueryHandlers],
+        { withResponse: true }
       );
     }
 
