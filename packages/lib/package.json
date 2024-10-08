@@ -1,6 +1,6 @@
 {
   "name": "react-redux-use-model",
-  "version": "0.0.24-alpha",
+  "version": "0.0.25-alpha",
   "type": "module",
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
