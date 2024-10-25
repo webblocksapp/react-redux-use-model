@@ -1,4 +1,5 @@
 export enum EntityName {
+  Animals = 'Animals',
   Products = 'products',
   Videos = 'videos',
   VideosComments = 'videosComments',

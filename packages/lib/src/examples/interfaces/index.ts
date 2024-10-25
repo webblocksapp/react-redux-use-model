@@ -1,3 +1,4 @@
+export * from './Animal';
 export * from './Comment';
 export * from './CommonObject';
 export * from './ListResponse';
