@@ -3,6 +3,7 @@ import {
   AnyObject,
   Entity,
   ForeignKey,
+  Id,
   Pagination,
   PaginationParams,
   StringKey,
@@ -56,7 +57,7 @@ export type CreateQueryHandler<
 };
 
 export type UpdateApiFnParams<TEntity extends Entity> = [
-  string,
+  Id,
   TEntity,
   ...args: any
 ];
@@ -78,7 +79,7 @@ export type UpdateQueryHandler<
   onError?: (error: unknown) => void;
 };
 
-export type ReadApiFnParams = [string, ...args: any];
+export type ReadApiFnParams = [Id, ...args: any];
 
 export type ReadApiFn<
   TEntity extends Entity,
@@ -97,7 +98,7 @@ export type ReadQueryHandler<
   onError?: (error: unknown) => void;
 };
 
-export type RemoveApiFnParams = [string, ...args: any];
+export type RemoveApiFnParams = [Id, ...args: any];
 
 export type RemoveApiFn<
   TEntity extends Entity,

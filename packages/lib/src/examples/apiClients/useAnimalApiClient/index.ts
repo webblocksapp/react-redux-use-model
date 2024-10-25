@@ -1,4 +1,4 @@
-import { Pagination, PaginationParams } from 'react-redux-use-model';
+import { Pagination, PaginationParams, Id } from 'react-redux-use-model';
 import { ListResponse, Animal } from '@examples/interfaces';
 import { axiosLocal } from '@examples/utils';
 
@@ -29,19 +29,19 @@ export const useAnimalApiClient = () => {
     return { data };
   };
 
-  const update = async (id: string, entity: Animal) => {
+  const update = async (id: Id, entity: Animal) => {
     const { data } = await axiosLocal.put<Animal>(`/animals/${id}`, entity);
 
     return { data };
   };
 
-  const read = async (id: string) => {
+  const read = async (id: Id) => {
     const { data } = await axiosLocal.get<Animal>(`/animals/${id}`);
 
     return { data };
   };
 
-  const remove = async (id: string) => {
+  const remove = async (id: Id) => {
     const { data } = await axiosLocal.delete<Animal>(`/animals/${id}`);
 
     return { data };

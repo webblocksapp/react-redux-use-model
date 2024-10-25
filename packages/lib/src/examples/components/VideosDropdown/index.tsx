@@ -27,7 +27,7 @@ export const VideosDropdown: React.FC = () => {
         .filter((entity) => entity.loading == false)
         .map((entity) => ({
           label: entity.data?.title,
-          value: entity.id,
+          value: String(entity.id),
         }))}
       endReached={() => {
         setParams((prev) => ({ ...prev, _page: params._page + 1 }));

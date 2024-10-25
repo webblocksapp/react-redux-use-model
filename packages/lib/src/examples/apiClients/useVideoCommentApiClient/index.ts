@@ -1,4 +1,4 @@
-import { Pagination, PaginationParams } from 'react-redux-use-model';
+import { Id, Pagination, PaginationParams } from 'react-redux-use-model';
 import { ListResponse, VideoComment } from '@examples/interfaces';
 import { axiosLocal } from '@examples/utils';
 
@@ -36,7 +36,7 @@ export const useVideoCommentApiClient = () => {
     return { data };
   };
 
-  const update = async (id: string, entity: VideoComment) => {
+  const update = async (id: Id, entity: VideoComment) => {
     const { data } = await axiosLocal.put<VideoComment>(
       `/videos/${entity.videoId}/comments/${id}`,
       entity
@@ -45,7 +45,7 @@ export const useVideoCommentApiClient = () => {
     return { data };
   };
 
-  const read = async (id: string, entity: VideoComment) => {
+  const read = async (id: Id, entity: VideoComment) => {
     const { data } = await axiosLocal.get<VideoComment>(
       `/videos/${entity.videoId}/comments/${id}`
     );
@@ -53,7 +53,7 @@ export const useVideoCommentApiClient = () => {
     return { data };
   };
 
-  const remove = async (id: string, entity: VideoComment) => {
+  const remove = async (id: Id, entity: VideoComment) => {
     const { data } = await axiosLocal.delete<VideoComment>(
       `/videos/${entity.videoId}/comments/${id}`
     );

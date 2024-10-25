@@ -17,4 +17,5 @@ export type {
   ReadQueryHandler,
   RemoveQueryHandler,
   UpdateQueryHandler,
+  Id,
 } from './interfaces';

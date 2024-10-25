@@ -1,4 +1,4 @@
-import { Pagination, PaginationParams } from 'react-redux-use-model';
+import { Id, Pagination, PaginationParams } from 'react-redux-use-model';
 import { ListResponse, Video } from '@examples/interfaces';
 import { axiosLocal } from '@examples/utils';
 
@@ -29,19 +29,19 @@ export const useVideoApiClient = () => {
     return { data };
   };
 
-  const update = async (id: string, entity: Video) => {
+  const update = async (id: Id, entity: Video) => {
     const { data } = await axiosLocal.put<Video>(`/videos/${id}`, entity);
 
     return { data };
   };
 
-  const read = async (id: string) => {
+  const read = async (id: Id) => {
     const { data } = await axiosLocal.put<Video>(`/videos/${id}`);
 
     return { data };
   };
 
-  const remove = async (id: string) => {
+  const remove = async (id: Id) => {
     const { data } = await axiosLocal.delete<Video>(`/videos/${id}`);
 
     return { data };

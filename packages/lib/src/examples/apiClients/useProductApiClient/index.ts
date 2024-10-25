@@ -1,4 +1,4 @@
-import { Pagination, PaginationParams } from 'react-redux-use-model';
+import { Id, Pagination, PaginationParams } from 'react-redux-use-model';
 import { ListResponse, Product } from '@examples/interfaces';
 import { axiosLocal } from '@examples/utils';
 
@@ -29,19 +29,19 @@ export const useProductApiClient = () => {
     return { data };
   };
 
-  const update = async (id: string, entity: Product) => {
+  const update = async (id: Id, entity: Product) => {
     const { data } = await axiosLocal.put<Product>(`/products/${id}`, entity);
 
     return { data };
   };
 
-  const read = async (id: string) => {
+  const read = async (id: Id) => {
     const { data } = await axiosLocal.get<Product>(`/products/${id}`);
 
     return { data };
   };
 
-  const remove = async (id: string) => {
+  const remove = async (id: Id) => {
     const { data } = await axiosLocal.delete<Product>(`/products/${id}`);
 
     return { data };

@@ -1,5 +1,6 @@
 import {
   Entity,
+  Id,
   NormalizedEntitiesState,
   QueryState,
   RootState,
@@ -14,7 +15,7 @@ export type ModelContextType = {
     entityName: string,
     queryKey: string | undefined
   ) => QueryState | undefined;
-  findEntity: (entityName: string, entityId: string) => Entity | undefined;
+  findEntity: (entityName: string, entityId: Id) => Entity | undefined;
 };
 
 export const ModelContext = createContext<ModelContextType>({} as any);

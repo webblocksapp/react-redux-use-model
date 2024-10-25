@@ -4,6 +4,7 @@ export * from './CrudOperation';
 export * from './Entity';
 export * from './EntityAction';
 export * from './ForeignKey';
+export * from './Id';
 export * from './NormalizedEntitiesState';
 export * from './NormalizedState';
 export * from './Pagination';

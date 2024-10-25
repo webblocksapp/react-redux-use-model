@@ -1,10 +1,10 @@
-import { RootState } from '@interfaces';
+import { Id, RootState } from '@interfaces';
 import { useProductModel } from '@examples/models';
 import { useSelector } from 'react-redux';
 import { createRandomProduct } from '@examples/mocks/fakers';
 
 export interface ProductItemProps {
-  productId?: string;
+  productId?: Id;
   index: number;
 }
 
@@ -30,7 +30,10 @@ export const ProductItem: React.FC<ProductItemProps> = ({
   };
 
   return (
-    <div id={product?.id} style={{ border: '1px solid black', padding: 5 }}>
+    <div
+      id={String(product?.id)}
+      style={{ border: '1px solid black', padding: 5 }}
+    >
       {loading ? (
         <>Loading...</>
       ) : (

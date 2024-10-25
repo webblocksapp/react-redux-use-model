@@ -14,6 +14,7 @@ import {
   ReadQueryHandler,
   ReadResponse,
   Entity,
+  Id,
 } from '@interfaces';
 import { Dispatch, createSelector } from '@reduxjs/toolkit';
 import {
@@ -708,7 +709,7 @@ export const useModel = <
   const selectEntities = createSelector(
     [
       selectNormalizedEntityState,
-      (_: RootState, ids: Array<string> | null | undefined) => ids,
+      (_: RootState, ids: Array<Id> | null | undefined) => ids,
     ],
     (state, ids) => {
       const entities: Array<ReturnType<typeof buildSelectedEntity>> = [];
@@ -727,7 +728,7 @@ export const useModel = <
    */
   const buildSelectedEntity = (
     state: NormalizedState | undefined,
-    entityId?: string
+    entityId?: string | number
   ) => {
     entityId = entityId || emptyId();
     const loading = state?.byId?.[entityId] === undefined;
@@ -742,7 +743,7 @@ export const useModel = <
    * Select an entity value from the normalized list.
    */
   const selectEntity = createSelector(
-    [selectNormalizedEntityState, (_: RootState, id?: string) => id],
+    [selectNormalizedEntityState, (_: RootState, id?: string | number) => id],
     (state, id) => buildSelectedEntity(state, id)
   );
 

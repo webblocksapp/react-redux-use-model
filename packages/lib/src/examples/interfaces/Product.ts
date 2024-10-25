@@ -1,5 +1,7 @@
+import { Id } from '@interfaces';
+
 export type Product = {
-  id: string;
+  id: Id;
   name: string;
   price: number;
 };
