@@ -48,8 +48,8 @@ export const AnimalList: React.FC = () => {
               padding: 10,
             }}
           >
-            {animalQuery?.ids?.map((id, index) => (
-              <AnimalItem key={id} index={index} animalId={id} />
+            {animalQuery?.ids?.map((id) => (
+              <AnimalItem key={id} animalId={id} />
             ))}
           </div>
           <Paginator

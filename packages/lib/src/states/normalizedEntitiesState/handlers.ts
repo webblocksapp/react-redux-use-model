@@ -108,11 +108,11 @@ export const list = (
   let updatedState = { ...state };
   const map = mapRelationships(schema?.relationships);
 
-  for (let [key, value] of Object.entries(
+  for (let [key, normalizedValue] of Object.entries(
     normalizer(entities, entityName, map)
   )) {
+    const { allIds: newIds, ...value } = normalizedValue;
     const entityState = state[key];
-    const newIds = Object.keys(value);
 
     updatedState = {
       ...updatedState,
@@ -150,11 +150,11 @@ export const create = (
   let updatedState = { ...state };
   const map = mapRelationships(schema?.relationships);
 
-  for (let [key, value] of Object.entries(
+  for (let [key, normalizedValue] of Object.entries(
     normalizer(entity, entityName, map)
   )) {
+    const { allIds: newIds, ...value } = normalizedValue;
     const entityState = state[key];
-    const newIds = Object.keys(value);
 
     updatedState = {
       ...updatedState,
@@ -212,11 +212,11 @@ export const update = (
   let updatedState = { ...state };
   const map = mapRelationships(schema?.relationships);
 
-  for (let [key, value] of Object.entries(
+  for (let [key, normalizedValue] of Object.entries(
     normalizer(entity, entityName, map)
   )) {
+    const { allIds: newIds, ...value } = normalizedValue;
     const entityState = state[key];
-    const newIds = Object.keys(value);
 
     updatedState = {
       ...updatedState,
@@ -260,11 +260,11 @@ export const read = (
   let updatedState = { ...state };
   const map = mapRelationships(schema?.relationships);
 
-  for (let [key, value] of Object.entries(
+  for (let [key, normalizedValue] of Object.entries(
     normalizer(entity, entityName, map)
   )) {
+    const { allIds: newIds, ...value } = normalizedValue;
     const entityState = state[key];
-    const newIds = Object.keys(value);
 
     updatedState = {
       ...updatedState,
@@ -309,9 +309,13 @@ export const remove = (
       [entityName]: {
         ...entityState,
         byId: restById,
-        allIds: (entityState?.allIds || []).filter((id) => id !== entityId),
+        allIds: (entityState?.allIds || []).filter((id) => {
+          return id != entityId;
+        }),
         queries: entityState?.queries?.map?.((query) => {
-          const filteredIds = query.ids.filter((id) => id !== entityId);
+          const filteredIds = query.ids.filter((id) => {
+            return id != entityId;
+          });
           return {
             ...query,
             ids: filteredIds,

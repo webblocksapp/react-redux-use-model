@@ -5,10 +5,9 @@ import { createRandomAnimal } from '@examples/mocks/fakers';
 
 export interface AnimalItemProps {
   animalId?: number;
-  index: number;
 }
 
-export const AnimalItem: React.FC<AnimalItemProps> = ({ animalId, index }) => {
+export const AnimalItem: React.FC<AnimalItemProps> = ({ animalId }) => {
   const animalModel = useAnimalModel();
   const { data: animal, loading } = useSelector((state: RootState) =>
     animalModel.selectEntity(state, animalId)
@@ -42,7 +41,7 @@ export const AnimalItem: React.FC<AnimalItemProps> = ({ animalId, index }) => {
           }}
         >
           <div>
-            {index + 1}. Name: {animal?.name}
+            {animalId}. Name: {animal?.name}
           </div>
           <div>
             <button onClick={update}>

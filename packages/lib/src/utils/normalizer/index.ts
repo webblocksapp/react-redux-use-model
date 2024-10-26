@@ -1,4 +1,8 @@
-import { AnyObject, Entity } from '@interfaces';
+import { AnyObject, Entity, Id, NormalizeEntity } from '@interfaces';
+
+export type NormalizerResult = {
+  [key: string]: NormalizeEntity<Entity> & { allIds: Id[] };
+};
 
 export const normalizer = <T extends Array<Entity> | Entity>(
   data: T,
@@ -8,7 +12,7 @@ export const normalizer = <T extends Array<Entity> | Entity>(
     newFieldName: string | ((entity: Entity) => string | undefined);
   }> = [],
   result: AnyObject = {}
-): { [key: string]: { [key: string]: { id?: string } } } => {
+): NormalizerResult => {
   const newFieldName = map.find(
     (item) => item.fieldName == fieldName
   )?.newFieldName;
@@ -18,7 +22,7 @@ export const normalizer = <T extends Array<Entity> | Entity>(
   }
 
   if (result[fieldName] === undefined) {
-    result[fieldName] = {};
+    result[fieldName] = { allIds: [] };
   }
 
   if (Array.isArray(data)) {
@@ -26,24 +30,31 @@ export const normalizer = <T extends Array<Entity> | Entity>(
       normalizer(value, fieldName, map, result);
     }
   } else {
+    const id = data.id;
+    if (id) {
+      const normalizedResult = result as NormalizerResult;
+      const allIds = normalizedResult[fieldName]['allIds'];
+      normalizedResult[fieldName]['allIds'] = [...allIds, id];
+    }
+
     for (const [key, value] of Object.entries(data)) {
-      if (data.id && result[fieldName][data.id] === undefined) {
-        result[fieldName][data.id] = data;
+      if (id && result[fieldName][id] === undefined) {
+        result[fieldName][id] = data;
       }
 
-      if (data.id) {
+      if (id) {
         if (
           Array.isArray(value) &&
           value.some((item) => item?.id !== undefined)
         ) {
-          result[fieldName][data.id][key] = value.map((item) => item.id);
+          result[fieldName][id][key] = value.map((item) => item.id);
           normalizer(value, key, map, result);
         } else if (
           typeof value === 'object' &&
           value !== null &&
           (value as Entity).id
         ) {
-          result[fieldName][data.id][key] = (value as Entity).id;
+          result[fieldName][id][key] = (value as Entity).id;
 
           const newFieldName = map.find(
             (item) => item.fieldName == key

@@ -1,4 +1,4 @@
-import { QueryState } from '@interfaces';
+import { Id, QueryState } from '@interfaces';
 import { calcPage, calcPagination, mergeIds, removeArrayExcess } from '@utils';
 
 const queryExists = (item: QueryState, queryKey: string) =>
@@ -7,7 +7,7 @@ const queryExists = (item: QueryState, queryKey: string) =>
 export const mergeQueries = (args: {
   queries: QueryState[];
   queryKey: string | undefined;
-  ids: string[];
+  ids: Id[];
   pagination?: QueryState['pagination'];
   sizeMultiplier?: number;
   currentPage?: number;

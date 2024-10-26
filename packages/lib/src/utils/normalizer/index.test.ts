@@ -8,7 +8,11 @@ describe('normalizer', () => {
     ];
     const result = normalizer(data, 'user');
     expect(result).toEqual({
-      user: { '1': { id: 1, name: 'John' }, '2': { id: 2, name: 'Mario' } },
+      user: {
+        '1': { id: 1, name: 'John' },
+        '2': { id: 2, name: 'Mario' },
+        allIds: [1, 2],
+      },
     });
   });
 
@@ -41,11 +45,13 @@ describe('normalizer', () => {
           name: 'Nike White Shoes',
           comments: [2, 3],
         },
+        allIds: [1, 2],
       },
       comments: {
         '1': { id: 1, detail: 'Nice shoes' },
         '2': { id: 2, detail: 'Excellent shoes' },
         '3': { id: 3, detail: 'Good product' },
+        allIds: [1, 2, 3],
       },
     });
   });
@@ -81,11 +87,13 @@ describe('normalizer', () => {
           name: 'Nike White Shoes',
           comments: [2, 3],
         },
+        allIds: [1, 2],
       },
       ['videos.comments']: {
         '1': { id: 1, detail: 'Nice shoes' },
         '2': { id: 2, detail: 'Excellent shoes' },
         '3': { id: 3, detail: 'Good product' },
+        allIds: [1, 2, 3],
       },
     });
   });
@@ -132,12 +140,15 @@ describe('normalizer', () => {
           data: '1b',
           type: 'Contact',
         },
+        allIds: ['1a', '1b'],
       },
       clothes: {
         '1a': { id: '1a', name: 'Nike Black Shoes' },
+        allIds: ['1a'],
       },
       contacts: {
         '1b': { id: '1b', firstName: 'William' },
+        allIds: ['1b'],
       },
     });
   });
