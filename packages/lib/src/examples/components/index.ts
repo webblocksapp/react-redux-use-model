@@ -1,3 +1,5 @@
+export * from './AnimalItem';
+export * from './AnimalList';
 export * from './Paginator';
 export * from './ProductCrud';
 export * from './ProductItem';

@@ -14,6 +14,8 @@ export enum QueryKey {
   ProductCrud = 'ProductCrud',
   VideoList = 'VideoList',
   VideosDropdown = 'VideosDropdown',
+  FilteredAnimalList = 'FilteredAnimalList',
+  AnimalList = 'AnimalList',
 }
 
 export enum ProductActionType {

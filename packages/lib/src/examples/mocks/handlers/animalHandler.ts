@@ -11,7 +11,7 @@ export const animalHandler = [
     const size: any = url.searchParams.get('_size');
     const page: any = url.searchParams.get('_page');
     const filter: any = url.searchParams.get('_filter');
-    let animals = data.animals;
+    let animals = data.animals.sort((a, b) => b.id - a.id);
 
     if (filter) {
       animals = animals.filter((item) =>
