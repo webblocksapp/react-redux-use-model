@@ -168,8 +168,8 @@ importers:
         specifier: ^6.15.0
         version: 6.29.0(react-dom@18.3.1)(react@18.3.1)
       reactjs-ui-core:
-        specifier: ^0.0.12
-        version: 0.0.12(@emotion/react@11.14.0)(@emotion/styled@11.14.0)(@mui/icons-material@5.16.14)(@mui/material@5.16.14)(i18next@23.16.8)(notistack@3.0.2)(react-highlight@0.15.0)(react-i18next@15.4.1)(react-router-dom@6.29.0)
+        specifier: ^0.0.14
+        version: 0.0.14(@emotion/react@11.14.0)(@emotion/styled@11.14.0)(@mui/icons-material@5.16.14)(@mui/material@5.16.14)(i18next@23.16.8)(notistack@3.0.2)(react-highlight@0.15.0)(react-i18next@15.4.1)(react-router-dom@6.29.0)
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
@@ -10394,8 +10394,8 @@ packages:
     dependencies:
       loose-envify: 1.4.0
 
-  /reactjs-ui-core@0.0.12(@emotion/react@11.14.0)(@emotion/styled@11.14.0)(@mui/icons-material@5.16.14)(@mui/material@5.16.14)(i18next@23.16.8)(notistack@3.0.2)(react-highlight@0.15.0)(react-i18next@15.4.1)(react-router-dom@6.29.0):
-    resolution: {integrity: sha512-VP2QE+9YPGE+1YPiKD4K7vwLlBXpM0Xpo5/O4f0oAIR6Sv7C0XPB/KsHvBnu7ihXVxFhyYPyeb5N0u25d/Ud2w==}
+  /reactjs-ui-core@0.0.14(@emotion/react@11.14.0)(@emotion/styled@11.14.0)(@mui/icons-material@5.16.14)(@mui/material@5.16.14)(i18next@23.16.8)(notistack@3.0.2)(react-highlight@0.15.0)(react-i18next@15.4.1)(react-router-dom@6.29.0):
+    resolution: {integrity: sha512-HIMo1k5zzd9Aa9PTiRW25Ott6RNjAcMohpqwrL2gmpsso2TdE0WorF34FDbnXHqMACE/t/P8zxYGKrFnVS05XQ==}
     peerDependencies:
       '@emotion/react': ^11.11.1
       '@emotion/styled': ^11.11.0

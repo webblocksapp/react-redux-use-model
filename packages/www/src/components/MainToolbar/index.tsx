@@ -1,3 +1,4 @@
+import { MAIN_LAYOUT_MAX_WIDTH } from '@constants/constants';
 import AppBar, { AppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { Body1, Box, Link, Stack } from 'reactjs-ui-core';
@@ -19,7 +20,7 @@ export const MainToolbar: React.FC<MainToolbar> = ({
           alignItems="center"
           justifyContent="space-between"
           spacing={1}
-          maxWidth={1280}
+          maxWidth={MAIN_LAYOUT_MAX_WIDTH}
           margin="auto"
         >
           <Box>
