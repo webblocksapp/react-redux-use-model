@@ -17,6 +17,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "baseUrl": "./",
     "paths": {
       "@api-clients/*": ["src/api-clients/*"],
       "@assets/*": ["src/assets/*"],
