@@ -22,6 +22,7 @@ export const Sidebar: React.FC<SettingsSidebarProps> = ({
               linkProps={{ to: item.route }}
               text={item.text}
               icon={item.icon}
+              type={item.type}
             />
           ))}
         </Stack>

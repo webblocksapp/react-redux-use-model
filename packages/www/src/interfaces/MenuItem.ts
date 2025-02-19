@@ -4,4 +4,5 @@ export type MenuItem = {
   route?: string;
   onClick?: () => void;
   description?: string | (() => string);
+  type?: 'section' | 'content';
 };
