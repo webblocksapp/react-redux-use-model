@@ -36,7 +36,8 @@
       "@states": ["src/states"],
       "@store": ["src/store.ts"],
       "@themes/*": ["src/themes/*"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "react": ["./node_modules/@types/react"]
     }
   },
   "include": ["src"]
