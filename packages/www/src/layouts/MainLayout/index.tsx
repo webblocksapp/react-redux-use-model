@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { MainToolbar } from '@components/MainToolbar';
-import { Box, ContentsArea, TableOfContents } from 'reactjs-ui-core';
-import { Outlet } from 'react-router-dom';
+import {
+  Box,
+  ContentsArea,
+  ContentsAreaHandle,
+  TableOfContents,
+} from 'reactjs-ui-core';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '@components/Sidebar';
 import { SIDEBAR_MENU } from '@constants/menus';
 import { MAIN_LAYOUT_MAX_WIDTH } from '@constants/constants';
 
 export const MainLayout: React.FC = () => {
+  const contentsAreaRef = useRef<ContentsAreaHandle>(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    contentsAreaRef.current?.refreshTableOfContents();
+  }, [location.pathname]);
+
   return (
     <Box
       height="100%"
@@ -25,7 +37,7 @@ export const MainLayout: React.FC = () => {
         <Box overflow="auto" display="grid" gridTemplateColumns="295px 1fr">
           <Sidebar menu={SIDEBAR_MENU} />
           <Box display="grid" gridTemplateColumns="1fr 300px" p={2} pl={3}>
-            <ContentsArea style={{ display: 'contents' }}>
+            <ContentsArea ref={contentsAreaRef} style={{ display: 'contents' }}>
               <Outlet />
               <Box position="relative">
                 <Box
