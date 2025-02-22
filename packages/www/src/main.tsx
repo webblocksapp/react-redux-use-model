@@ -2,12 +2,36 @@ import './index.css';
 import { App } from './App.tsx';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
-import { ThemeProvider } from 'reactjs-ui-core';
+import { CodeProvider, ThemeProvider } from 'reactjs-ui-core';
+
+const scratches = import.meta.glob('../src/scratches/**/*.(ts|tsx|sh)', {
+  as: 'raw',
+});
+
+const modules = { ...scratches };
+const snippets: { [key: string]: string } = {};
+
+export const loadCodeSnippets = async () => {
+  const promises: Promise<void>[] = [];
+
+  for (const [key, value] of Object.entries(modules)) {
+    promises.push(
+      new Promise(async (resolve) => {
+        (snippets[key] = await value()), resolve();
+      })
+    );
+  }
+
+  await Promise.all(promises);
+  return snippets;
+};
 
 createRoot(document.getElementById('root')!).render(
   <ThemeProvider themeName="githubDark">
     <HashRouter>
-      <App />
+      <CodeProvider loadCodeSnippets={loadCodeSnippets}>
+        <App />
+      </CodeProvider>
     </HashRouter>
   </ThemeProvider>
 );

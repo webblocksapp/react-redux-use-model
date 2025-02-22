@@ -1,5 +1,5 @@
 import { Body1 } from '@components/Body1';
-import { ContentsClass, H3, H6, Stack } from 'reactjs-ui-core';
+import { Code, ContentsClass, H3, H6, Stack } from 'reactjs-ui-core';
 
 export const Introduction: React.FC = () => {
   return (
@@ -57,6 +57,7 @@ export const Introduction: React.FC = () => {
           </ul>
         </Stack>
       </Stack>
+      <Code type="content" code="xxxx" language="bash" />
     </Stack>
   );
 };
