@@ -13,7 +13,7 @@ export const Sidebar: React.FC<SettingsSidebarProps> = ({
   ...rest
 }) => {
   return (
-    <Box py={2} display="grid" {...rest}>
+    <Box py={2} {...rest}>
       <MenuList sx={{ paddingTop: 0 }}>
         <Stack spacing={spacing}>
           {menu.map((item, index) => (

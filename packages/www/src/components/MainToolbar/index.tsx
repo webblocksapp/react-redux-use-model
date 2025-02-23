@@ -6,12 +6,18 @@ import { Body1, Box, Link, Stack } from 'reactjs-ui-core';
 export interface MainToolbar extends AppBarProps {}
 
 export const MainToolbar: React.FC<MainToolbar> = ({
-  position = 'relative',
+  position = 'sticky',
   elevation = 0,
+  sx,
   ...rest
 }) => {
   return (
-    <AppBar {...rest} position={position} elevation={elevation}>
+    <AppBar
+      {...rest}
+      sx={{ bgcolor: 'secondary.main', ...sx }}
+      position={position}
+      elevation={elevation}
+    >
       <Toolbar>
         <Stack
           width="100%"

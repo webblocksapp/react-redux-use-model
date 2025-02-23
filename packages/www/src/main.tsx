@@ -4,11 +4,11 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import { CodeProvider, ThemeProvider } from 'reactjs-ui-core';
 
-const scratches = import.meta.glob('../src/scratches/**/*.(ts|tsx|sh)', {
+const codeSnippets = import.meta.glob('../src/code-snippets/**/*.(ts|tsx|sh)', {
   as: 'raw',
 });
 
-const modules = { ...scratches };
+const modules = { ...codeSnippets };
 const snippets: { [key: string]: string } = {};
 
 export const loadCodeSnippets = async () => {

@@ -9,7 +9,7 @@ import {
 import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '@components/Sidebar';
 import { SIDEBAR_MENU } from '@constants/menus';
-import { MAIN_LAYOUT_MAX_WIDTH } from '@constants/constants';
+import { MAIN_LAYOUT_MAX_WIDTH, NAV_HEIGHT } from '@constants/constants';
 
 export const MainLayout: React.FC = () => {
   const contentsAreaRef = useRef<ContentsAreaHandle>(null);
@@ -28,22 +28,28 @@ export const MainLayout: React.FC = () => {
     >
       <MainToolbar />
       <Box
-        overflow="auto"
         display="grid"
         maxWidth={MAIN_LAYOUT_MAX_WIDTH}
         marginX="auto"
         width="100%"
       >
-        <Box overflow="auto" display="grid" gridTemplateColumns="295px 1fr">
-          <Sidebar menu={SIDEBAR_MENU} />
+        <Box display="grid" gridTemplateColumns="295px 1fr">
+          <Box>
+            <Sidebar
+              height={`calc(100vh - ${NAV_HEIGHT}px)`}
+              position="sticky"
+              top={NAV_HEIGHT}
+              menu={SIDEBAR_MENU}
+            />
+          </Box>
           <Box display="grid" gridTemplateColumns="1fr 300px" p={2} pl={3}>
             <ContentsArea ref={contentsAreaRef} style={{ display: 'contents' }}>
               <Outlet />
               <Box position="relative">
                 <Box
                   pl={1}
-                  position="absolute"
-                  top={0}
+                  position="sticky"
+                  top={85}
                   right={0}
                   width={300}
                   sx={{ '& li': { textWrap: 'wrap' } }}
