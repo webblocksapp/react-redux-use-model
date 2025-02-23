@@ -1,6 +1,7 @@
 import { MainLayout } from '@layouts/MainLayout';
 import { Docs } from '@pages/Docs';
 import { Introduction } from '@pages/Docs/Introduction';
+import { QuickStart } from '@pages/Docs/QuickStart';
 import { Setup } from '@pages/Docs/Setup';
 import { RouteObject } from 'react-router-dom';
 
@@ -16,6 +17,7 @@ export const routes: RouteObject[] = [
           { path: '', element: <Introduction /> },
           { path: 'introduction', element: <Introduction /> },
           { path: 'setup', element: <Setup /> },
+          { path: 'quick-start', element: <QuickStart /> },
         ],
       },
     ],
