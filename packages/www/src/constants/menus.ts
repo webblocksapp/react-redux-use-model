@@ -9,4 +9,12 @@ export const SIDEBAR_MENU: MenuItem[] = [
     text: () => 'Introduction',
     route: '/docs/introduction',
   },
+  {
+    text: () => 'Setup',
+    route: '/docs/setup',
+  },
+  {
+    text: () => 'Quick Start',
+    route: '/docs/quick-start',
+  },
 ];
