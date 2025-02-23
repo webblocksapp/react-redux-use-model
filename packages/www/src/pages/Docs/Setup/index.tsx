@@ -1,5 +1,5 @@
 import { Body1 } from '@components/Body1';
-import { Code, ContentsClass, H3, H6, Stack } from 'reactjs-ui-core';
+import { Box, Code, ContentsClass, H3, H6, Stack } from 'reactjs-ui-core';
 
 export const Setup: React.FC = () => {
   return (
@@ -28,10 +28,27 @@ export const Setup: React.FC = () => {
           <H6 className={ContentsClass.ItemTitle} fontWeight={500}>
             Project Setup
           </H6>
-          <Body1>
-            <code>store.ts</code> file definition:
-          </Body1>
+          <Box className={ContentsClass.Item}>
+            <Body1
+              fontWeight={500}
+              color="text.primary"
+              className={ContentsClass.ItemTitle}
+            >
+              <code>store.ts</code> file definition
+            </Body1>
+          </Box>
+
           <Code type="path" codePath="code-snippets/store.ts" />
+          <Box className={ContentsClass.Item}>
+            <Body1
+              fontWeight={500}
+              color="text.primary"
+              className={ContentsClass.ItemTitle}
+            >
+              <code>main.tsx</code> file definition
+            </Body1>
+          </Box>
+          <Code type="path" codePath="code-snippets/main.tsx" />
         </Stack>
       </Stack>
     </Stack>
