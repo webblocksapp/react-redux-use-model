@@ -1,4 +1,6 @@
+import { Id } from 'react-redux-use-model';
+
 export type Movie = {
-  id?: string;
+  id?: Id;
   name: string;
 };

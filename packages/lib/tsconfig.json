@@ -34,7 +34,6 @@
       "react-redux-use-model": ["src"]
     }
   },
-  "include": ["src"],
-  "exclude": ["public"],
+  "exclude": ["public", "vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

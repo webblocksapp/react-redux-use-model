@@ -1,17 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { MainToolbar } from '@components/MainToolbar';
-import {
-  Box,
-  ContentsArea,
-  ContentsAreaHandle,
-  TableOfContents,
-} from 'reactjs-ui-core';
+import { Box, ContentsAreaHandle } from 'reactjs-ui-core';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '@components/Sidebar';
 import { SIDEBAR_MENU } from '@constants/menus';
 import { MAIN_LAYOUT_MAX_WIDTH, NAV_HEIGHT } from '@constants/constants';
 
-export const MainLayout: React.FC<{ children?: React.ReactElement }> = () => {
+export const SecondaryMainLayout: React.FC = () => {
   const contentsAreaRef = useRef<ContentsAreaHandle>(null);
   const location = useLocation();
 
@@ -42,22 +37,8 @@ export const MainLayout: React.FC<{ children?: React.ReactElement }> = () => {
               menu={SIDEBAR_MENU}
             />
           </Box>
-          <Box display="grid" gridTemplateColumns="1fr 300px" p={2} pl={3}>
-            <ContentsArea ref={contentsAreaRef} style={{ display: 'contents' }}>
-              <Outlet />
-              <Box position="relative">
-                <Box
-                  pl={1}
-                  position="sticky"
-                  top={85}
-                  right={0}
-                  width={300}
-                  sx={{ '& li': { textWrap: 'wrap' } }}
-                >
-                  <TableOfContents display="block" />
-                </Box>
-              </Box>
-            </ContentsArea>
+          <Box display="grid" p={2} pl={3}>
+            <Outlet />
           </Box>
         </Box>
       </Box>

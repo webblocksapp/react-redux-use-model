@@ -1,4 +1,5 @@
 import { MainLayout } from '@layouts/MainLayout';
+import { SecondaryMainLayout } from '@layouts/SecondaryMainLayout';
 import { Docs } from '@pages/Docs';
 import { Introduction } from '@pages/Docs/Introduction';
 import { QuickStart } from '@pages/Docs/QuickStart';
@@ -17,8 +18,18 @@ export const routes: RouteObject[] = [
           { path: '', element: <Introduction /> },
           { path: 'introduction', element: <Introduction /> },
           { path: 'setup', element: <Setup /> },
-          { path: 'quick-start', element: <QuickStart /> },
         ],
+      },
+    ],
+  },
+  {
+    path: '/',
+    element: <SecondaryMainLayout />,
+    children: [
+      {
+        path: 'docs',
+        element: <Docs />,
+        children: [{ path: 'quick-start', element: <QuickStart /> }],
       },
     ],
   },

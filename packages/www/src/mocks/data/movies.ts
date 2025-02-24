@@ -1,6 +1,6 @@
 import { Movie } from '@interfaces/Movie';
-import { createMovie } from '@mocks/utils';
+import { createRandomMovie } from '@mocks/fakers';
 
-export const movies: Movie[] = Array(1000)
+export const movies: Movie[] = Array(12)
   .fill(null)
-  .map(() => createMovie());
+  .map(() => createRandomMovie());

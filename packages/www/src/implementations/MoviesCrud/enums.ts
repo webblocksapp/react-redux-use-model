@@ -3,6 +3,5 @@ export enum EntityName {
 }
 
 export enum QueryKey {
-  MoviesList = 'MoviesList',
-  MoviesFilteredList = 'MoviesFilteredList',
+  MoviesCrud = 'MoviesCrud',
 }
