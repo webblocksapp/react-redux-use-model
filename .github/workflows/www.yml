@@ -1,0 +1,39 @@
+name: Docs www pipeline
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - '*'
+    paths:
+      - www/**
+  push:
+    branches:
+      - master
+    paths:
+      - www/**
+defaults:
+  run:
+    working-directory: www
+jobs:
+  www-workflow:
+    runs-on: ubuntu-latest
+    name: WWW workflow
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8.9.2'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build lib
+        run: pnpm lib:build
+      - name: Build www
+        run: pnpm www:build
+      - name: Deploy www
+        run: pnpm www:deploy-docs

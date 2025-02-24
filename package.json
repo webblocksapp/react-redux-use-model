@@ -2,5 +2,10 @@
   "name": "react-redux-use-model",
   "keywords": [],
   "author": "Mauricio Rivera",
-  "license": "ISC"
+  "license": "ISC",
+  "scripts": {
+    "lib:build": "pnpm --filter react-redux-use-model build",
+    "www:build": "pnpm --filter www build",
+    "www:deploy-docs": "pnpm --filter www deploy-docs"
+  }
 }
