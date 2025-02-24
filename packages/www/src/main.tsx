@@ -35,16 +35,23 @@ export const loadCodeSnippets = async () => {
   return snippets;
 };
 
-createRoot(document.getElementById('root')!).render(
-  <Provider store={store}>
-    <ModelProvider store={store}>
-      <ThemeProvider themeName="githubDark">
-        <HashRouter>
-          <CodeProvider loadCodeSnippets={loadCodeSnippets}>
-            <App />
-          </CodeProvider>
-        </HashRouter>
-      </ThemeProvider>
-    </ModelProvider>
-  </Provider>
-);
+const main = async () => {
+  const { worker } = await import('./mocks/browser');
+  await worker.start({ onUnhandledRequest: 'bypass' });
+
+  createRoot(document.getElementById('root')!).render(
+    <Provider store={store}>
+      <ModelProvider store={store}>
+        <ThemeProvider themeName="githubDark">
+          <HashRouter>
+            <CodeProvider loadCodeSnippets={loadCodeSnippets}>
+              <App />
+            </CodeProvider>
+          </HashRouter>
+        </ThemeProvider>
+      </ModelProvider>
+    </Provider>
+  );
+};
+
+main();

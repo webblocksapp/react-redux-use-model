@@ -17,9 +17,8 @@ export const QuickStart: React.FC = () => {
               name: 'useMovieModel.ts',
               language: 'typescript',
               mapReplace: {
-                '@implementations/MoviesCrud/enums': '@constants/enums',
-                '@implementations/MoviesCrud/useMovieApiClient':
-                  '@api-clients/useMovieApiClient',
+                './enums': '@constants/enums',
+                './useMovieApiClient': '@api-clients/useMovieApiClient',
               },
             },
             {

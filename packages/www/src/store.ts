@@ -11,3 +11,5 @@ export const rootState = combineStates({
 export const store = configureStore({
   reducer: rootState,
 });
+
+export type RootState = ReturnType<typeof rootState>;
