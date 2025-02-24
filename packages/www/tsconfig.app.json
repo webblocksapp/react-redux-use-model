@@ -23,6 +23,8 @@
       "@components/*": ["src/components/*"],
       "@common-types": ["common-types"],
       "@constants/*": ["src/constants/*"],
+      "@contexts": ["src/contexts"],
+      "@contexts/*": ["src/contexts/*"],
       "@hocs/*": ["src/hocs/*"],
       "@icons/*": ["src/assets/icons/*"],
       "@implementations/*": ["src/implementations/*"],

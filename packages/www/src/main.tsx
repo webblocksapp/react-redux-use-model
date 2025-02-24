@@ -6,6 +6,7 @@ import { CodeProvider, ThemeProvider } from 'reactjs-ui-core';
 import { store } from '@store';
 import { ModelProvider } from 'react-redux-use-model';
 import { Provider } from 'react-redux';
+import { MswProvider } from '@components/MswProvider';
 
 const codeSnippets = import.meta.glob('../src/code-snippets/**/*.(ts|tsx|sh)', {
   as: 'raw',
@@ -38,11 +39,8 @@ export const loadCodeSnippets = async () => {
   return snippets;
 };
 
-const main = async () => {
-  const { worker } = await import('./mocks/browser');
-  await worker.start({ onUnhandledRequest: 'bypass' });
-
-  createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById('root')!).render(
+  <MswProvider>
     <Provider store={store}>
       <ModelProvider store={store}>
         <ThemeProvider themeName="githubDark">
@@ -54,7 +52,5 @@ const main = async () => {
         </ThemeProvider>
       </ModelProvider>
     </Provider>
-  );
-};
-
-main();
+  </MswProvider>
+);
