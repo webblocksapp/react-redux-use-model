@@ -42,7 +42,7 @@ export const MswProvider: React.FC<HeartBeatProps> = ({ children }) => {
     };
   }, [loading]);
 
-  console.log(hasError);
+  console.log({ hasError });
 
   return (
     <MswContext.Provider value={{ loading, hasError }}>
