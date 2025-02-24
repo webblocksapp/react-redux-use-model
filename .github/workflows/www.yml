@@ -1,19 +1,11 @@
 name: Docs www pipeline
 on:
   workflow_dispatch:
-  pull_request:
-    branches:
-      - '*'
-    paths:
-      - www/**
   push:
     branches:
       - master
     paths:
-      - www/**
-defaults:
-  run:
-    working-directory: www
+      - packages/www/**
 jobs:
   www-workflow:
     runs-on: ubuntu-latest
