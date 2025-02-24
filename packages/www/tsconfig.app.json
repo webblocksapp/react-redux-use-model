@@ -26,6 +26,7 @@
       "@constants/*": ["src/constants/*"],
       "@hocs/*": ["src/hocs/*"],
       "@icons/*": ["src/assets/icons/*"],
+      "@implementations/*": ["src/implementations/*"],
       "@interfaces/*": ["src/interfaces/*"],
       "@i18n/*": ["src/i18n/*"],
       "@layouts/*": ["src/layouts/*"],

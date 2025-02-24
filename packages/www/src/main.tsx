@@ -10,8 +10,14 @@ import { Provider } from 'react-redux';
 const codeSnippets = import.meta.glob('../src/code-snippets/**/*.(ts|tsx|sh)', {
   as: 'raw',
 });
+const implementations = import.meta.glob(
+  '../src/implementations/**/*.(ts|tsx|sh)',
+  {
+    as: 'raw',
+  }
+);
 
-const modules = { ...codeSnippets };
+const modules = { ...codeSnippets, ...implementations };
 const snippets: { [key: string]: string } = {};
 
 export const loadCodeSnippets = async () => {
