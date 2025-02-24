@@ -27,5 +27,6 @@ jobs:
         run: pnpm lib:build
       - name: Build www
         run: pnpm www:build
-      - name: Deploy www
-        run: pnpm www:deploy-docs
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
