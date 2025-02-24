@@ -9,6 +9,9 @@ on:
 jobs:
   www-workflow:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     name: WWW workflow
     steps:
       - name: Checkout
