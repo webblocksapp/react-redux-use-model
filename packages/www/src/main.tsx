@@ -3,6 +3,9 @@ import { App } from './App.tsx';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import { CodeProvider, ThemeProvider } from 'reactjs-ui-core';
+import { store } from '@store';
+import { ModelProvider } from 'react-redux-use-model';
+import { Provider } from 'react-redux';
 
 const codeSnippets = import.meta.glob('../src/code-snippets/**/*.(ts|tsx|sh)', {
   as: 'raw',
@@ -27,11 +30,15 @@ export const loadCodeSnippets = async () => {
 };
 
 createRoot(document.getElementById('root')!).render(
-  <ThemeProvider themeName="githubDark">
-    <HashRouter>
-      <CodeProvider loadCodeSnippets={loadCodeSnippets}>
-        <App />
-      </CodeProvider>
-    </HashRouter>
-  </ThemeProvider>
+  <Provider store={store}>
+    <ModelProvider store={store}>
+      <ThemeProvider themeName="githubDark">
+        <HashRouter>
+          <CodeProvider loadCodeSnippets={loadCodeSnippets}>
+            <App />
+          </CodeProvider>
+        </HashRouter>
+      </ThemeProvider>
+    </ModelProvider>
+  </Provider>
 );
