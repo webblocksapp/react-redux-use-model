@@ -5,5 +5,3 @@ export const ORIGIN_URL = getOrigin();
 export const WORKER_URL = `${ORIGIN_URL}${
   BASE_URL ? `/${BASE_URL}` : ''
 }/mockServiceWorker.js`;
-
-console.log({ ORIGIN_URL, WORKER_URL, BASE_URL });

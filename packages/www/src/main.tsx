@@ -7,7 +7,6 @@ import { store } from '@store';
 import { ModelProvider } from 'react-redux-use-model';
 import { Provider } from 'react-redux';
 import { MswProvider } from '@components/MswProvider';
-import { BASE_URL } from '@constants/urls.ts';
 
 const codeSnippets = import.meta.glob('../src/code-snippets/**/*.(ts|tsx|sh)', {
   as: 'raw',
@@ -45,7 +44,7 @@ createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <ModelProvider store={store}>
         <ThemeProvider themeName="githubDark">
-          <HashRouter basename={BASE_URL}>
+          <HashRouter>
             <CodeProvider loadCodeSnippets={loadCodeSnippets}>
               <App />
             </CodeProvider>
