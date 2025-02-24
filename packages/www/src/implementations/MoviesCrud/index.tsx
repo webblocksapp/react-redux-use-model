@@ -47,12 +47,14 @@ export const MoviesCrud: React.FC = () => {
               <>No data available.</>
             )}
           </div>
-          <Paginator
-            pagination={movieQuery?.pagination}
-            onClickPage={(index) =>
-              setParams((prev) => ({ ...prev, _page: index }))
-            }
-          />
+          <div style={{ marginTop: 10 }}>
+            <Paginator
+              pagination={movieQuery?.pagination}
+              onClickPage={(index) =>
+                setParams((prev) => ({ ...prev, _page: index }))
+              }
+            />
+          </div>
         </div>
         <div className="query-code">
           <pre>
