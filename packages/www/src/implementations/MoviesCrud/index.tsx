@@ -37,7 +37,7 @@ export const MoviesCrud: React.FC<MoviesCrudProps> = (props) => {
   const search = useDebounce((criteria: string) => {
     setParams({
       _page: 0,
-      _size: 18,
+      _size: 10,
       _filter: criteria,
     });
   }, 300);
