@@ -43,6 +43,7 @@ export const movieHandler = [
   http.post(`${BASE_LOCAL_URL}/movies`, async ({ request }) => {
     const movie = (await request.json()) as Movie;
     const body = { id: uuid(), ...movie };
+    data.movies.push(body);
     await delay(2000);
     return HttpResponse.json(body, { status: 200 });
   }),

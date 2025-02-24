@@ -13,6 +13,33 @@ export const QuickStart: React.FC = () => {
           codeTabs={[
             {
               type: 'path',
+              codePath: 'implementations/MoviesCrud/index.tsx',
+              name: 'MoviesCrud.tsx',
+              language: 'typescript',
+              mapReplace: {
+                './enums': '@constants/enums',
+                './useMovieModel': '@model/useMovieModel',
+                './MovieItem': '@components/MovieItem',
+              },
+            },
+            {
+              type: 'path',
+              codePath: 'implementations/MoviesCrud/MovieItem.tsx',
+              name: 'MovieItem.tsx',
+              language: 'typescript',
+              mapReplace: {
+                './enums': '@constants/enums',
+                './useMovieModel': '@model/useMovieModel',
+              },
+            },
+            {
+              type: 'path',
+              codePath: 'interfaces/Movie.ts',
+              name: 'Movie.ts',
+              language: 'typescript',
+            },
+            {
+              type: 'path',
               codePath: 'implementations/MoviesCrud/useMovieModel.ts',
               name: 'useMovieModel.ts',
               language: 'typescript',
@@ -26,6 +53,9 @@ export const QuickStart: React.FC = () => {
               codePath: 'implementations/MoviesCrud/useMovieApiClient.ts',
               name: 'useMovieApiClient.ts',
               language: 'typescript',
+              mapReplace: {
+                './enums': '@constants/enums',
+              },
             },
           ]}
         >

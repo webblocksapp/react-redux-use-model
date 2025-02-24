@@ -1,4 +1,4 @@
-import { Pagination } from '@interfaces';
+import { Pagination } from 'react-redux-use-model';
 
 export interface PaginatorProps {
   pagination?: Pagination;

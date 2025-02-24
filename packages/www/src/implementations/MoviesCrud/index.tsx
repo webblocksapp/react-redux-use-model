@@ -1,10 +1,10 @@
-import { QueryKey } from './enums';
-import { useMovieModel } from './useMovieModel';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { QueryKey } from './enums';
+import { useMovieModel } from './useMovieModel';
 import { Paginator } from '@components/Paginator';
-import { createRandomMovie } from '@mocks/fakers';
 import { MovieItem } from './MovieItem';
+import { createRandomMovie } from '@mocks/fakers';
 import './index.css';
 
 export const MoviesCrud: React.FC = () => {
@@ -26,15 +26,26 @@ export const MoviesCrud: React.FC = () => {
   return (
     <div className="movies-crud">
       <div>
+        <h2>Movies Crud</h2>
+      </div>
+      <div>
         <button onClick={create}>Create random movie</button>
       </div>
       <div>
         <div>
           <div className="movies-list">
-            {movieQuery?.ids?.map((id, index) => (
-              <MovieItem index={index} key={id} movieId={id} />
-            ))}
-            {!movieQuery.hasRecords ? <>No data available.</> : <></>}
+            {movieQuery.hasRecords ? (
+              movieQuery?.ids?.map((id, index) => (
+                <MovieItem
+                  index={index}
+                  key={id}
+                  movieId={id}
+                  pagination={movieQuery?.pagination}
+                />
+              ))
+            ) : (
+              <>No data available.</>
+            )}
           </div>
           <Paginator
             pagination={movieQuery?.pagination}

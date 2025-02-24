@@ -1,3 +1,4 @@
+import { axiosLocal } from '@utils/axiosLocal';
 import {
   Id,
   ListResponse,
@@ -5,7 +6,6 @@ import {
   PaginationParams,
 } from 'react-redux-use-model';
 import { Movie } from '@interfaces/Movie';
-import { axiosLocal } from '@utils/axiosLocal';
 
 export const useMovieApiClient = () => {
   const list = async (

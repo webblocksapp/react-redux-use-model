@@ -1,19 +1,25 @@
-import { useMovieModel } from './useMovieModel';
+import { Id, Pagination } from 'react-redux-use-model';
 import { useSelector } from 'react-redux';
-import { createRandomMovie } from '@mocks/fakers';
-import { Id } from 'react-redux-use-model';
 import { RootState } from '@store';
+import { useMovieModel } from './useMovieModel';
+import { createRandomMovie } from '@mocks/fakers';
 
 export interface MovieItemProps {
   movieId?: Id;
+  pagination?: Pagination;
   index: number;
 }
 
-export const MovieItem: React.FC<MovieItemProps> = ({ movieId, index }) => {
+export const MovieItem: React.FC<MovieItemProps> = ({
+  movieId,
+  index,
+  pagination,
+}) => {
   const movieModel = useMovieModel();
   const { data: movie, loading } = useSelector((state: RootState) =>
     movieModel.selectEntity(state, movieId)
   );
+  const base = (pagination?.page || 0) * (pagination?.size || 0);
 
   const update = () => {
     movieId &&
@@ -28,10 +34,7 @@ export const MovieItem: React.FC<MovieItemProps> = ({ movieId, index }) => {
   };
 
   return (
-    <div
-      id={String(movie?.id)}
-      style={{ border: '1px solid gray', padding: 5 }}
-    >
+    <div style={{ border: '1px solid gray', padding: 5 }}>
       {loading ? (
         <>Loading...</>
       ) : (
@@ -42,7 +45,7 @@ export const MovieItem: React.FC<MovieItemProps> = ({ movieId, index }) => {
           }}
         >
           <div>
-            {index + 1}. Name: {movie?.name}
+            {index + base + 1}. {movie?.name}
           </div>
           <div>
             <button onClick={update}>

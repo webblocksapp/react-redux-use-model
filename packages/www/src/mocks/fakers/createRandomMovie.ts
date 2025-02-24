@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 export const createRandomMovie = (data?: Partial<Movie>): Movie => {
   return {
     id: uuid(),
-    name: faker.lorem.sentence({ min: 1, max: 4 }),
+    name: faker.lorem.sentence({ min: 1, max: 2 }),
     ...data,
   };
 };
