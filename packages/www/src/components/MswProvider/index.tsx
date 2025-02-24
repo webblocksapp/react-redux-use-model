@@ -2,6 +2,7 @@ import { axiosLocal } from '@utils/axiosLocal';
 import { MswContext } from '@contexts/MswContext';
 import { useEffect, useRef, useState } from 'react';
 import { worker } from '@mocks/browser';
+import { WORKER_URL } from '@constants/urls';
 
 export interface HeartBeatProps {
   children?: React.ReactNode;
@@ -15,7 +16,12 @@ export const MswProvider: React.FC<HeartBeatProps> = ({ children }) => {
   });
 
   const startWorker = async () => {
-    await worker.start({ onUnhandledRequest: 'bypass' });
+    await worker.start({
+      onUnhandledRequest: 'bypass',
+      serviceWorker: {
+        url: WORKER_URL,
+      },
+    });
     setLoading(false);
   };
 
