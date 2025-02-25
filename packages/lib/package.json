@@ -1,6 +1,6 @@
 {
   "name": "react-redux-use-model",
-  "version": "0.0.27-alpha",
+  "version": "0.0.28-alpha",
   "type": "module",
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
@@ -8,7 +8,7 @@
   "main": "./dist/es/index.js",
   "files": [
     "dist",
-    "../../README.md"
+    "README.md"
   ],
   "exports": {
     ".": {
@@ -20,7 +20,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && rm dist/mockServiceWorker.js",
+    "copy-readme": "cp ../../README.md .",
+    "build": "vite build && rm dist/mockServiceWorker.js && pnpm copy-readme",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "local-publish-lib": "pnpm build && npm publish --registry http://localhost:4873",
     "publish-lib": "pnpm build && npm publish",
