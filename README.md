@@ -4,6 +4,8 @@
 
 **[Documentation is available here.](https://webblocksapp.github.io/react-redux-use-model)**
 
+## Overview
+
 react-redux-use-model is a library built on top of react-redux and Redux Toolkit. Its purpose is to simplify the management of global state in a React application by automatically normalizing data. This enables easy updates across multiple UI components displaying the same information without the need to duplicate information in the Redux state, which would otherwise require manual updates to each component when the state changes.
 
 ## Features
