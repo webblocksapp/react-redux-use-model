@@ -28,7 +28,7 @@ export const MswProvider: React.FC<HeartBeatProps> = ({ children }) => {
   const pingMsw = async () => {
     try {
       const { data } = await axiosLocal.get<{ now: string }>('/msw');
-      if (typeof data === 'string') setHasError(true);
+      if (typeof data === 'string' && !hasError) setHasError(true);
     } catch (_) {
       setHasError(true);
     }
@@ -48,18 +48,13 @@ export const MswProvider: React.FC<HeartBeatProps> = ({ children }) => {
     };
   }, [loading]);
 
-  console.log({ hasError });
+  useEffect(() => {
+    hasError && window.location.reload();
+  }, [hasError]);
 
   return (
     <MswContext.Provider value={{ loading, hasError }}>
-      {loading ? (
-        <></>
-      ) : (
-        <>
-          {hasError ? <>MSW is down</> : <></>}
-          {children}
-        </>
-      )}
+      {loading ? <></> : <>{children}</>}
     </MswContext.Provider>
   );
 };
