@@ -388,7 +388,7 @@ export const goToPage = (
               buildEmptyIds({
                 size: calcPageSize({ size: pagination.size, sizeMultiplier }),
               }),
-              pagination,
+              calculatedPagination,
               { replaceWhenEmpty: true }
             ),
             pagination,

@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { QueryKey } from './enums';
 import { useMovieModel } from './useMovieModel';
-import { Paginator } from '@components/Paginator';
 import { MovieItem } from './MovieItem';
 import { createRandomMovie } from '@mocks/fakers';
+import { Pagination } from '@components/Pagination';
 import './index.css';
 
 export const MoviesCrud: React.FC = () => {
   const movieModel = useMovieModel();
-  const movieQuery = useSelector(movieModel.selectPaginatedQuery);
+  const query = useSelector(movieModel.selectPaginatedQuery);
   const [params, setParams] = useState({ _page: 0, _size: 10, _filter: '' });
 
   const create = () => {
@@ -34,31 +34,30 @@ export const MoviesCrud: React.FC = () => {
       <div>
         <div>
           <div className="movies-list">
-            {movieQuery.hasRecords ? (
-              movieQuery?.ids?.map((id, index) => (
+            {query.hasRecords ? (
+              query?.ids?.map((id, index) => (
                 <MovieItem
                   index={index}
                   key={id}
                   movieId={id}
-                  pagination={movieQuery?.pagination}
+                  pagination={query?.pagination}
                 />
               ))
             ) : (
               <>No data available.</>
             )}
           </div>
-          <div style={{ marginTop: 10 }}>
-            <Paginator
-              pagination={movieQuery?.pagination}
-              onClickPage={(index) =>
-                setParams((prev) => ({ ...prev, _page: index }))
-              }
-            />
-          </div>
+          <Pagination
+            page={query?.pagination?.page}
+            count={query?.pagination?.totalPages}
+            onChange={async (page) =>
+              setParams((prev) => ({ ...prev, _page: page }))
+            }
+          />
         </div>
         <div className="query-code">
           <pre>
-            <code>{JSON.stringify(movieQuery, null, 2)}</code>
+            <code>{JSON.stringify(query, null, 2)}</code>
           </pre>
         </div>
       </div>

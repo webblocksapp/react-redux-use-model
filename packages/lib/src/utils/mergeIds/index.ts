@@ -27,6 +27,7 @@ export const mergeIds = (
       endIndex,
       keepEmptyPositions: true,
       removeDuplicates: true,
+      size: pagination.size,
       ...options,
     });
   } else {
