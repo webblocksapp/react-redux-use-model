@@ -1,5 +1,6 @@
 import { Movie } from '@interfaces/Movie';
+import { createRandomMovie } from '@mocks/fakers';
 
-export const movies: Movie[] = Array(1000000)
+export const movies: Movie[] = Array(10000)
   .fill(null)
-  .map((_, index) => ({ id: index + 1, name: `Movie ${index + 1}` }));
+  .map(() => createRandomMovie());
