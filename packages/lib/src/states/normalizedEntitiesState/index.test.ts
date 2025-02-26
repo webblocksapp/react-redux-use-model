@@ -1,4 +1,4 @@
-import { EntityActionType } from '@constants';
+import { EntityActionType, EntityHelperActionType } from '@constants';
 import { normalizedEntitiesState } from '@states/normalizedEntitiesState';
 
 describe('normalizedEntitiesState', () => {
@@ -894,5 +894,53 @@ describe('normalizedEntitiesState', () => {
         }),
       })
     );
+  });
+
+  it('One million total elements test.', () => {
+    const entities1 = [{ id: '1', name: 'Business 1', associatedContact: '1' }];
+    const queryKey = 'OneMillionList';
+    const entityName = 'OneMillion';
+    const totalElements = 1000000;
+    const page = 100000;
+    const size = 10;
+    const totalPages = totalElements / size;
+    const sizeMultiplier = 5;
+
+    let state = normalizedEntitiesState(
+      {},
+      {
+        type: EntityHelperActionType.INITIALIZE_QUERY,
+        queryKey,
+        entityName,
+        initialLoadingSize: size,
+        timestamp: 0,
+      }
+    );
+
+    state = normalizedEntitiesState(state, {
+      type: EntityHelperActionType.GO_TO_PAGE,
+      queryKey,
+      entityName,
+      page,
+      size,
+      sizeMultiplier,
+    });
+
+    state = normalizedEntitiesState(state, {
+      type: EntityActionType.LIST,
+      entities: entities1,
+      queryKey,
+      entityName,
+      pagination: {
+        page,
+        size,
+        totalElements,
+        totalPages,
+      },
+      schema: undefined,
+    });
+
+    const ids = state[entityName]?.queries?.[0]?.ids;
+    expect(ids?.length).toBe(totalElements);
   });
 });
