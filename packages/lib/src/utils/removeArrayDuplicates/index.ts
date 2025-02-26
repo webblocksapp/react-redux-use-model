@@ -37,6 +37,5 @@ export const removeArrayDuplicates = <
   }
 
   const result = startArray.concat(newSlicedArray, endArray) as T;
-  console.log({ arr, startArray, slicedArray, endArray, result });
   return result;
 };
