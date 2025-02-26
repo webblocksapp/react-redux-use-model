@@ -1,3 +1,4 @@
+export * from './paginatedArray';
 export * from './buildEmptyIds';
 export * from './calcPage';
 export * from './calcPageSize';

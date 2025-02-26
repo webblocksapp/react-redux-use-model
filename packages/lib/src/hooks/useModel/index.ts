@@ -269,7 +269,7 @@ export const useModel = <
    */
   const getCachedPaginationParams = (queryKey: string) => {
     const query = findQuery(entityName, queryKey);
-    let params = query?.params as
+    const params = query?.params as
       | ModelMethodParameters<
           TEntity,
           TQueryHandlers[string],
@@ -587,7 +587,7 @@ export const useModel = <
         const entityState = findEntityState(entityName);
         const queries = entityState?.queries || [];
 
-        for (let query of queries) {
+        for (const query of queries) {
           if (query.pagination && query.pagination.page == query.currentPage) {
             /**
              * Page is decreased in one on every query if it's detected that the

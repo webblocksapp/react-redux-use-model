@@ -108,7 +108,7 @@ export const list = (
   let updatedState = { ...state };
   const map = mapRelationships(schema?.relationships);
 
-  for (let [key, normalizedValue] of Object.entries(
+  for (const [key, normalizedValue] of Object.entries(
     normalizer(entities, entityName, map)
   )) {
     const { allIds: newIds, ...value } = normalizedValue;
@@ -150,7 +150,7 @@ export const create = (
   let updatedState = { ...state };
   const map = mapRelationships(schema?.relationships);
 
-  for (let [key, normalizedValue] of Object.entries(
+  for (const [key, normalizedValue] of Object.entries(
     normalizer(entity, entityName, map)
   )) {
     const { allIds: newIds, ...value } = normalizedValue;
@@ -212,7 +212,7 @@ export const update = (
   let updatedState = { ...state };
   const map = mapRelationships(schema?.relationships);
 
-  for (let [key, normalizedValue] of Object.entries(
+  for (const [key, normalizedValue] of Object.entries(
     normalizer(entity, entityName, map)
   )) {
     const { allIds: newIds, ...value } = normalizedValue;
@@ -260,7 +260,7 @@ export const read = (
   let updatedState = { ...state };
   const map = mapRelationships(schema?.relationships);
 
-  for (let [key, normalizedValue] of Object.entries(
+  for (const [key, normalizedValue] of Object.entries(
     normalizer(entity, entityName, map)
   )) {
     const { allIds: newIds, ...value } = normalizedValue;
