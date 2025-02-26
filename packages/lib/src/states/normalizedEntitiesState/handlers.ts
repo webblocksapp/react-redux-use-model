@@ -1,6 +1,5 @@
 import {
   Entity,
-  Id,
   ModelSchema,
   NormalizedEntitiesState,
   QueryState,
@@ -18,35 +17,8 @@ import {
   mergeQueries,
   mergeUniqueIds,
   normalizer,
+  produceIds,
 } from '@utils';
-
-type QueryItem = {
-  entityName: string;
-  queryKey: string | undefined;
-  ids: Array<Id>;
-};
-
-let SINGLETON: Array<QueryItem> = [];
-
-const queryExists = (item: QueryItem, args: QueryItem) =>
-  item.entityName == args.entityName && item.queryKey == args.queryKey;
-
-const produceIds = (args: QueryItem) => {
-  if (SINGLETON.some((item) => queryExists(item, args))) {
-    SINGLETON = SINGLETON.map((item) => {
-      if (queryExists(item, args)) {
-        return { ...item, ...args };
-      }
-      return item;
-    });
-  } else {
-    SINGLETON = [...SINGLETON, { ...args }];
-  }
-
-  console.log(SINGLETON);
-
-  return SINGLETON.find((item) => queryExists(item, args))?.ids || [];
-};
 
 export const initializeQuery = (
   entityName: string,
@@ -66,7 +38,12 @@ export const initializeQuery = (
         ...(entityState?.queries || []),
         {
           queryKey,
-          ids: produceIds({ entityName, queryKey, ids: tempIds }),
+          ids: produceIds({
+            entityName,
+            queryKey,
+            ids: tempIds,
+            eventName: 'initializeQuery',
+          }),
           timestamp,
           loading: true,
           listing: false,
@@ -152,9 +129,10 @@ export const list = (
         ...(entityName === key
           ? {
               queries: mergeQueries({
+                entityName,
                 queries: entityState?.queries || [],
                 queryKey,
-                ids: produceIds({ entityName, queryKey, ids: newIds }),
+                ids: newIds,
                 pagination,
                 sizeMultiplier,
                 currentPage,
@@ -203,6 +181,7 @@ export const create = (
                   ids: produceIds({
                     entityName,
                     queryKey: query.queryKey,
+                    eventName: 'create',
                     ids: (() => {
                       const newIds = [...query.ids];
                       const { startIndex } = calcPaginationIndexes({
@@ -353,6 +332,7 @@ export const remove = (
             ...query,
             ids: produceIds({
               entityName,
+              eventName: 'remove',
               queryKey: query.queryKey,
               ids: filteredIds,
             }),
@@ -422,6 +402,7 @@ export const goToPage = (
             ...item,
             ids: produceIds({
               entityName,
+              eventName: 'goToPage',
               queryKey,
               ids: mergeIds(
                 item.ids,
@@ -463,7 +444,12 @@ export const invalidateQuery = (
           return {
             ...query,
             queryKey,
-            ids: produceIds({ entityName, queryKey, ids: tempIds }),
+            ids: produceIds({
+              entityName,
+              queryKey,
+              ids: tempIds,
+              eventName: 'invalidateQuery',
+            }),
             calculatedCurrentPage: undefined,
             calculatedPagination: undefined,
             currentPage: undefined,

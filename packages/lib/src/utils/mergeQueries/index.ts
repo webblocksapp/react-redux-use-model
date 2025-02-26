@@ -1,10 +1,17 @@
 import { Id, QueryState } from '@interfaces';
-import { calcPage, calcPagination, mergeIds, removeArrayExcess } from '@utils';
+import {
+  calcPage,
+  calcPagination,
+  mergeIds,
+  produceIds,
+  removeArrayExcess,
+} from '@utils';
 
 const queryExists = (item: QueryState, queryKey: string) =>
   item.queryKey == queryKey;
 
 export const mergeQueries = (args: {
+  entityName: string;
   queries: QueryState[];
   queryKey: string | undefined;
   ids: Id[];
@@ -15,6 +22,7 @@ export const mergeQueries = (args: {
   invalidatedQuery?: boolean;
 }): QueryState[] => {
   const {
+    entityName,
     queries,
     queryKey,
     ids,
@@ -52,7 +60,7 @@ export const mergeQueries = (args: {
 
         return {
           ...item,
-          ids: mergedIds,
+          ids: produceIds({ entityName, queryKey, ids: mergedIds }),
           params,
           ...(pagination
             ? {
@@ -82,7 +90,7 @@ export const mergeQueries = (args: {
       ...queries,
       {
         queryKey,
-        ids,
+        ids: produceIds({ entityName, queryKey, ids }),
         pagination,
         calculatedPagination,
         currentPage,

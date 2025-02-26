@@ -1,4 +1,3 @@
-export * from './paginatedArray';
 export * from './buildEmptyIds';
 export * from './calcPage';
 export * from './calcPageSize';
@@ -24,10 +23,12 @@ export * from './mergeUniqueIds';
 export * from './normalizer';
 export * from './now';
 export * from './paginateData';
+export * from './paginatedArray';
 export * from './removeArrayDuplicates';
 export * from './removeArrayExcess';
 export * from './replaceArrayPortion';
 export * from './set';
+export * from './singleton';
 export * from './sleep';
 export * from './sortArrayWithNulls';
 export * from './useDebounce';

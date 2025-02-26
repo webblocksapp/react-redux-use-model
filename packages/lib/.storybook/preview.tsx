@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook/react';
+import { ThemeProvider } from 'reactjs-ui-core';
 import { Provider } from 'react-redux';
 import { ModelProvider } from '@components';
 import { worker } from '@examples/mocks/browser';
@@ -22,9 +23,11 @@ const Decorators: React.FC<{ children: React.ReactElement }> = ({
   return loading ? (
     <></>
   ) : (
-    <Provider store={store}>
-      <ModelProvider store={store}>{children}</ModelProvider>
-    </Provider>
+    <ThemeProvider themeName="githubDark">
+      <Provider store={store}>
+        <ModelProvider store={store}>{children}</ModelProvider>
+      </Provider>
+    </ThemeProvider>
   );
 };
 
