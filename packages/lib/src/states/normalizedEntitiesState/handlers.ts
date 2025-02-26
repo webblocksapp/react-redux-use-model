@@ -1,5 +1,6 @@
 import {
   Entity,
+  Id,
   ModelSchema,
   NormalizedEntitiesState,
   QueryState,
@@ -19,6 +20,34 @@ import {
   normalizer,
 } from '@utils';
 
+type QueryItem = {
+  entityName: string;
+  queryKey: string | undefined;
+  ids: Array<Id>;
+};
+
+let SINGLETON: Array<QueryItem> = [];
+
+const queryExists = (item: QueryItem, args: QueryItem) =>
+  item.entityName == args.entityName && item.queryKey == args.queryKey;
+
+const produceIds = (args: QueryItem) => {
+  if (SINGLETON.some((item) => queryExists(item, args))) {
+    SINGLETON = SINGLETON.map((item) => {
+      if (queryExists(item, args)) {
+        return { ...item, ...args };
+      }
+      return item;
+    });
+  } else {
+    SINGLETON = [...SINGLETON, { ...args }];
+  }
+
+  console.log(SINGLETON);
+
+  return SINGLETON.find((item) => queryExists(item, args))?.ids || [];
+};
+
 export const initializeQuery = (
   entityName: string,
   queryKey: string,
@@ -37,7 +66,7 @@ export const initializeQuery = (
         ...(entityState?.queries || []),
         {
           queryKey,
-          ids: tempIds,
+          ids: produceIds({ entityName, queryKey, ids: tempIds }),
           timestamp,
           loading: true,
           listing: false,
@@ -125,7 +154,7 @@ export const list = (
               queries: mergeQueries({
                 queries: entityState?.queries || [],
                 queryKey,
-                ids: newIds,
+                ids: produceIds({ entityName, queryKey, ids: newIds }),
                 pagination,
                 sizeMultiplier,
                 currentPage,
@@ -171,16 +200,20 @@ export const create = (
                     pagination: query.pagination,
                     operation: 'create',
                   }),
-                  ids: (() => {
-                    const newIds = [...query.ids];
-                    const { startIndex } = calcPaginationIndexes({
-                      ...query.pagination,
-                      page: query?.currentPage || query.pagination.page,
-                    });
-                    entity.id && newIds.splice(startIndex, 0, entity.id);
+                  ids: produceIds({
+                    entityName,
+                    queryKey: query.queryKey,
+                    ids: (() => {
+                      const newIds = [...query.ids];
+                      const { startIndex } = calcPaginationIndexes({
+                        ...query.pagination,
+                        page: query?.currentPage || query.pagination.page,
+                      });
+                      entity.id && newIds.splice(startIndex, 0, entity.id);
 
-                    return newIds;
-                  })(),
+                      return newIds;
+                    })(),
+                  }),
                   hasRecords: Boolean(newIds.length),
                 }
               : {}),
@@ -318,7 +351,11 @@ export const remove = (
           });
           return {
             ...query,
-            ids: filteredIds,
+            ids: produceIds({
+              entityName,
+              queryKey: query.queryKey,
+              ids: filteredIds,
+            }),
             hasRecords: Boolean(filteredIds.length),
             ...(query.pagination
               ? {
@@ -383,14 +420,18 @@ export const goToPage = (
 
           return {
             ...item,
-            ids: mergeIds(
-              item.ids,
-              buildEmptyIds({
-                size: calcPageSize({ size: pagination.size, sizeMultiplier }),
-              }),
-              calculatedPagination,
-              { replaceWhenEmpty: true }
-            ),
+            ids: produceIds({
+              entityName,
+              queryKey,
+              ids: mergeIds(
+                item.ids,
+                buildEmptyIds({
+                  size: calcPageSize({ size: pagination.size, sizeMultiplier }),
+                }),
+                calculatedPagination,
+                { replaceWhenEmpty: true }
+              ),
+            }),
             pagination,
             calculatedPagination,
             currentPage: page,
@@ -422,7 +463,7 @@ export const invalidateQuery = (
           return {
             ...query,
             queryKey,
-            ids: tempIds,
+            ids: produceIds({ entityName, queryKey, ids: tempIds }),
             calculatedCurrentPage: undefined,
             calculatedPagination: undefined,
             currentPage: undefined,
