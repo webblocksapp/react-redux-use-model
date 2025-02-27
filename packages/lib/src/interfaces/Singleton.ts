@@ -4,4 +4,5 @@ export type Singleton = {
   entityName: string;
   queryKey: string | undefined;
   ids: Array<Id>;
+  timestamp?: number;
 };
