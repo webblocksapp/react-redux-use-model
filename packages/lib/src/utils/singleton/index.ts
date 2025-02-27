@@ -1,4 +1,5 @@
-import { Id } from '@interfaces';
+import { Id, Pagination } from '@interfaces';
+import { paginateData } from '@utils/paginateData';
 
 type QueryId = {
   entityName: string;
@@ -15,6 +16,7 @@ type QueryItem = {
   entityName: string;
   queryKey: string | undefined;
   method: (args: { currentIds: Array<Id> }) => Array<Id>;
+  pagination: Pagination | undefined;
 };
 
 let SINGLETON: Array<Singleton> = [];
@@ -27,7 +29,12 @@ export const produceIds = (
     eventName?: string;
   }
 ) => {
-  const { eventName: _, method, ...restArgs } = args;
+  const {
+    eventName: _,
+    pagination = { size: 10, page: 0, totalElements: 10, totalPages: 1 },
+    method,
+    ...restArgs
+  } = args;
 
   if (SINGLETON.some((item) => queryExists(item, restArgs))) {
     SINGLETON = SINGLETON.map((item) => {
@@ -43,5 +50,11 @@ export const produceIds = (
     ];
   }
 
-  return SINGLETON.find((item) => queryExists(item, restArgs))?.ids || [];
+  const ids = SINGLETON.find((item) => queryExists(item, restArgs))?.ids || [];
+  const { content } = paginateData(ids, {
+    ...pagination,
+    limit: pagination.size,
+  });
+
+  return content;
 };

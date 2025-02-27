@@ -55,6 +55,7 @@ export const mergeQueries = (args: {
           ids: produceIds({
             entityName,
             queryKey,
+            pagination: calculatedPagination,
             method: ({ currentIds }) => {
               let mergedIds = invalidatedQuery
                 ? ids
@@ -99,7 +100,12 @@ export const mergeQueries = (args: {
       ...queries,
       {
         queryKey,
-        ids: produceIds({ entityName, queryKey, method: () => ids }),
+        ids: produceIds({
+          entityName,
+          queryKey,
+          method: () => ids,
+          pagination: calculatedPagination,
+        }),
         pagination,
         calculatedPagination,
         currentPage,

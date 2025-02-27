@@ -1,4 +1,4 @@
-import { Id, RootState } from '@interfaces';
+import { Id, Pagination, RootState } from '@interfaces';
 import { useProductModel } from '@examples/models';
 import { useSelector } from 'react-redux';
 import { createRandomProduct } from '@examples/mocks/fakers';
@@ -6,16 +6,19 @@ import { createRandomProduct } from '@examples/mocks/fakers';
 export interface ProductItemProps {
   productId?: Id;
   index: number;
+  pagination: Pagination | undefined;
 }
 
 export const ProductItem: React.FC<ProductItemProps> = ({
   productId,
   index,
+  pagination,
 }) => {
   const productModel = useProductModel();
   const { data: product, loading } = useSelector((state: RootState) =>
     productModel.selectEntity(state, productId)
   );
+  const base = (pagination?.size || 0) * (pagination?.page || 0);
 
   const update = () => {
     productId &&
@@ -45,7 +48,7 @@ export const ProductItem: React.FC<ProductItemProps> = ({
           }}
         >
           <div>
-            {index + 1}. Name: {product?.name}, Price: {product?.price}
+            {index + base + 1}. Name: {product?.name}, Price: {product?.price}
           </div>
           <div>
             <button onClick={update}>

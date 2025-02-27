@@ -43,6 +43,12 @@ export const initializeQuery = (
             queryKey,
             method: () => tempIds,
             eventName: 'initializeQuery',
+            pagination: {
+              page: 0,
+              size: initialLoadingSize,
+              totalElements: initialLoadingSize,
+              totalPages: 1,
+            },
           }),
           timestamp,
           loading: true,
@@ -182,6 +188,7 @@ export const create = (
                     entityName,
                     queryKey: query.queryKey,
                     eventName: 'create',
+                    pagination: query.calculatedPagination,
                     method: ({ currentIds }) => {
                       const newIds = [...currentIds];
                       const { startIndex } = calcPaginationIndexes({
@@ -333,6 +340,7 @@ export const remove = (
               entityName,
               eventName: 'remove',
               queryKey: query.queryKey,
+              pagination: query.calculatedPagination,
               method: ({ currentIds }) => {
                 const filteredIds = currentIds.filter((id) => {
                   return id != entityId;
@@ -408,6 +416,7 @@ export const goToPage = (
               entityName,
               eventName: 'goToPage',
               queryKey,
+              pagination: calculatedPagination,
               method: ({ currentIds }) => {
                 return mergeIds(
                   currentIds,
@@ -454,6 +463,7 @@ export const invalidateQuery = (
             ...query,
             queryKey,
             ids: produceIds({
+              pagination: query.calculatedPagination,
               entityName,
               queryKey,
               method: () => tempIds,

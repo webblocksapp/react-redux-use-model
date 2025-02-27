@@ -51,7 +51,12 @@ export const ProductPaginatedList: React.FC = withQueryKey(() => {
         >
           <div>
             {productQuery?.ids?.map((id, index) => (
-              <ProductItem key={id} index={index} productId={id} />
+              <ProductItem
+                key={id}
+                index={index}
+                pagination={productQuery.pagination}
+                productId={id}
+              />
             ))}
           </div>
           <Pagination

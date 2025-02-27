@@ -23,7 +23,6 @@ import {
   paginateData,
   useModelContext,
   calcTotalPages,
-  calcPaginationLimit,
   useQueryKey,
   isLastPage,
   isPageBlank,
@@ -813,23 +812,17 @@ export const useModel = <
    */
   const selectPaginatedQuery = createSelector([selectQuery], (query) => {
     if (query?.pagination) {
-      const { size, totalElements, page } = query.pagination;
-      let { content: ids } = paginateData(query?.ids || [], {
-        page,
+      const calculatedSize = query.calculatedPagination?.size || 0;
+      const { size, page } = query.pagination;
+      const sizeMultiplier = calculatedSize / size;
+      const records = size * page;
+      const factor = Math.floor(records / calculatedSize);
+      const calculatedPage = page - sizeMultiplier * factor;
+
+      const { content: ids } = paginateData(query?.ids || [], {
+        page: calculatedPage,
         limit: size,
       });
-
-      const limit = calcPaginationLimit({
-        page: query.currentPage || 0,
-        size,
-        totalElements,
-      });
-
-      if (limit !== size) {
-        ids = Array(limit)
-          .fill(null)
-          .map((_, i) => ids[i]);
-      }
 
       return { ...query, ids };
     }
