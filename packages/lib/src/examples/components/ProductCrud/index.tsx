@@ -35,7 +35,12 @@ export const ProductCrud: React.FC = () => {
             }}
           >
             {productQuery?.ids?.map((id, index) => (
-              <ProductItem index={index} key={id} productId={id} />
+              <ProductItem
+                pagination={productQuery.pagination}
+                index={index}
+                key={id}
+                productId={id}
+              />
             ))}
             {!productQuery.hasRecords ? <>No data available.</> : <></>}
           </div>

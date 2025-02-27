@@ -48,7 +48,12 @@ export const ProductList: React.FC = () => {
             }}
           >
             {productQuery?.ids?.map((id, index) => (
-              <ProductItem key={id} index={index} productId={id} />
+              <ProductItem
+                pagination={productQuery.pagination}
+                key={id}
+                index={index}
+                productId={id}
+              />
             ))}
           </div>
           <Pagination

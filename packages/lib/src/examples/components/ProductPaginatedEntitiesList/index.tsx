@@ -38,6 +38,7 @@ export const ProductPaginatedEntitiesList: React.FC = () => {
           <div>
             {entities.map((entity, index) => (
               <ProductItem
+                pagination={productQuery.pagination}
                 key={entity.id}
                 index={index}
                 productId={entity.id}
