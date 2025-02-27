@@ -50,17 +50,26 @@ export const mergeQueries = (args: {
   if (queries.some((item) => queryExists(item, queryKey))) {
     return queries.map((item) => {
       if (queryExists(item, queryKey)) {
-        let mergedIds = invalidatedQuery
-          ? ids
-          : mergeIds(item.ids, ids, calculatedPagination);
-
-        if (pagination?.totalElements !== undefined) {
-          mergedIds = removeArrayExcess(mergedIds, pagination.totalElements);
-        }
-
         return {
           ...item,
-          ids: produceIds({ entityName, queryKey, ids: mergedIds }),
+          ids: produceIds({
+            entityName,
+            queryKey,
+            method: ({ currentIds }) => {
+              let mergedIds = invalidatedQuery
+                ? ids
+                : mergeIds(currentIds, ids, calculatedPagination);
+
+              if (pagination?.totalElements !== undefined) {
+                mergedIds = removeArrayExcess(
+                  mergedIds,
+                  pagination.totalElements
+                );
+              }
+
+              return mergedIds;
+            },
+          }),
           params,
           ...(pagination
             ? {
@@ -90,7 +99,7 @@ export const mergeQueries = (args: {
       ...queries,
       {
         queryKey,
-        ids: produceIds({ entityName, queryKey, ids }),
+        ids: produceIds({ entityName, queryKey, method: () => ids }),
         pagination,
         calculatedPagination,
         currentPage,

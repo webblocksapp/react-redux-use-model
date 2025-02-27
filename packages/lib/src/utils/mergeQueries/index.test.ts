@@ -1,8 +1,11 @@
 import { mergeQueries } from '@utils';
 
+const entityName = 'TestEntity';
+
 describe('mergeQueries', () => {
   it('Merge query with no existing queries.', () => {
     const result = mergeQueries({
+      entityName,
       queries: [],
       queryKey: 'QueryKey',
       ids: ['1', '2'],
@@ -19,6 +22,13 @@ describe('mergeQueries', () => {
   });
 
   it('Merge query with existing queries.', () => {
+    mergeQueries({
+      entityName,
+      queries: [],
+      queryKey: 'QueryKey',
+      ids: ['1', '2'],
+    });
+
     const result = mergeQueries({
       queries: [
         {
@@ -34,6 +44,7 @@ describe('mergeQueries', () => {
           hasRecords: true,
         },
       ],
+      entityName,
       queryKey: 'QueryKey',
       ids: ['3', '4'],
     });
@@ -63,6 +74,7 @@ describe('mergeQueries', () => {
           hasRecords: true,
         },
       ],
+      entityName,
       queryKey: undefined,
       ids: ['3', '4'],
     });
@@ -77,6 +89,13 @@ describe('mergeQueries', () => {
   });
 
   it('Merge query with existing queries and pagination.', () => {
+    mergeQueries({
+      entityName,
+      queries: [],
+      queryKey: 'QueryKey',
+      ids: ['1', '2'],
+    });
+
     const result = mergeQueries({
       queries: [
         {
@@ -92,6 +111,7 @@ describe('mergeQueries', () => {
           hasRecords: false,
         },
       ],
+      entityName,
       queryKey: 'QueryKey',
       ids: ['3', '4'],
       pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
@@ -107,6 +127,13 @@ describe('mergeQueries', () => {
   });
 
   it('Merge query with existing queries and pagination removing duplicates.', () => {
+    mergeQueries({
+      entityName,
+      queries: [],
+      queryKey: 'QueryKey',
+      ids: ['1', '2'],
+    });
+
     const result = mergeQueries({
       queries: [
         {
@@ -122,6 +149,7 @@ describe('mergeQueries', () => {
           hasRecords: false,
         },
       ],
+      entityName,
       queryKey: 'QueryKey',
       ids: ['4', '5'],
       pagination: { page: 1, size: 2, totalElements: 5, totalPages: 3 },
@@ -137,6 +165,13 @@ describe('mergeQueries', () => {
   });
 
   it('Merge query with page override.', () => {
+    mergeQueries({
+      entityName,
+      queries: [],
+      queryKey: 'QueryKey',
+      ids: ['1', '2'],
+    });
+
     const result = mergeQueries({
       queries: [
         {
@@ -152,6 +187,7 @@ describe('mergeQueries', () => {
           hasRecords: false,
         },
       ],
+      entityName,
       queryKey: 'QueryKey',
       ids: ['3', '4'],
       pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
@@ -183,6 +219,7 @@ describe('mergeQueries', () => {
           hasRecords: false,
         },
       ],
+      entityName,
       queryKey: 'QueryKey2',
       ids: ['1', '2'],
     });
@@ -202,6 +239,13 @@ describe('mergeQueries', () => {
   });
 
   it('Merge query with existing queries and calculated pagination.', () => {
+    mergeQueries({
+      entityName,
+      queries: [],
+      queryKey: 'QueryKey',
+      ids: ['1', '2', '3', '4', '5', '6'],
+    });
+
     const result = mergeQueries({
       queries: [
         {
@@ -223,6 +267,7 @@ describe('mergeQueries', () => {
           hasRecords: true,
         },
       ],
+      entityName,
       queryKey: 'QueryKey',
       ids: ['13', '14', '15', '16', '17', '18'],
       pagination: { page: 7, size: 2, totalElements: 18, totalPages: 3 },

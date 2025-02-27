@@ -41,7 +41,7 @@ export const initializeQuery = (
           ids: produceIds({
             entityName,
             queryKey,
-            ids: tempIds,
+            method: () => tempIds,
             eventName: 'initializeQuery',
           }),
           timestamp,
@@ -182,16 +182,15 @@ export const create = (
                     entityName,
                     queryKey: query.queryKey,
                     eventName: 'create',
-                    ids: (() => {
-                      const newIds = [...query.ids];
+                    method: ({ currentIds }) => {
+                      const newIds = [...currentIds];
                       const { startIndex } = calcPaginationIndexes({
-                        ...query.pagination,
-                        page: query?.currentPage || query.pagination.page,
+                        ...query.pagination!,
+                        page: query?.currentPage || query.pagination!.page,
                       });
                       entity.id && newIds.splice(startIndex, 0, entity.id);
-
                       return newIds;
-                    })(),
+                    },
                   }),
                   hasRecords: Boolean(newIds.length),
                 }
@@ -334,7 +333,12 @@ export const remove = (
               entityName,
               eventName: 'remove',
               queryKey: query.queryKey,
-              ids: filteredIds,
+              method: ({ currentIds }) => {
+                const filteredIds = currentIds.filter((id) => {
+                  return id != entityId;
+                });
+                return filteredIds;
+              },
             }),
             hasRecords: Boolean(filteredIds.length),
             ...(query.pagination
@@ -404,14 +408,19 @@ export const goToPage = (
               entityName,
               eventName: 'goToPage',
               queryKey,
-              ids: mergeIds(
-                item.ids,
-                buildEmptyIds({
-                  size: calcPageSize({ size: pagination.size, sizeMultiplier }),
-                }),
-                calculatedPagination,
-                { replaceWhenEmpty: true }
-              ),
+              method: ({ currentIds }) => {
+                return mergeIds(
+                  currentIds,
+                  buildEmptyIds({
+                    size: calcPageSize({
+                      size: pagination.size,
+                      sizeMultiplier,
+                    }),
+                  }),
+                  calculatedPagination,
+                  { replaceWhenEmpty: true }
+                );
+              },
             }),
             pagination,
             calculatedPagination,
@@ -447,7 +456,7 @@ export const invalidateQuery = (
             ids: produceIds({
               entityName,
               queryKey,
-              ids: tempIds,
+              method: () => tempIds,
               eventName: 'invalidateQuery',
             }),
             calculatedCurrentPage: undefined,
