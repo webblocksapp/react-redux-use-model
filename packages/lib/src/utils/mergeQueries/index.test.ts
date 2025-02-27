@@ -120,7 +120,7 @@ describe('mergeQueries', () => {
     expect(result).toMatchObject([
       {
         queryKey: 'QueryKey',
-        ids: ['1', '2', undefined, undefined, '3', '4'],
+        ids: ['3', '4'],
         pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
       },
     ]);
@@ -158,7 +158,7 @@ describe('mergeQueries', () => {
     expect(result).toMatchObject([
       {
         queryKey: 'QueryKey',
-        ids: ['1', '2', '4', '5'],
+        ids: ['4', '5'],
         pagination: { page: 1, size: 2, totalElements: 5, totalPages: 3 },
       },
     ]);
@@ -197,7 +197,7 @@ describe('mergeQueries', () => {
     expect(result).toMatchObject([
       {
         queryKey: 'QueryKey',
-        ids: ['1', '2', undefined, undefined, '3', '4'],
+        ids: ['3', '4'],
         pagination: { page: 1, size: 2, totalElements: 6, totalPages: 3 },
       },
     ]);
@@ -277,26 +277,7 @@ describe('mergeQueries', () => {
     expect(result).toEqual([
       {
         queryKey: 'QueryKey',
-        ids: [
-          '1',
-          '2',
-          '3',
-          '4',
-          '5',
-          '6',
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          '13',
-          '14',
-          '15',
-          '16',
-          '17',
-          '18',
-        ],
+        ids: ['13', '14', '15', '16', '17', '18'],
         pagination: { page: 7, size: 2, totalElements: 18, totalPages: 3 },
         calculatedPagination: {
           page: 2,

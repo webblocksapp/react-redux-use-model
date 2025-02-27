@@ -129,7 +129,7 @@ describe('normalizedEntitiesState', () => {
         allIds: ['1', '2', '5', '6'],
         queries: [
           {
-            ids: ['1', '2', undefined, undefined, '5', '6'],
+            ids: ['5', '6'],
             queryKey: 'UsersList',
             pagination: { page: 2, size: 2, totalElements: 6, totalPages: 3 },
             calculatedPagination: {
@@ -941,6 +941,6 @@ describe('normalizedEntitiesState', () => {
     });
 
     const ids = state[entityName]?.queries?.[0]?.ids;
-    expect(ids?.length).toBe(totalElements);
+    expect(ids?.length).toBe(0);
   });
 });
