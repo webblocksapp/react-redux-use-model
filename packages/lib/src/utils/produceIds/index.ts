@@ -1,10 +1,20 @@
-import { QueryId, QueryItem, Singleton } from '@interfaces';
+import { Pagination, QueryId, QueryItem, Singleton } from '@interfaces';
 import { paginateData } from '@utils/paginateData';
 
 let SINGLETON: Array<Singleton> = [];
 
 const queryExists = (item: QueryId, args: QueryId) =>
   item.entityName == args.entityName && item.queryKey == args.queryKey;
+
+export const updateQueryPagination = (
+  args: QueryId,
+  pagination: Pagination | undefined
+) => {
+  const query = SINGLETON.find((item) => queryExists(item, args));
+  if (query) {
+    query.lastPagination = pagination;
+  }
+};
 
 export const produceIds = (
   args: QueryItem & {
@@ -32,9 +42,11 @@ export const produceIds = (
     ];
   }
 
-  const ids = SINGLETON.find((item) => queryExists(item, restArgs))?.ids || [];
+  const query = SINGLETON.find((item) => queryExists(item, restArgs));
+  const ids = query?.ids || [];
+  const lastPagination = query?.lastPagination || pagination;
   const { content } = paginateData(ids, {
-    ...pagination,
+    ...lastPagination,
     limit: pagination.size,
   });
 

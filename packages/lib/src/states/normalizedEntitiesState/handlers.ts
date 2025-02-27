@@ -18,6 +18,7 @@ import {
   mergeUniqueIds,
   normalizer,
   produceIds,
+  updateQueryPagination,
 } from '@utils';
 
 export const initializeQuery = (
@@ -403,6 +404,8 @@ export const goToPage = (
             totalPages: pagination.totalPages,
             totalElements: pagination.totalElements,
           });
+
+          updateQueryPagination({ entityName, queryKey }, calculatedPagination);
 
           const calculatedCurrentPage = calcPage({
             page,
