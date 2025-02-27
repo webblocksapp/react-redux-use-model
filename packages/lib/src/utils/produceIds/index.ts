@@ -1,23 +1,5 @@
-import { Id, Pagination } from '@interfaces';
+import { QueryId, QueryItem, Singleton } from '@interfaces';
 import { paginateData } from '@utils/paginateData';
-
-type QueryId = {
-  entityName: string;
-  queryKey: string | undefined;
-};
-
-type Singleton = {
-  entityName: string;
-  queryKey: string | undefined;
-  ids: Array<Id>;
-};
-
-type QueryItem = {
-  entityName: string;
-  queryKey: string | undefined;
-  method: (args: { currentIds: Array<Id> }) => Array<Id>;
-  pagination: Pagination | undefined;
-};
 
 let SINGLETON: Array<Singleton> = [];
 

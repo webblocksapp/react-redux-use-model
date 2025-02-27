@@ -25,7 +25,7 @@ export const useProductModel = () => {
   >({
     entityName: EntityName.Products,
     config: {
-      paginationSizeMultiplier: 5,
+      paginationSizeMultiplier: 1,
     },
     handlers: {
       list: {
