@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Box, H5, Stack } from 'reactjs-ui-core';
 import { QueryKey } from './enums';
 import { useMovieModel } from './useMovieModel';
 import { MovieItem } from './MovieItem';
 import { createRandomMovie } from '@mocks/fakers';
 import { Pagination } from '@components/Pagination';
-import './index.css';
+import { SearchField } from '@components/SearchField';
+import { Button } from '@components/Button';
 
 export const MoviesCrud: React.FC = () => {
   const movieModel = useMovieModel();
@@ -24,43 +26,35 @@ export const MoviesCrud: React.FC = () => {
   }, [params]);
 
   return (
-    <div className="movies-crud">
-      <div>
-        <h2>Movies Crud</h2>
-      </div>
-      <div>
-        <button onClick={create}>Create random movie</button>
-      </div>
-      <div>
-        <div>
-          <div className="movies-list">
-            {query.hasRecords ? (
-              query?.ids?.map((id, index) => (
-                <MovieItem
-                  index={index}
-                  key={id}
-                  movieId={id}
-                  pagination={query?.pagination}
-                />
-              ))
-            ) : (
-              <>No data available.</>
-            )}
-          </div>
-          <Pagination
-            page={query?.pagination?.page}
-            count={query?.pagination?.totalPages}
-            onChange={async (page) =>
-              setParams((prev) => ({ ...prev, _page: page }))
-            }
+    <Stack p={2} spacing={1}>
+      <H5 fontWeight={500}>One Million Rows Example</H5>
+      <Box display="grid" gridTemplateColumns="1fr auto" columnGap={1}>
+        <SearchField />
+        <Button
+          sx={{ height: '100%', minWidth: '210px' }}
+          color="secondary"
+          onClick={create}
+        >
+          {query.creating ? `Creating Random Movie...` : `Create Random Movie`}
+        </Button>
+      </Box>
+      <Stack spacing={1}>
+        {query?.ids?.map((id, index) => (
+          <MovieItem
+            index={index}
+            key={id}
+            movieId={id}
+            pagination={query?.pagination}
           />
-        </div>
-        <div className="query-code">
-          <pre>
-            <code>{JSON.stringify(query, null, 2)}</code>
-          </pre>
-        </div>
-      </div>
-    </div>
+        ))}
+      </Stack>
+      <Pagination
+        page={query?.pagination?.page}
+        count={query?.pagination?.totalPages}
+        onChange={async (page) =>
+          setParams((prev) => ({ ...prev, _page: page }))
+        }
+      />
+    </Stack>
   );
 };
