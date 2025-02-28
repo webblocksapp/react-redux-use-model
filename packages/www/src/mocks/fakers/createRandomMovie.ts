@@ -1,10 +1,11 @@
 import { faker } from '@faker-js/faker';
 import { Movie } from '@interfaces/Movie';
-import { v4 as uuid } from 'uuid';
+import { movies } from '@mocks/data/movies';
 
 export const createRandomMovie = (data?: Partial<Movie>): Movie => {
+  const serialId = movies.length + 1;
   return {
-    id: uuid(),
+    id: serialId,
     name: faker.lorem.sentence({ min: 1, max: 2 }),
     ...data,
   };

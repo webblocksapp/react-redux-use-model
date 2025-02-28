@@ -21,7 +21,11 @@ const interfaces = import.meta.glob('../src/interfaces/**/*.(ts|tsx|sh)', {
   as: 'raw',
 });
 
-const modules = { ...codeSnippets, ...implementations, ...interfaces };
+const modules = {
+  ...codeSnippets,
+  ...implementations,
+  ...interfaces,
+};
 const snippets: { [key: string]: string } = {};
 
 export const loadCodeSnippets = async () => {

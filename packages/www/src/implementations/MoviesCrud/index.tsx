@@ -27,13 +27,14 @@ export const MoviesCrud: React.FC = () => {
 
   return (
     <Stack p={2} spacing={1}>
-      <H5 fontWeight={500}>One Million Rows Example</H5>
+      <H5 fontWeight={500}>One Million Movies</H5>
       <Box display="grid" gridTemplateColumns="1fr auto" columnGap={1}>
         <SearchField />
         <Button
           sx={{ height: '100%', minWidth: '210px' }}
           color="secondary"
           onClick={create}
+          disabled={query.creating}
         >
           {query.creating ? `Creating Random Movie...` : `Create Random Movie`}
         </Button>

@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@store';
 import { useMovieModel } from './useMovieModel';
 import { createRandomMovie } from '@mocks/fakers';
+import { Body1, Box, SkeletonLoader, Stack } from 'reactjs-ui-core';
+import { Button } from '@components/Button';
 
 export interface MovieItemProps {
   movieId?: Id;
@@ -10,16 +12,11 @@ export interface MovieItemProps {
   index: number;
 }
 
-export const MovieItem: React.FC<MovieItemProps> = ({
-  movieId,
-  index,
-  pagination,
-}) => {
+export const MovieItem: React.FC<MovieItemProps> = ({ movieId }) => {
   const movieModel = useMovieModel();
   const { data: movie, loading } = useSelector((state: RootState) =>
     movieModel.selectEntity(state, movieId)
   );
-  const base = (pagination?.page || 0) * (pagination?.size || 0);
 
   const update = () => {
     movieId &&
@@ -34,29 +31,38 @@ export const MovieItem: React.FC<MovieItemProps> = ({
   };
 
   return (
-    <div style={{ border: '1px solid gray', padding: 5 }}>
-      {loading ? (
-        <>Loading...</>
-      ) : (
-        <div
-          style={{
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
+    <SkeletonLoader loading={loading}>
+      <Box
+        p={1}
+        display="flex"
+        alignItems="center"
+        border={(theme) => `1px solid ${theme.palette.secondary.main}`}
+        minHeight={60}
+      >
+        <Stack
+          flex={1}
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={1}
         >
-          <div>
-            {index + base + 1}. {movie?.name}
-          </div>
-          <div>
-            <button onClick={update}>
+          <Body1
+            color="text.secondary"
+            skeletonText={'XXXXXXXXXXX'}
+            fontWeight={500}
+          >
+            {movieId}. {movie?.name}
+          </Body1>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Button onClick={update}>
               {movieModel.updateState.isLoading ? 'Updating...' : 'Update'}
-            </button>
-            <button onClick={remove}>
+            </Button>
+            <Button onClick={remove}>
               {movieModel.removeState.isLoading ? 'Removing...' : 'Remove'}
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+            </Button>
+          </Stack>
+        </Stack>
+      </Box>
+    </SkeletonLoader>
   );
 };

@@ -34,12 +34,6 @@ export const QuickStart: React.FC = () => {
             },
             {
               type: 'path',
-              codePath: 'interfaces/Movie.ts',
-              name: 'Movie.ts',
-              language: 'typescript',
-            },
-            {
-              type: 'path',
               codePath: 'implementations/MoviesCrud/useMovieModel.ts',
               name: 'useMovieModel.ts',
               language: 'typescript',
@@ -56,6 +50,18 @@ export const QuickStart: React.FC = () => {
               mapReplace: {
                 './enums': '@constants/enums',
               },
+            },
+            {
+              type: 'path',
+              codePath: 'implementations/MoviesCrud/enums.ts',
+              name: 'enums.ts',
+              language: 'typescript',
+            },
+            {
+              type: 'path',
+              codePath: 'interfaces/Movie.ts',
+              name: 'Movie.ts',
+              language: 'typescript',
             },
           ]}
         >
