@@ -1,6 +1,8 @@
 import { Redirect } from '@components/Redirect';
 import { MainLayout } from '@layouts/MainLayout';
 import { SecondaryMainLayout } from '@layouts/SecondaryMainLayout';
+import { APIS_MENU, DOCS_MENU } from '@constants/menus';
+import { Apis } from '@pages/Apis';
 import { Docs } from '@pages/Docs';
 import { Introduction } from '@pages/Docs/Introduction';
 import { QuickStart } from '@pages/Docs/QuickStart';
@@ -14,7 +16,7 @@ export const routes: RouteObject[] = [
   },
   {
     path: '/',
-    element: <MainLayout />,
+    element: <MainLayout menu={DOCS_MENU} />,
     children: [
       {
         path: 'docs',
@@ -35,6 +37,17 @@ export const routes: RouteObject[] = [
         path: 'docs',
         element: <Docs />,
         children: [{ path: 'quick-start', element: <QuickStart /> }],
+      },
+    ],
+  },
+  {
+    path: '/',
+    element: <MainLayout menu={APIS_MENU} />,
+    children: [
+      {
+        path: 'apis',
+        element: <Apis />,
+        children: [],
       },
     ],
   },
