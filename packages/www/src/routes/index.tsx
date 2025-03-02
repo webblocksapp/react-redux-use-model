@@ -31,7 +31,7 @@ export const routes: RouteObject[] = [
   },
   {
     path: '/',
-    element: <SecondaryMainLayout />,
+    element: <SecondaryMainLayout menu={DOCS_MENU} />,
     children: [
       {
         path: 'docs',

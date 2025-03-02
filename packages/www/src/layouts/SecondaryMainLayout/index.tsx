@@ -3,10 +3,16 @@ import { MainToolbar } from '@components/MainToolbar';
 import { Box, ContentsAreaHandle } from 'reactjs-ui-core';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '@components/Sidebar';
-import { SIDEBAR_MENU } from '@constants/menus';
 import { MAIN_LAYOUT_MAX_WIDTH, NAV_HEIGHT } from '@constants/constants';
+import { MenuItem } from '@interfaces/MenuItem';
 
-export const SecondaryMainLayout: React.FC = () => {
+export interface SecondaryMainLayoutProps {
+  menu: MenuItem[];
+}
+
+export const SecondaryMainLayout: React.FC<SecondaryMainLayoutProps> = ({
+  menu,
+}) => {
   const contentsAreaRef = useRef<ContentsAreaHandle>(null);
   const location = useLocation();
 
@@ -34,7 +40,7 @@ export const SecondaryMainLayout: React.FC = () => {
               height={`calc(100vh - ${NAV_HEIGHT}px)`}
               position="sticky"
               top={NAV_HEIGHT}
-              menu={SIDEBAR_MENU}
+              menu={menu}
             />
           </Box>
           <Box display="grid" p={2} pl={3}>

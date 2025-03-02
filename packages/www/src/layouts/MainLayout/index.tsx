@@ -13,7 +13,6 @@ import { MenuItem } from '@interfaces/MenuItem';
 
 export interface MainLayoutProps {
   menu: MenuItem[];
-  children?: React.ReactElement;
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ menu }) => {
