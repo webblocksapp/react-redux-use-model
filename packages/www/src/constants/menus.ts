@@ -17,6 +17,14 @@ export const DOCS_MENU: MenuItem[] = [
     text: () => 'Quick Start',
     route: '/docs/quick-start',
   },
+  {
+    text: () => 'Using useModel',
+    type: 'section',
+  },
+  {
+    text: () => 'Actions',
+    route: '/docs/actions',
+  },
 ];
 
 export const APIS_MENU: MenuItem[] = [

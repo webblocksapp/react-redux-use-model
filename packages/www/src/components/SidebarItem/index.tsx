@@ -1,6 +1,7 @@
 import { Body1, MenuItem, MenuItemProps } from 'reactjs-ui-core';
 import { MenuItem as MenuItemType } from '@interfaces/MenuItem';
 import { styles } from './styles';
+import { alpha } from '@mui/material';
 
 export interface SidebarItemProps
   extends MenuItemProps,
@@ -16,7 +17,14 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
     switch (type) {
       case 'section':
         return (
-          <Body1 color={'text.primary'} fontWeight={500}>
+          <Body1
+            color={'text.primary'}
+            fontWeight={500}
+            py={1}
+            borderBottom={(theme) =>
+              `1px solid ${alpha(theme.palette.text.secondary, 0.3)}`
+            }
+          >
             {typeof text === 'function' ? text() : ''}
             {typeof text === 'string' ? text : ''}
           </Body1>

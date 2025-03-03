@@ -9,6 +9,7 @@ import { QuickStart } from '@pages/Docs/QuickStart';
 import { Setup } from '@pages/Docs/Setup';
 import { RouteObject } from 'react-router-dom';
 import { UseModel } from '@pages/Api/UseModel';
+import { Actions } from '@pages/Docs/Actions';
 
 export const routes: RouteObject[] = [
   {
@@ -26,6 +27,7 @@ export const routes: RouteObject[] = [
           { path: '', element: <Redirect to="/docs/introduction" /> },
           { path: 'introduction', element: <Introduction /> },
           { path: 'setup', element: <Setup /> },
+          { path: 'actions', element: <Actions /> },
         ],
       },
     ],
