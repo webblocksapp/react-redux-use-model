@@ -1,7 +1,8 @@
-import { MAIN_LAYOUT_MAX_WIDTH } from '@constants/constants';
 import AppBar, { AppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import { Body1, Box, Link, Stack } from 'reactjs-ui-core';
+import { MAIN_LAYOUT_MAX_WIDTH } from '@constants/constants';
+import { Link, Stack } from 'reactjs-ui-core';
+import { Body1 } from '@components/Body1';
 
 export interface MainToolbar extends AppBarProps {}
 
@@ -29,13 +30,19 @@ export const MainToolbar: React.FC<MainToolbar> = ({
           maxWidth={MAIN_LAYOUT_MAX_WIDTH}
           margin="auto"
         >
-          <Box>
+          <Stack direction="row" spacing={2}>
             <Link to="/">
               <Body1 color="text.primary" fontWeight={500}>
                 react-redux-use-model
               </Body1>
             </Link>
-          </Box>
+            <Link to="/docs/introduction">
+              <Body1 fontWeight={500}>Docs</Body1>
+            </Link>
+            <Link to="/api">
+              <Body1 fontWeight={500}>API</Body1>
+            </Link>
+          </Stack>
         </Stack>
       </Toolbar>
     </AppBar>

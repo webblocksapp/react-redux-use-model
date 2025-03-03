@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
 
-export const Apis: React.FC = () => {
+export const Api: React.FC = () => {
   return <Outlet />;
 };

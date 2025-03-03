@@ -21,19 +21,11 @@ export const DOCS_MENU: MenuItem[] = [
 
 export const APIS_MENU: MenuItem[] = [
   {
-    text: () => 'Getting Started',
+    text: () => 'Methods',
     type: 'section',
   },
   {
-    text: () => 'Introduction',
-    route: '/docs/introduction',
-  },
-  {
-    text: () => 'Setup',
-    route: '/docs/setup',
-  },
-  {
-    text: () => 'Quick Start',
-    route: '/docs/quick-start',
+    text: () => 'useModel',
+    route: '/api/use-model',
   },
 ];
