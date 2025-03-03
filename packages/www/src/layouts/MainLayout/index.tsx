@@ -55,7 +55,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ menu }) => {
                   position="sticky"
                   top={85}
                   right={0}
-                  width={300}
                   sx={{ '& li': { textWrap: 'wrap' } }}
                 >
                   <TableOfContents display="block" />

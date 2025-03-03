@@ -24,6 +24,9 @@ export const useMovieModel = () => {
     }
   >({
     entityName: EntityName.Movies,
+    config: {
+      paginationSizeMultiplier: 5,
+    },
     handlers: {
       list: {
         apiFn: movieApiClient.list,
