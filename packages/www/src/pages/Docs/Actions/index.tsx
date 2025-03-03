@@ -111,12 +111,38 @@ export const Actions: React.FC = () => {
             Defining a Model
           </H6>
           <Body1>
-            By using the hook <code>useModel</code> you will define the
-            interaction between the backend and the redux store.
+            By using the <code>useModel</code> hook, you define the interaction
+            between the backend and the Redux store.
+          </Body1>
+          <Body1>
+            The recommended approach is to create a custom hook for each model
+            entity, pre-configuring an instance of the <code>useModel</code>{' '}
+            hook as follows:
           </Body1>
           <Code
             type="path"
             codePath="code-snippets/model-snippet-1.ts"
+            language="typescript"
+            mapReplace={{ '//MORE_CODE': '...' }}
+          />
+        </Stack>
+        <Stack className={ContentsClass.Item} spacing={2}>
+          <H6
+            fontWeight={500}
+            color="text.primary"
+            className={ContentsClass.ItemTitle}
+          >
+            Defining an API Client
+          </H6>
+          <Body1>
+            You can define an API client for each entity using the native
+            JavaScript <code>fetch</code> API or a library like Axios. Ensure
+            that every API client method meets the required query handler
+            constraints to pass data to the Redux store in the correct format.
+          </Body1>
+          <Code
+            type="path"
+            codePath="code-snippets/api-client-snippet-1.ts"
             language="typescript"
             mapReplace={{ '//MORE_CODE': '...' }}
           />
