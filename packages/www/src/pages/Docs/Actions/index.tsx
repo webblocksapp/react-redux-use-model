@@ -144,7 +144,9 @@ export const Actions: React.FC = () => {
             type="path"
             codePath="code-snippets/api-client-snippet-1.ts"
             language="typescript"
-            mapReplace={{ '//MORE_CODE': '...' }}
+            mapReplace={{
+              '//MORE_CODE': '...',
+            }}
           />
         </Stack>
       </Stack>

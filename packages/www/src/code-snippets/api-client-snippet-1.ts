@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { axiosLocal } from '@utils/axiosLocal';
+import axios from 'axios';
 import {
   ListResponse,
   Pagination,
@@ -15,7 +15,7 @@ export const useMovieApiClient = () => {
     data: Movie[];
     pagination: Pagination;
   }> => {
-    const { data } = await axiosLocal.get<ListResponse<Movie>>('/movies', {
+    const { data } = await axios.get<ListResponse<Movie>>('/movies', {
       params,
     });
 
@@ -26,7 +26,7 @@ export const useMovieApiClient = () => {
   };
 
   const create = async (entity: Movie) => {
-    const { data } = await axiosLocal.post<Movie>('/movies', entity);
+    const { data } = await axios.post<Movie>('/movies', entity);
     return { data };
   };
 
