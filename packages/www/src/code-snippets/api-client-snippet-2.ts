@@ -18,15 +18,10 @@ export const useMovieApiClient = () => {
     return response.data;
   };
 
-  const create = async (entity: Movie): Promise<CreateResponse<Movie>> => {
-    return axios.post<Movie>('/movies', entity);
-  };
-
   //MORE_CODE
 
   return {
     list,
-    create,
     //MORE_CODE
   };
 };

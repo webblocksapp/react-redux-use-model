@@ -7,12 +7,14 @@ export { withQueryKey } from './hocs';
 export { normalizedEntitiesState } from './states';
 export type { ModelProviderProps } from './components';
 export type ListResponse<TEntity extends Entity> = {
-  content: BaseListResponse<TEntity>['data'];
+  data: BaseListResponse<TEntity>['data'];
   pagination: Exclude<BaseListResponse<TEntity>['pagination'], undefined>;
 };
 export type {
   CreateQueryHandler,
+  CreateResponse,
   CrudQueryHandlers,
+  Id,
   InvalidateQueryStrategy,
   ListQueryHandler,
   NormalizeEntity,
@@ -20,7 +22,9 @@ export type {
   PaginationParams,
   QueryHandler,
   ReadQueryHandler,
+  ReadResponse,
   RemoveQueryHandler,
+  RemoveResponse,
   UpdateQueryHandler,
-  Id,
+  UpdateResponse,
 } from './interfaces';

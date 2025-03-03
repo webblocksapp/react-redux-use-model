@@ -28,7 +28,7 @@ export const movieHandler = [
 
     return HttpResponse.json(
       {
-        content,
+        data: content,
         pagination: {
           size,
           page,
