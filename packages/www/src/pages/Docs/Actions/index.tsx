@@ -6,7 +6,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { ContentsClass, H3, Stack } from 'reactjs-ui-core';
+import { Code, ContentsClass, H3, H6, Stack } from 'reactjs-ui-core';
 
 export const Actions: React.FC = () => {
   return (
@@ -102,6 +102,25 @@ export const Actions: React.FC = () => {
             </TableRow>
           </TableBody>
         </Table>
+        <Stack className={ContentsClass.Item} spacing={2}>
+          <H6
+            fontWeight={500}
+            color="text.primary"
+            className={ContentsClass.ItemTitle}
+          >
+            Defining a Model
+          </H6>
+          <Body1>
+            By using the hook <code>useModel</code> you will define the
+            interaction between the backend and the redux store.
+          </Body1>
+          <Code
+            type="path"
+            codePath="code-snippets/model-snippet-1.ts"
+            language="typescript"
+            mapReplace={{ '//MORE_CODE': '...' }}
+          />
+        </Stack>
       </Stack>
     </Stack>
   );
