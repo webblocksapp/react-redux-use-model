@@ -18,8 +18,8 @@ export const PaginationStats: React.FC<PaginationStats> = ({
           Size Multiplier:{' '}
         </Body1>
         <Body1 component="span">
-          {query.calculatedPagination?.size ||
-            0 / (query.pagination?.size || 1)}
+          {(query.calculatedPagination?.size || 0) /
+            (query.pagination?.size || 1)}
         </Body1>
       </Body1>
       <Body1 color="text.primary">Pagination Payload:</Body1>
