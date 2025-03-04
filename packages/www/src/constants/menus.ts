@@ -29,22 +29,22 @@ export const DOCS_MENU: MenuItem[] = [
     text: () => 'List Records',
     route: '/docs/list-records',
   },
-  {
-    text: () => 'Read a Record',
-    route: '/docs/read-record',
-  },
-  {
-    text: () => 'Create a Record',
-    route: '/docs/create-record',
-  },
-  {
-    text: () => 'Update a Record',
-    route: '/docs/update-record',
-  },
-  {
-    text: () => 'Remove a Record',
-    route: '/docs/remove-record',
-  },
+  // {
+  //   text: () => 'Read a Record',
+  //   route: '/docs/read-record',
+  // },
+  // {
+  //   text: () => 'Create a Record',
+  //   route: '/docs/create-record',
+  // },
+  // {
+  //   text: () => 'Update a Record',
+  //   route: '/docs/update-record',
+  // },
+  // {
+  //   text: () => 'Remove a Record',
+  //   route: '/docs/remove-record',
+  // },
 ];
 
 export const APIS_MENU: MenuItem[] = [

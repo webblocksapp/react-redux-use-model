@@ -39,9 +39,9 @@ export const MainToolbar: React.FC<MainToolbar> = ({
             <Link to="/docs/introduction">
               <Body1 fontWeight={500}>Docs</Body1>
             </Link>
-            <Link to="/api">
+            {/* <Link to="/api">
               <Body1 fontWeight={500}>API</Body1>
-            </Link>
+            </Link> */}
           </Stack>
         </Stack>
       </Toolbar>
