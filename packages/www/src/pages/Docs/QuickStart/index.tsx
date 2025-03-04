@@ -1,4 +1,4 @@
-import { MoviesCrud } from '@implementations/MoviesCrud';
+import { MoviesCrud } from '@components/MoviesCrud';
 import { ContentsClass, H3, Implementation, Stack } from 'reactjs-ui-core';
 
 export const QuickStart: React.FC = () => {
@@ -13,47 +13,37 @@ export const QuickStart: React.FC = () => {
           codeTabs={[
             {
               type: 'path',
-              codePath: 'implementations/MoviesCrud/index.tsx',
+              codePath: 'components/MoviesCrud/index.tsx',
               name: 'MoviesCrud.tsx',
               language: 'typescript',
-              mapReplace: {
-                './enums': '@constants/enums',
-                './useMovieModel': '@model/useMovieModel',
-                './MovieItem': '@components/MovieItem',
-              },
             },
             {
               type: 'path',
-              codePath: 'implementations/MoviesCrud/MovieItem.tsx',
+              codePath: 'components/MovieItem/index.tsx',
               name: 'MovieItem.tsx',
               language: 'typescript',
-              mapReplace: {
-                './enums': '@constants/enums',
-                './useMovieModel': '@model/useMovieModel',
-              },
             },
             {
               type: 'path',
-              codePath: 'implementations/MoviesCrud/useMovieModel.ts',
+              codePath: 'models/useMovieModel/index.ts',
               name: 'useMovieModel.ts',
               language: 'typescript',
-              mapReplace: {
-                './enums': '@constants/enums',
-                './useMovieApiClient': '@api-clients/useMovieApiClient',
-              },
             },
             {
               type: 'path',
-              codePath: 'implementations/MoviesCrud/useMovieApiClient.ts',
+              codePath: 'api-clients/useMovieApiClient/index.ts',
               name: 'useMovieApiClient.ts',
               language: 'typescript',
-              mapReplace: {
-                './enums': '@constants/enums',
-              },
             },
             {
               type: 'path',
-              codePath: 'implementations/MoviesCrud/enums.ts',
+              codePath: 'utils/axiosLocal/index.ts',
+              name: 'axiosLocal.ts',
+              language: 'typescript',
+            },
+            {
+              type: 'path',
+              codePath: 'constants/enums.ts',
               name: 'enums.ts',
               language: 'typescript',
             },

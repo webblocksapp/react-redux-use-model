@@ -1,5 +1,5 @@
-import { EntityName } from './enums';
-import { useMovieApiClient } from './useMovieApiClient';
+import { EntityName } from '@constants/enums';
+import { useMovieApiClient } from '@api-clients/useMovieApiClient';
 import {
   useModel,
   EntityActionType,

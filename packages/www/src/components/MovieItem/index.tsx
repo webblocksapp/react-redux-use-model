@@ -1,9 +1,9 @@
 import { Id, Pagination } from 'react-redux-use-model';
 import { useSelector } from 'react-redux';
-import { RootState } from '@store';
-import { useMovieModel } from './useMovieModel';
-import { createRandomMovie } from '@mocks/fakers';
 import { Body1, Box, SkeletonLoader, Stack } from 'reactjs-ui-core';
+import { RootState } from '@store';
+import { useMovieModel } from '@models/useMovieModel';
+import { createRandomMovie } from '@mocks/fakers';
 import { Button } from '@components/Button';
 
 export interface MovieItemProps {

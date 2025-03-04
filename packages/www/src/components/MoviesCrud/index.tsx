@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Box, H5, Stack } from 'reactjs-ui-core';
-import { QueryKey } from './enums';
-import { useMovieModel } from './useMovieModel';
-import { MovieItem } from './MovieItem';
+import { QueryKey } from '@constants/enums';
+import { useMovieModel } from '@models/useMovieModel';
 import { createRandomMovie } from '@mocks/fakers';
 import { Pagination } from '@components/Pagination';
 import { SearchField } from '@components/SearchField';
 import { Button } from '@components/Button';
+import { MovieItem } from '@components/MovieItem';
 
 export const MoviesCrud: React.FC = () => {
   const movieModel = useMovieModel();

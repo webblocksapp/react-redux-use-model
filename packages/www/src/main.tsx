@@ -8,23 +8,36 @@ import { ModelProvider } from 'react-redux-use-model';
 import { Provider } from 'react-redux';
 import { MswProvider } from '@components/MswProvider';
 
+const apiClients = import.meta.glob('../src/api-clients/**/*.(ts|tsx|sh)', {
+  as: 'raw',
+});
 const codeSnippets = import.meta.glob('../src/code-snippets/**/*.(ts|tsx|sh)', {
   as: 'raw',
 });
-const implementations = import.meta.glob(
-  '../src/implementations/**/*.(ts|tsx|sh)',
-  {
-    as: 'raw',
-  }
-);
+const components = import.meta.glob('../src/components/**/*.(ts|tsx|sh)', {
+  as: 'raw',
+});
+const constants = import.meta.glob('../src/constants/**/*.(ts|tsx|sh)', {
+  as: 'raw',
+});
 const interfaces = import.meta.glob('../src/interfaces/**/*.(ts|tsx|sh)', {
+  as: 'raw',
+});
+const models = import.meta.glob('../src/models/**/*.(ts|tsx|sh)', {
+  as: 'raw',
+});
+const utils = import.meta.glob('../src/utils/**/*.(ts|tsx|sh)', {
   as: 'raw',
 });
 
 const modules = {
+  ...apiClients,
   ...codeSnippets,
-  ...implementations,
+  ...components,
+  ...constants,
   ...interfaces,
+  ...models,
+  ...utils,
 };
 const snippets: { [key: string]: string } = {};
 
