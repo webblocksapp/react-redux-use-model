@@ -1,11 +1,5 @@
+import { ApiTable } from '@components/ApiTable';
 import { Body1 } from '@components/Body1';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-} from '@mui/material';
 import { Code, ContentsClass, H3, H6, Stack } from 'reactjs-ui-core';
 
 export const Actions: React.FC = () => {
@@ -19,89 +13,49 @@ export const Actions: React.FC = () => {
           <code>react-redux-use-model</code> provides the basic actions to
           handle CRUD operations with the backend:
         </Body1>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Action Name</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>HTTP Verb</TableCell>
-              <TableCell>TS Handler Type</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell>
-                <code>ENTITY:LIST</code>
-              </TableCell>
-              <TableCell>
-                Action for fetching a paginated list of records from an API
-                endpoint.
-              </TableCell>
-              <TableCell>
-                <code>GET</code>
-              </TableCell>
-              <TableCell>
-                <code>{'ListQueryHandler<T>'}</code>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <code>ENTITY:READ</code>
-              </TableCell>
-              <TableCell>
-                Action for fetching a single record from an API endpoint.
-              </TableCell>
-              <TableCell>
-                <code>GET</code>
-              </TableCell>
-              <TableCell>
-                <code>{'ReadQueryHandler<T>'}</code>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <code>ENTITY:CREATE</code>
-              </TableCell>
-              <TableCell>
-                Action for creating a single record from an API endpoint.
-              </TableCell>
-              <TableCell>
-                <code>POST</code>
-              </TableCell>
-              <TableCell>
-                <code>{'CreateQueryHandler<T>'}</code>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <code>ENTITY:UPDATE</code>
-              </TableCell>
-              <TableCell>
-                Action for updating a single record from an API endpoint.
-              </TableCell>
-              <TableCell>
-                <code>PUT</code>
-              </TableCell>
-              <TableCell>
-                <code>{'UpdateQueryHandler<T>'}</code>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <code>ENTITY:REMOVE</code>
-              </TableCell>
-              <TableCell>
-                Action for deleting a single record from an API endpoint.
-              </TableCell>
-              <TableCell>
-                <code>DELETE</code>
-              </TableCell>
-              <TableCell>
-                <code>{'RemoveQueryHandler<T>'}</code>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+        <ApiTable
+          data={{
+            columnNames: [
+              'Action Name',
+              'Description',
+              'HTTP Verb',
+              'TS Handler Type',
+            ],
+            rows: [
+              [
+                <code>ENTITY:LIST</code>,
+                'Action for fetching a paginated list of records from an API endpoint.',
+                <code>GET</code>,
+                <code>{'ListQueryHandler<T>'}</code>,
+              ],
+              [
+                <code>ENTITY:READ</code>,
+                'Action for fetching a single record from an API endpoint.',
+                <code>GET</code>,
+                <code>{'ReadQueryHandler<T>'}</code>,
+              ],
+              [
+                <code>ENTITY:CREATE</code>,
+                'Action for creating a single record from an API endpoint.',
+                <code>POST</code>,
+                <code>{'CreateQueryHandler<T>'}</code>,
+              ],
+              [
+                <code>ENTITY:UPDATE</code>,
+                'Action for updating a single record from an API endpoint.',
+                <code>PUT</code>,
+                <code>{'UpdateQueryHandler<T>'}</code>,
+              ],
+              [
+                <code>ENTITY:REMOVE</code>,
+                'Action for deleting a single record from an API endpoint.',
+                <code>DELETE</code>,
+                <code>{'RemoveQueryHandler<T>'}</code>,
+              ],
+            ],
+          }}
+        />
+
         <Stack className={ContentsClass.Item} spacing={2}>
           <H6
             fontWeight={500}
