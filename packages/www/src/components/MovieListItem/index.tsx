@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMovieModelExample1 } from '@models/useMovieModelExample1';
+import { useMovieModel } from '@models/useMovieModel';
 import { RootState } from '@store';
 import { useSelector } from 'react-redux';
 import { Id } from 'react-redux-use-model';
@@ -11,7 +11,7 @@ export interface MovieListItemProps {
 }
 
 export const MovieListItem: React.FC<MovieListItemProps> = ({ id }) => {
-  const movieModel = useMovieModelExample1();
+  const movieModel = useMovieModel();
   const entity = useSelector((state: RootState) =>
     movieModel.selectEntity(state, id)
   );

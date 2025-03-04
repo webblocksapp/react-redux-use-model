@@ -12,12 +12,12 @@ import {
 } from '@mui/material';
 import { Pagination } from '@components/Pagination';
 import { Stack } from 'reactjs-ui-core';
-import { useMovieModelExample2 } from '@models/useMovieModelExample2';
+import { useMovieModel2 } from '@models/useMovieModel2';
 import { PaginationStats } from '@components/PaginationStats';
 import { MovieListItem } from '@components/MovieListItem';
 
 export const MoviesListExample2: React.FC = () => {
-  const movieModel = useMovieModelExample2();
+  const movieModel = useMovieModel2();
   const query = useSelector(movieModel.selectPaginatedQuery);
   const [params, setParams] = useState({ _page: 0, _size: 10, _filter: '' });
 

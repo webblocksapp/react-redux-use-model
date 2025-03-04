@@ -7,7 +7,7 @@ import {
 } from 'react-redux-use-model';
 import { Movie } from '@interfaces/Movie';
 
-export const useMovieModelExample2 = () => {
+export const useMovieModel1 = () => {
   const movieApiClient = useMovieApiClient();
   const model = useModel<
     Movie,
@@ -17,7 +17,7 @@ export const useMovieModelExample2 = () => {
   >({
     entityName: EntityName.Movies,
     config: {
-      paginationSizeMultiplier: 1,
+      paginationSizeMultiplier: 5,
     },
     handlers: {
       list: {

@@ -92,11 +92,11 @@ export const ListRecords: React.FC = () => {
               codeTabs={[
                 {
                   type: 'path',
-                  codePath: 'models/useMovieModelExample1/index.ts',
+                  codePath: 'models/useMovieModel1/index.ts',
                   name: 'useMovieModel.ts',
                   language: 'typescript',
                   mapReplace: {
-                    useMovieModelExample1: 'useMovieModel',
+                    useMovieModel1: 'useMovieModel',
                   },
                 },
                 {
@@ -105,7 +105,7 @@ export const ListRecords: React.FC = () => {
                   name: 'MoviesList.tsx',
                   language: 'tsx',
                   mapReplace: {
-                    useMovieModelExample1: 'useMovieModel',
+                    useMovieModel1: 'useMovieModel',
                     MoviesListExample1: 'MoviesList',
                   },
                 },
@@ -131,11 +131,11 @@ export const ListRecords: React.FC = () => {
               codeTabs={[
                 {
                   type: 'path',
-                  codePath: 'models/useMovieModelExample2/index.ts',
+                  codePath: 'models/useMovieModel2/index.ts',
                   name: 'useMovieModel.ts',
                   language: 'typescript',
                   mapReplace: {
-                    useMovieModelExample2: 'useMovieModel',
+                    useMovieModel2: 'useMovieModel',
                   },
                 },
                 {
@@ -144,7 +144,7 @@ export const ListRecords: React.FC = () => {
                   name: 'MoviesList.tsx',
                   language: 'tsx',
                   mapReplace: {
-                    useMovieModelExample2: 'useMovieModel',
+                    useMovieModel2: 'useMovieModel',
                     MoviesListExample2: 'MoviesList',
                   },
                 },
