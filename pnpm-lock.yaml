@@ -204,8 +204,8 @@ importers:
         specifier: ^15.6.1
         version: 15.6.1(react@18.3.1)
       reactjs-ui-core:
-        specifier: 0.0.22
-        version: 0.0.22(6y35qx5vreccylvuradiwcvfcu)
+        specifier: 0.0.23
+        version: 0.0.23(6y35qx5vreccylvuradiwcvfcu)
       uuid:
         specifier: ^9.0.1
         version: 9.0.1
@@ -5539,8 +5539,8 @@ packages:
       react-router-dom: ^6.15.0
       react-syntax-highlighter: ^15.6.1
 
-  reactjs-ui-core@0.0.22:
-    resolution: {integrity: sha512-dIIcT0xHTg7T5YAJvGekRvksCaj6EKHCoKPFhMytnFlhMvkEx7Zc2n2Et0u6Dp2flThTlpbExBrXFItfD9o1pg==}
+  reactjs-ui-core@0.0.23:
+    resolution: {integrity: sha512-WWk9jMoqORLfBHaXnNcWibQiF4TFQVQwR5rOSSwTV4v5DU7bc9DPPjjFHbVPcqLbUukiA5hvDmExSRvyCg3BrA==}
     peerDependencies:
       '@emotion/react': ^11.11.1
       '@emotion/styled': ^11.11.0
@@ -13117,7 +13117,7 @@ snapshots:
       react-syntax-highlighter: 15.6.1(react@18.3.1)
       uuid: 9.0.1
 
-  reactjs-ui-core@0.0.22(6y35qx5vreccylvuradiwcvfcu):
+  reactjs-ui-core@0.0.23(6y35qx5vreccylvuradiwcvfcu):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.0.10)(react@18.3.1)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.0.10)(react@18.3.1))(@types/react@19.0.10)(react@18.3.1)

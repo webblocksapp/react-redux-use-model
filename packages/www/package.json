@@ -30,7 +30,7 @@
     "react-redux-use-model": "workspace:*",
     "react-router-dom": "^6.15.0",
     "react-syntax-highlighter": "^15.6.1",
-    "reactjs-ui-core": "0.0.22",
+    "reactjs-ui-core": "0.0.23",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
