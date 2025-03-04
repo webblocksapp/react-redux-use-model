@@ -1,8 +1,15 @@
 import { ApiTable } from '@components/ApiTable';
 import { Body1 } from '@components/Body1';
-import { MoviesList } from '@components/MoviesList';
-import { QueryKey } from '@constants/enums';
-import { Code, ContentsClass, H3, H6, Stack } from 'reactjs-ui-core';
+import { MoviesListExample1 } from '@components/MoviesListExample1';
+import { MoviesListExample2 } from '@components/MoviesListExample2';
+import {
+  Code,
+  ContentsClass,
+  H3,
+  H6,
+  Implementation,
+  Stack,
+} from 'reactjs-ui-core';
 
 export const ListRecords: React.FC = () => {
   return (
@@ -80,10 +87,32 @@ export const ListRecords: React.FC = () => {
               pagination size to keep additional records in memory, ensuring a
               smoother user experience.
             </Body1>
-            <MoviesList
-              paginationSizeMultiplier={5}
-              queryKey={QueryKey.MoviesListExample1}
-            />
+            <Implementation
+              multipleCode
+              codeTabs={[
+                {
+                  type: 'path',
+                  codePath: 'models/useMovieModelExample1/index.ts',
+                  name: 'useMovieModel.ts',
+                  language: 'typescript',
+                  mapReplace: {
+                    useMovieModelExample1: 'useMovieModel',
+                  },
+                },
+                {
+                  type: 'path',
+                  codePath: 'components/MoviesListExample1/index.tsx',
+                  name: 'MoviesList.tsx',
+                  language: 'tsx',
+                  mapReplace: {
+                    useMovieModelExample1: 'useMovieModel',
+                    MoviesListExample1: 'MoviesList',
+                  },
+                },
+              ]}
+            >
+              <MoviesListExample1 />
+            </Implementation>
           </Stack>
           <Stack pt={2} className={ContentsClass.Item} spacing={2}>
             <Body1
@@ -97,10 +126,32 @@ export const ListRecords: React.FC = () => {
               If you want the real pagination to match the calculated
               pagination, set the <code>paginationSizeMultiplier</code> to 1.
             </Body1>
-            <MoviesList
-              paginationSizeMultiplier={1}
-              queryKey={QueryKey.MoviesListExample2}
-            />
+            <Implementation
+              multipleCode
+              codeTabs={[
+                {
+                  type: 'path',
+                  codePath: 'models/useMovieModelExample2/index.ts',
+                  name: 'useMovieModel.ts',
+                  language: 'typescript',
+                  mapReplace: {
+                    useMovieModelExample2: 'useMovieModel',
+                  },
+                },
+                {
+                  type: 'path',
+                  codePath: 'components/MoviesListExample2/index.tsx',
+                  name: 'MoviesList.tsx',
+                  language: 'tsx',
+                  mapReplace: {
+                    useMovieModelExample2: 'useMovieModel',
+                    MoviesListExample2: 'MoviesList',
+                  },
+                },
+              ]}
+            >
+              <MoviesListExample2 />
+            </Implementation>
           </Stack>
         </Stack>
       </Stack>

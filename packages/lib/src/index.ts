@@ -21,6 +21,7 @@ export type {
   Pagination,
   PaginationParams,
   QueryHandler,
+  QueryState,
   ReadQueryHandler,
   ReadResponse,
   RemoveQueryHandler,
