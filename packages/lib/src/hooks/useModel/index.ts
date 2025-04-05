@@ -1,4 +1,4 @@
-import { EntityActionType, EntityHelperActionType } from '@constants';
+import { EntityActionType, EntityHelperActionType, ListMode } from '@constants';
 import {
   EntityAction,
   RootState,
@@ -27,6 +27,7 @@ import {
   isLastPage,
   isPageBlank,
   now,
+  updateQueryListMode,
 } from '@utils';
 import { useApiClients } from '@hooks';
 import { useMemo, useRef } from 'react';
@@ -57,6 +58,7 @@ export const useModel = <
   config?: {
     paginationSizeMultiplier?: number;
     initialLoadingSize?: number;
+    mode?: ListMode;
   };
 }) => {
   const queryKey = useQueryKey();
@@ -310,6 +312,7 @@ export const useModel = <
       setQueryKey(options.queryKey);
 
       const queryKey = getQueryKey();
+      updateQueryListMode({ entityName, queryKey }, methodOptions?.mode);
       const foundQuery = findQuery(entityName, queryKey);
 
       /**

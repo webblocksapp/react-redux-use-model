@@ -1,4 +1,4 @@
-import { ModelMode } from '@constants';
+import { ListMode } from '@constants';
 import { Id, Pagination, QueryId, QueryItem, Singleton } from '@interfaces';
 import { paginateData } from '@utils/paginateData';
 
@@ -17,17 +17,25 @@ export const updateQueryPagination = (
   }
 };
 
+export const updateQueryListMode = (
+  args: QueryId,
+  mode: ListMode | undefined
+) => {
+  const query = SINGLETON.find((item) => queryExists(item, args));
+  if (query) {
+    query.listMode = mode;
+  }
+};
+
 export const produceIds = (
   args: QueryItem & {
     eventName?: string;
-    mode?: ModelMode;
   }
 ) => {
   const {
     eventName: _,
     pagination = { size: 10, page: 0, totalElements: 10, totalPages: 1 },
     method,
-    mode,
     ...restArgs
   } = args;
 
@@ -50,7 +58,7 @@ export const produceIds = (
   const lastPagination = query?.lastPagination || pagination;
   let result: Id[];
 
-  if (mode === ModelMode.LoadMore) {
+  if (query?.listMode === ListMode.LoadMore) {
     result = ids;
   } else {
     const { content } = paginateData(ids, {

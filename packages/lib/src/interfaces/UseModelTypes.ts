@@ -1,4 +1,4 @@
-import { EntityActionType } from '@constants';
+import { EntityActionType, ListMode } from '@constants';
 import {
   AnyObject,
   Entity,
@@ -9,7 +9,10 @@ import {
   StringKey,
 } from '@interfaces';
 
-export type BuildModelMethodOptions = { withResponse?: boolean };
+export type BuildModelMethodOptions = {
+  withResponse?: boolean;
+  mode?: ListMode;
+};
 
 export type QueryHandlers<
   TEntity extends Entity,

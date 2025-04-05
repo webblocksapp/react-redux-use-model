@@ -13,7 +13,7 @@ export enum EntityHelperActionType {
   UPDATE_QUERY_LOADERS = 'ENTITY:UPDATE_QUERY_LOADERS',
 }
 
-export enum ModelMode {
+export enum ListMode {
   Standard = 'Standard',
   LoadMore = 'LoadMore',
 }
