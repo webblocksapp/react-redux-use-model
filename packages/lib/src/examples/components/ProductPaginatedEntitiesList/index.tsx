@@ -18,7 +18,7 @@ export const ProductPaginatedEntitiesList: React.FC = () => {
 
   useEffect(() => {
     productModel.list({
-      queryKey: QueryKey.ProductPaginatedEntitiesList,
+      queryKey: QueryKey.ProductPaginatedList,
       paginationParams: params,
     });
   }, [params]);
