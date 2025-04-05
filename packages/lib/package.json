@@ -67,7 +67,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.1.0",
-    "react-virtuoso": "^4.7.2",
+    "react-virtuoso": "^4.12.5",
     "reactjs-ui-core": "^0.0.21",
     "storybook": "^7.6.17",
     "ts-jest": "^29.1.2",

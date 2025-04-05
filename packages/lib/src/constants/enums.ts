@@ -12,3 +12,8 @@ export enum EntityHelperActionType {
   INITIALIZE_QUERY = 'ENTITY:INITIALIZE_QUERY',
   UPDATE_QUERY_LOADERS = 'ENTITY:UPDATE_QUERY_LOADERS',
 }
+
+export enum ModelMode {
+  Standard = 'Standard',
+  LoadMore = 'LoadMore',
+}
