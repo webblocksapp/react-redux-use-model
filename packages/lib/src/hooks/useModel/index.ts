@@ -312,7 +312,7 @@ export const useModel = <
       setQueryKey(options.queryKey);
 
       const queryKey = getQueryKey();
-      updateQueryListMode({ entityName, queryKey }, methodOptions?.mode);
+      updateQueryListMode({ entityName, queryKey }, options?.mode);
       const foundQuery = findQuery(entityName, queryKey);
 
       /**

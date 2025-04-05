@@ -11,7 +11,6 @@ import {
 
 export type BuildModelMethodOptions = {
   withResponse?: boolean;
-  mode?: ListMode;
 };
 
 export type QueryHandlers<
@@ -230,6 +229,7 @@ export type ModelMethodParameters<
       {
         queryKey: string;
         invalidateQuery?: InvalidateQueryStrategy;
+        mode?: ListMode;
         paginationParams: ExtractApiFnParametersArg1<
           TEntity,
           TQueryHandler,

@@ -10,7 +10,7 @@ export enum QueryKey {
   FilteredProductList = 'FilteredProductList',
   ProductPaginatedList = 'ProductPaginatedList',
   ProductPaginatedFilteredList = 'ProductPaginatedFilteredList',
-  ProductPaginatedEntitiesList = 'ProductPaginatedList',
+  ProductListLoadMore = 'ProductListLoadMore',
   ProductCrud = 'ProductCrud',
   VideoList = 'VideoList',
   VideosDropdown = 'VideosDropdown',
