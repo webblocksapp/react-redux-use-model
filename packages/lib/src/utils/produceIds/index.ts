@@ -1,4 +1,5 @@
-import { Pagination, QueryId, QueryItem, Singleton } from '@interfaces';
+import { ModelMode } from '@constants';
+import { Id, Pagination, QueryId, QueryItem, Singleton } from '@interfaces';
 import { paginateData } from '@utils/paginateData';
 
 let SINGLETON: Array<Singleton> = [];
@@ -19,12 +20,14 @@ export const updateQueryPagination = (
 export const produceIds = (
   args: QueryItem & {
     eventName?: string;
+    mode?: ModelMode;
   }
 ) => {
   const {
     eventName: _,
     pagination = { size: 10, page: 0, totalElements: 10, totalPages: 1 },
     method,
+    mode,
     ...restArgs
   } = args;
 
@@ -45,10 +48,17 @@ export const produceIds = (
   const query = SINGLETON.find((item) => queryExists(item, restArgs));
   const ids = query?.ids || [];
   const lastPagination = query?.lastPagination || pagination;
-  const { content } = paginateData(ids, {
-    ...lastPagination,
-    limit: pagination.size,
-  });
+  let result: Id[];
 
-  return content;
+  if (mode === ModelMode.LoadMore) {
+    result = ids;
+  } else {
+    const { content } = paginateData(ids, {
+      ...lastPagination,
+      limit: pagination.size,
+    });
+    result = content;
+  }
+
+  return result;
 };
