@@ -24,6 +24,16 @@ export const updateQueryListMode = (
   const query = SINGLETON.find((item) => queryExists(item, args));
   if (query) {
     query.listMode = mode;
+  } else {
+    SINGLETON = [
+      ...SINGLETON,
+      {
+        entityName: args.entityName,
+        queryKey: args.queryKey,
+        ids: [],
+        listMode: mode,
+      },
+    ];
   }
 };
 
